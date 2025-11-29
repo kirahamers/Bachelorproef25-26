@@ -1,0 +1,126 @@
+%---------- Inleiding ---------------------------------------------------------
+
+\section{Inleiding}%
+\label{sec:inleiding}
+
+Scrada is een Certified Peppol Access Point dat bedrijven kunnen gebruiken om facturen te versturen via Peppol. 
+Om factuur fraude tegen te gaan moet het bedrijf een KYC (Know Your Customer) uitvoeren. 
+Hierbij wordt de identiteit van de klant gecontroleerd binnen een business relation. Momenteel doet Scrada dit door via een kopie van de identiteitskaart te verifiëren of de persoon bestuurder is van het bedrijf dat ze opgegeven hebben. 
+Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met het GDPR-principe. 
+Het gebruik van identiteitskaarten zorgt voor excessieve dataprocessing (terwijl GDPR staat voor data minimalisatie) en heeft ook expliciete toestemming nodig van de klant, die op elk moment moet ingetrokken kunnen worden. 
+Daarnaast is het proces tijdsintensief en bestaat er ook een kans op fouten door handmatige verificatie. Dit kan leiden tot onvoldoende beveiliging van gegevens, wat niet GDPR-conform is.
+Als gevolg daarvan wil Scrada een geautomatiseerd KYC-proces te implementeren dat GDPR-conform, fraudeveilig en kostenefficiënt is.
+
+\begin{itemize}
+  \item kaderen thema
+  \item de doelgroep
+  \item de probleemstelling en (centrale) onderzoeksvraag
+  \item de onderzoeksdoelstelling
+\end{itemize}
+
+Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
+Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
+
+\subsection{Deelvragen probleemdomein} 
+\begin{itemize}
+    \item \textcolor{green}{Hoe verloopt het huidige KYC-proces bij Scrada op het Peppol-platform?}
+    \item \textcolor{green}{Welke problemen ervaart Scrada bij het huidige KYC-proces?}
+    \item \textcolor{green}{Op welke stappen in het proces kan automatisering toegepast worden?}
+    \item \textcolor{green}{Welke technologieën kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}
+    \item \textcolor{green}{Welke gegevens van bedrijven worden verzameld tijdens het KYC-proces en hoe gaat Scrada hiermee om?}
+    \item \textcolor{green}{Wat zijn de kenmerken van een GDPR-conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}
+    \item \textcolor{green}{Welke frauderisico’s bestaan er bij het huidige KYC-proces?}
+    \item \textcolor{green}{Welke kosten draagt het huidige KYC-proces bij Scrada?}
+\end{itemize}
+
+\subsection{Deelvragen oplossingsdomein} 
+\begin{itemize}
+    \item \textcolor{orange}{Hoe kunnen de geautomatiseerde KYC-processen conform blijven aan de GDPR-regels?}
+    \item \textcolor{orange}{Welke risico’s bestaan bij het verwerken van persoonsgegevens in een geautomatiseerd KYC-proces?}
+    \item \textcolor{orange}{Welke maatregelen/technologieën kunnen worden ingezet om fraude bij het geautomatiseerde KYC-proces te voorkomen?}
+    \item \textcolor{orange}{Hoe kan automatisering bijdragen aan kostenreductie zonder nadelig te zijn voor GDPR en fraudeveiligheid?}
+\end{itemize}
+
+%---------- Stand van zaken ---------------------------------------------------
+
+\section{Stand van zaken}%
+\label{sec:stand_van_zaken}
+
+\subsection{Data en GDPR}
+Data heeft hedendaags een grote rol. Het ophalen, verwerken en bewaren hiervan is cruciaal voor het bestaan en succes van bedrijven.
+Daarom werd ook in 2016 een regelgeving hierrond opgesteld, namelijk de GDPR-wetgeving. De General Data Protection Regulation (GDPR) zorgt 
+voor de bescherming van persoonlijke gegevens, wat een fundamenteel recht is binnen de Europese Unie. 
+Deze regels omvatten principes zoals 
+\begin{itemize}
+  \item \textbf purpose limitation: de data moet expliciet aangegeven doelen hebben;
+  \item \textbf data minimalisation: de verzamelde gegevens moeten strikt noodzakelijk zijn voor die doelen;
+  \item \textbf lawfulness/tranparency: het transparant en legaal verwerken;
+  \item \textbf storage limitation: data niet langer gebruiken/verwerken dan nodig is; \autocite{EuropeanUnion2016}.
+\end{itemize}
+Indien deze regels overtreden worden, kunnen er zware boetes opgelegd worden, maar daarnaast wordt ook het vertrouwen van klanten en partners van het bedrijf geschaad.
+
+\subsection{KYC bij Scrada}
+Als gevolg van de GDPR is van groot belang dat bedrijven zoals Scrada zich aan deze regels houden bij het verwerken van persoonsgegevens tijdens het KYC-proces.
+Het KYC-proces (Know Your Customer) begint de laatste jaren steeds een grotere rol te spelen in de financiële sector. Deze zorgt ervoor
+dat banken niet gebruikt kunnen worden door illegale partijen voor witwasactiviteiten \autocite{PatilSangeetha2022}. Ook Scrada maakt gebruik van KYC binnen hun bedrijf.
+Momenteel doet Scrada, een Certified Peppol Access Point voor electronische facturatie, hun KYC-proces manueel aan de hand van identiteitskaarten en de KBO-databank. 
+Dit is tijdsintensief en brengt een grotere kans op fouten met zich mee. Daarnaast is deze methode ook verouderd, vereist het extra explicitie toestemming van de klant en
+is het niet efficiënt volgens de GDPR-regels.
+
+\subsection{De noodzaak van automatisering}
+efficiëntie, veiligheid en kostenbesparing zijn belangrijke factoren voor bedrijven.
+Automatisering van processen kan bedrijven helpen om deze doelen te bereiken door repetitieve taken te verminderen, de nauwkeurigheid te verhogen en operationele kosten te verlagen.
+Voor Scrada is het daarom van belang om hun KYC-proces te automatiseren, zodat ze GDPR-conform, fraudeveilig en kostenefficiënt zijn.
+
+
+% Voor literatuurverwijzingen zijn er twee belangrijke commando's:
+% \autocite{KEY} => (Auteur, jaartal) Gebruik dit als de naam van de auteur
+%   geen onderdeel is van de zin.
+% \textcite{KEY} => Auteur (jaartal)  Gebruik dit als de auteursnaam wel een
+%   functie heeft in de zin (bv. ``Uit onderzoek door Doll & Hill (1954) bleek
+%   ...'')
+
+Je mag deze sectie nog verder onderverdelen in subsecties als dit de structuur van de tekst kan verduidelijken.
+
+%---------- Methodologie ------------------------------------------------------
+\section{Methodologie}%
+\label{sec:methodologie}
+
+% Hier beschrijf je hoe je van plan bent het onderzoek te voeren. 
+% Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? 
+% Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
+% Valt je onderwerp onder één van de typische soorten bachelorproeven die besproken zijn in de lessen Research Methods (bv.\ vergelijkende studie of risico-analyse)? Zorg er dan ook voor dat we duidelijk de verschillende stappen terug vinden die we verwachten in dit soort onderzoek!
+% Vermijd onderzoekstechnieken die geen objectieve, meetbare resultaten kunnen opleveren. Enquêtes, bijvoorbeeld, zijn voor een bachelorproef informatica meestal \textbf{niet geschikt}. De antwoorden zijn eerder meningen dan feiten en in de praktijk blijkt het ook bijzonder moeilijk om voldoende respondenten te vinden. Studenten die een enquête willen voeren, hebben meestal ook geen goede definitie van de populatie, waardoor ook niet kan aangetoond worden dat eventuele resultaten representatief zijn.
+% Uit dit onderdeel moet duidelijk naar voor komen dat je bachelorproef ook technisch voldoen\-de diepgang zal bevatten. Het zou niet kloppen als een bachelorproef informatica ook door bv.\ een student marketing zou kunnen uitgevoerd worden.
+% Je beschrijft ook al welke tools (hardware, software, diensten, \ldots) je denkt hiervoor te gebruiken of te ontwikkelen.
+% Probeer ook een tijdschatting te maken. Hoe lang zal je met elke fase van je onderzoek bezig zijn en wat zijn de concrete \emph{deliverables} in elke fase?
+
+Om automatisering van het KYC-proces bij Scrada te implementeren, zal een combinatie van literatuurstudie, benchmarking van bestaande technologieën en een proof-of-concept (PoC) ontwikkeld worden.
+
+\subsection{Onderzoekstechnieken}
+Tijdens de literatuurstudie zal er onderzoek gedaan worden naar de GDPR-regelgeving, KYC-processen en automatiseringstechnologieën. Onder de automatiseringstechnologieën 
+vallen op het eerste zicht Blockchain, API-integraties en OCR (Optical Character Recognition of optische tekenherkenning) samen met AI (Artifical Intelligence).
+Aangezien geautomatiseerde KYC-processen al door verschillende bedrijven gebruikt worden, zal er ook een benchmarking uitgevoerd worden van bestaande oplossingen.
+Dit zal helpen om de voor- en nadelen van verschillende technologieën te begrijpen en te bepalen welke het meest geschikt is voor Scrada.
+Tot slot zal er een proof-of-concept ontwikkeld worden om de gekozen automatiseringstechnologie te ontwerpen en implementeren binnen het KYC-proces van Scrada.
+
+\subsection{Tools}
+Om automatisering te implementeren, zullen verschillende tools en technologieën gebruikt worden.
+Voor de ontwikkeling van de PoC zal er gebruik gemaakt worden van programmeertalen zoals Python of JavaScript, afhankelijk van de gekozen technologie.
+Daarnaast zullen ook API-integraties gekoppeld met externe, officiele databanken zoals KBO geimplementeerd kunnen worden voor efficiënte verificatie. 
+OCR en AI-tools zullen gebruikt worden voor het automatisch inlezen en verwerken van documenten. 
+Daarnaast kunnen er ook blockchain-platforms zoals Ethereum of Solana ingezet worden voor veilige en transparante gegevensopslag en -verificatie.
+Tot slot zullen er ook tools gebruikt worden voor het testen en valideren van de PoC, zoals unit testen/integratietesten (met Pytest of JUnit), API-testing met Postman en beveiligingstesten om
+het nastreven van de GDPR-regels door Audit en Logging.
+
+\subsection{Tijdschattig}
+%---------- Verwachte resultaten ----------------------------------------------
+\section{Verwacht resultaat, conclusie}%
+\label{sec:verwachte_resultaten}
+
+Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
+
+Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
+
+Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
+
