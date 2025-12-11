@@ -8,17 +8,9 @@ Hierbij wordt de identiteit van de klant gecontroleerd binnen een business relat
 Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met het GDPR-principe. 
 Het gebruik van identiteitskaarten zorgt voor excessieve dataprocessing (terwijl GDPR staat voor data minimalisatie) en heeft ook expliciete toestemming nodig van de klant, die op elk moment moet ingetrokken kunnen worden. 
 Daarnaast is het proces tijdsintensief en bestaat er ook een kans op fouten door handmatige verificatie. Dit kan leiden tot onvoldoende beveiliging van gegevens, wat niet GDPR-conform is.
-Als gevolg daarvan wil Scrada een geautomatiseerd KYC-proces te implementeren dat GDPR-conform, fraudeveilig en kostenefficiënt is.
-
-\begin{itemize}
-  \item kaderen thema
-  \item de doelgroep
-  \item de probleemstelling en (centrale) onderzoeksvraag
-  \item de onderzoeksdoelstelling
-\end{itemize}
-
-Formuleer duidelijk de onderzoeksvraag! De begeleiders lezen nog steeds te veel voorstellen waarin we geen onderzoeksvraag terugvinden.
-Schrijf ook iets over de doelstelling. Wat zie je als het concrete eindresultaat van je onderzoek, naast de uitgeschreven scriptie? Is het een proof-of-concept, een rapport met aanbevelingen, \ldots Met welk eindresultaat kan je je bachelorproef als een succes beschouwen?
+Als gevolg daarvan wil Scrada een geautomatiseerd KYC-proces implementeren dat GDPR-conform, fraudeveilig en kostenefficiënt is.
+Hieruit volgt de onderzoeksvraag van deze bachelorproef: Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een 
+GDPR-conforme, fraudeveilige en kostenefficiënte manier?
 
 \subsection{Deelvragen probleemdomein} 
 \begin{itemize}
@@ -51,12 +43,12 @@ Daarom werd ook in 2016 een regelgeving hierrond opgesteld, namelijk de GDPR-wet
 voor de bescherming van persoonlijke gegevens, wat een fundamenteel recht is binnen de Europese Unie. 
 Deze regels omvatten principes zoals 
 \begin{itemize}
-  \item purpose limitation: de data moet expliciet aangegeven doelen hebben;
-  \item data minimalisation: de verzamelde gegevens moeten strikt noodzakelijk zijn voor die doelen;
-  \item lawfulness/tranparency: het transparant en legaal verwerken;
-  \item storage limitation: data niet langer gebruiken/verwerken dan nodig is; \autocite{EuropeanUnion2016}.
+  \item purpose limitation: de data moet expliciet aangegeven doelen hebben.
+  \item data minimalisation: de verzamelde gegevens moeten strikt noodzakelijk zijn voor die doelen.
+  \item lawfulness/tranparency: het transparant en legaal verwerken.
+  \item storage limitation: data niet langer gebruiken/verwerken dan nodig is \autocite{EuropeanUnion2016}.
 \end{itemize}
-Indien deze regels overtreden worden, kunnen er zware boetes opgelegd worden, maar daarnaast wordt ook het vertrouwen van klanten en partners van het bedrijf geschaad.
+Indien deze regels overtreden worden, kunnen er zware boetes opgelegd worden, daarnaast wordt ook het vertrouwen van klanten en partners van het bedrijf geschaad.
 
 \subsection{KYC bij Scrada}
 Als gevolg van de GDPR is van groot belang dat bedrijven zoals Scrada zich aan deze regels houden bij het verwerken van persoonsgegevens tijdens het KYC-proces.
@@ -67,7 +59,7 @@ Dit is tijdsintensief en brengt een grotere kans op fouten met zich mee. Daarnaa
 is het niet efficiënt volgens de GDPR-regels.
 
 \subsection{De noodzaak van automatisering}
-efficiëntie, veiligheid en kostenbesparing zijn belangrijke factoren voor bedrijven.
+Efficiëntie, veiligheid en kostenbesparing zijn belangrijke factoren voor bedrijven.
 Automatisering van processen kan bedrijven helpen om deze doelen te bereiken door repetitieve taken te verminderen, de nauwkeurigheid te verhogen en operationele kosten te verlagen.
 Voor Scrada is het daarom van belang om hun KYC-proces te automatiseren, zodat ze GDPR-conform, fraudeveilig en kostenefficiënt zijn.
 
@@ -96,7 +88,7 @@ Om automatisering van het KYC-proces bij Scrada te implementeren, zal een combin
 
 \subsection{Onderzoekstechnieken}
 Tijdens de literatuurstudie zal er onderzoek gedaan worden naar de GDPR-regelgeving, KYC-processen en automatiseringstechnologieën. Onder de automatiseringstechnologieën 
-vallen op het eerste zicht Blockchain, API-integraties en OCR (Optical Character Recognition of optische tekenherkenning) samen met AI (Artifical Intelligence).
+vallen op het eerste zicht Blockchain, API-integraties en OCR (Optical Character Recognition of optische tekenherkenning via gezichts- of vingerafdrukherkenning) samen met AI (Artifical Intelligence) \autocite{KawamuraLeena2022}.
 Aangezien geautomatiseerde KYC-processen al door verschillende bedrijven gebruikt worden, zal er ook een benchmarking uitgevoerd worden van bestaande oplossingen.
 Dit zal helpen om de voor- en nadelen van verschillende technologieën te begrijpen en te bepalen welke het meest geschikt is voor Scrada.
 Tot slot zal er een proof-of-concept ontwikkeld worden om de gekozen automatiseringstechnologie te ontwerpen en implementeren binnen het KYC-proces van Scrada.
@@ -106,7 +98,8 @@ Om automatisering te implementeren, zullen verschillende tools en technologieën
 Voor de ontwikkeling van de PoC zal er gebruik gemaakt worden van programmeertalen zoals Python of JavaScript, afhankelijk van de gekozen technologie.
 Daarnaast zullen ook API-integraties gekoppeld met externe, officiele databanken zoals KBO geimplementeerd kunnen worden voor efficiënte verificatie. 
 OCR en AI-tools zullen gebruikt worden voor het automatisch inlezen en verwerken van documenten. 
-Daarnaast kunnen er ook blockchain-platforms zoals Ethereum of Solana ingezet worden voor veilige en transparante gegevensopslag en -verificatie.
+Daarnaast kunnen er ook blockchain-platforms zoals Ethereum of Solana ingezet worden voor veilige en transparante gegevensopslag en -verificatie met als concreet
+idee om One-Time Verification te implementeren, als het ware een digitale paspoort \autocite{KawamuraLeena2022}. Alle sensitieve gegevens kunnen dan veilig off-chain opgeslagen worden (tegenover on-chain, wat publiek is) \autocite{Gagnon2024}.
 Tot slot zullen er ook tools gebruikt worden voor het testen en valideren van de PoC, zoals unit testen/integratietesten (met Pytest of JUnit), API-testing met Postman en beveiligingstesten om
 het nastreven van de GDPR-regels door Audit en Logging.
 
@@ -117,12 +110,12 @@ het nastreven van de GDPR-regels door Audit en Logging.
   \emph{Deliverable: overzicht van bestaande literatuur en technologieën over geautomatiseerde, GDPR-conformde KYC die toepasselijk zouden kunnen zijn bij Scrada.}
 
   \item \textbf{Week 3--4: Analyse van het huidig KYC-proces} \\
-  Documenteren van het huidige proces bij Scrada, onderzoeken waar automatisatie of verbetering kan toegepast worden rekening houdend met efficiëntie, fraudeveiligheid en GDPR. \\
-  \emph{Deliverable: beschrijving van het huidige proces bij Scrada en probleemidentificatie, rekening houdend met de mogelijke oplossingen vanuit de literatuurstudie (Welke zou het best passen?).}
+  Documenteren van het huidige proces bij Scrada, onderzoeken waar automatisatie of verbetering (bottlenecks) kan toegepast worden rekening houdend met efficiëntie, fraudeveiligheid en GDPR. \\
+  \emph{Deliverable: beschrijving van het huidige proces bij Scrada en bottlenecks (gevisualiseerd aan de hand van een BPMN), rekening houdend met de mogelijke oplossingen vanuit de literatuurstudie (Welke zou het best passen?).}
 
   \item \textbf{Week 5: Requirementsanalyse} \\
   Opstellen van functionele en niet-functionele eisen voor een geautomatiseerd KYC-proces, rekening houden met de GDPR-vereisten. \\
-  \emph{Deliverable: requirementsdocument.}
+  \emph{Deliverable: requirementsdocument met een verbeterde BPMN dat de flow van het verbeterd proces visualiseert.}
 
   \item \textbf{Week 6--8: Proof-of-Concept ontwikkeling} \\
   Implementatie van een prototype dat identiteit en bedrijfsinformatie automatisch verifieert gebruik makend van passende technologieën. \\
@@ -134,7 +127,7 @@ het nastreven van de GDPR-regels door Audit en Logging.
 
   \item \textbf{Week 11--12: Evaluatie en analyse} \\
   Vergelijking tussen het huidige en het geautomatiseerde proces, rekening houdend met fraudeveiligheid en kostenefficiëntie. \\
-  \emph{Deliverable: beoordeling van de resultaten van de automatisering.}
+  \emph{Deliverable: beoordeling van de resultaten van de automatisering met een Business Case die de kostenefficiëntie, fraudeveiligheid en GDPR-conformiteit valideert.}
 
   \item \textbf{Week 13--14: Schrijven en afronden} \\
   Uitwerking van de volledige scriptie, inclusief conclusies en aanbevelingen. \\
@@ -145,9 +138,21 @@ het nastreven van de GDPR-regels door Audit en Logging.
 \section{Verwacht resultaat, conclusie}%
 \label{sec:verwachte_resultaten}
 
-Hier beschrijf je welke resultaten je verwacht. Als je metingen en simulaties uitvoert, kan je hier al mock-ups maken van de grafieken samen met de verwachte conclusies. Benoem zeker al je assen en de onderdelen van de grafiek die je gaat gebruiken. Dit zorgt ervoor dat je concreet weet welk soort data je moet verzamelen en hoe je die moet meten.
+Het verwachte resultaat van deze bachelorproef is een geautomatiseerd KYC-proces in de vorm van een PoC dat geoptimaliseerd is voor Scrada met de focus op GDPR-conformiteit.
+De PoC zal de huidige bottlenacks aanpakken en de volgende resultaten opleveren, wat een sterke Business Case voor implementatie vormt:
 
-Wat heeft de doelgroep van je onderzoek aan het resultaat? Op welke manier zorgt jouw bachelorproef voor een meerwaarde?
+\subsection*{GDPR-Conformiteit \autocite{EuropeanUnion2016}}
+Wat eerst excessieve dataprocessing was die handmatig ingevoerd moest worden, zal de verwerking geminimaliseerd worden door alleen de strikt noodzakelijke gegevens te verzamelen en verwerken
+via beveiligde API-integraties met officiële databanken of aan de hand van een digitaal paspoort. Hierbij zal privacy, veiligheid en vertrouwen van de klant versterkt worden.
 
-Hier beschrijf je wat je verwacht uit je onderzoek, met de motivatie waarom. Het is \textbf{niet} erg indien uit je onderzoek andere resultaten en conclusies vloeien dan dat je hier beschrijft: het is dan juist interessant om te onderzoeken waarom jouw hypothesen niet overeenkomen met de resultaten.
+\subsection*{Fraudeveiligheid}
+Daarnaast zal het proces fraudeveilig zijn door het implementeren van technologieën zoals blockchain met One-Time Verification  en AI-gestuurde verificatie voor een automatische authenticatieprocedure,
+wat de kans op identiteitsfraude, dat de testen zullen aantonen, zal minimaliseren.
 
+\subsection*{Kostenefficiëntie \autocite{KawamuraLeena2022}}
+Tot slot zal het geautomatiseerde proces kostenefficiënt zijn door het verminderen van handmatige taken, het versnellen van verificatietijden en het verlagen van operationele kosten.
+Aangezien de automatiseringsoplossing wordt intern ontwikkeld en is afgestemd op de specifieke behoeften van Scrada,
+worden dure, derde-partij licentiekosten van all-in-one KYC-platforms vermeden. Enkel de directe kosten voor externe data-API's (zoals KBO) zullen als operationele kosten gelden,
+wat resulteert in een significant lagere totale eigendomskost (TCO).
+
+Als extra meerwaarde zal dit Scrada helpen om hun klanten beter te bedienen en hun concurrentiepositie te versterken in de markt voor electronische facturatie via Peppol.
