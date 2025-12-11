@@ -5,13 +5,14 @@
 Scrada is een Certified Peppol Access Point dat bedrijven kunnen gebruiken om facturen te versturen via Peppol. 
 Om factuur fraude tegen te gaan moet het bedrijf een KYC (Know Your Customer) uitvoeren. 
 Hierbij wordt de identiteit van de klant gecontroleerd binnen een business relation. Momenteel doet Scrada dit door via een kopie van de identiteitskaart te verifiëren of de persoon bestuurder is van het bedrijf dat ze opgegeven hebben. 
-Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met het GDPR-principe. 
+Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub \-/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met het GDPR-principe. 
 Het gebruik van identiteitskaarten zorgt voor excessieve dataprocessing (terwijl GDPR staat voor data minimalisatie) en heeft ook expliciete toestemming nodig van de klant, die op elk moment moet ingetrokken kunnen worden. 
 Daarnaast is het proces tijdsintensief en bestaat er ook een kans op fouten door handmatige verificatie. Dit kan leiden tot onvoldoende beveiliging van gegevens, wat niet GDPR-conform is.
 Als gevolg daarvan wil Scrada een geautomatiseerd KYC-proces implementeren dat GDPR-conform, fraudeveilig en kostenefficiënt is.
 Hieruit volgt de onderzoeksvraag van deze bachelorproef: Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een 
 GDPR-conforme, fraudeveilige en kostenefficiënte manier?
 
+De deelvragen die hierbij geformuleerd kunnen worden, zijn opgesplitst in twee domeinen: het probleemdomein en het oplossingsdomein.
 \subsection{Deelvragen probleemdomein} 
 \begin{itemize}
     \item {Hoe verloopt het huidige KYC-proces bij Scrada op het Peppol-platform?}
@@ -19,14 +20,14 @@ GDPR-conforme, fraudeveilige en kostenefficiënte manier?
     \item {Op welke stappen in het proces kan automatisering toegepast worden?}
     \item {Welke technologieën kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}
     \item {Welke gegevens van bedrijven worden verzameld tijdens het KYC-proces en hoe gaat Scrada hiermee om?}
-    \item {Wat zijn de kenmerken van een GDPR-conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}
+    \item {Wat zijn de kenmerken van een GDPR- \- conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}
     \item {Welke frauderisico’s bestaan er bij het huidige KYC-proces?}
     \item {Welke kosten draagt het huidige KYC-proces bij Scrada?}
 \end{itemize}
 
 \subsection{Deelvragen oplossingsdomein} 
 \begin{itemize}
-    \item {Hoe kunnen de geautomatiseerde KYC-processen conform blijven aan de GDPR-regels?}
+    \item {Hoe kunnen de geautomatiseerde KYC- \- processen conform blijven aan de GDPR-regels?}
     \item {Welke risico’s bestaan bij het verwerken van persoonsgegevens in een geautomatiseerd KYC-proces?}
     \item {Welke maatregelen/technologieën kunnen worden ingezet om fraude bij het geautomatiseerde KYC-proces te voorkomen?}
     \item {Hoe kan automatisering bijdragen aan kostenreductie zonder nadelig te zijn voor GDPR en fraudeveiligheid?}
@@ -74,7 +75,7 @@ Voor Scrada is het daarom van belang om hun KYC-proces te automatiseren, zodat z
 %---------- Methodologie ------------------------------------------------------
 \section{Methodologie}%
 \label{sec:methodologie}
-
+\sloppy
 % Hier beschrijf je hoe je van plan bent het onderzoek te voeren. 
 % Welke onderzoekstechniek ga je toepassen om elk van je onderzoeksvragen te beantwoorden? 
 % Gebruik je hiervoor literatuurstudie, interviews met belanghebbenden (bv.~voor requirements-analyse), experimenten, simulaties, vergelijkende studie, risico-analyse, PoC, \ldots?
@@ -156,3 +157,16 @@ worden dure, derde-partij licentiekosten van all-in-one KYC-platforms vermeden. 
 wat resulteert in een significant lagere totale eigendomskost (TCO).
 
 Als extra meerwaarde zal dit Scrada helpen om hun klanten beter te bedienen en hun concurrentiepositie te versterken in de markt voor electronische facturatie via Peppol.
+
+
+\clearpage
+\begin{landscape}
+    \centering
+    \vspace*{1cm}
+    \includegraphics[width=0.95\linewidth, height=0.85\textheight, keepaspectratio]{gantt.png}
+    
+    \vspace{1cm}
+    \captionof{figure}{Tijdsplanning geautomatiseerde KYC bij Scrada}
+    \label{fig:tijdsplanning}
+\end{landscape}
+\clearpage % Terug naar portrait-modus en nieuwe pagina
