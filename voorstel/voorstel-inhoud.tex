@@ -3,10 +3,10 @@
 \label{sec:inleiding}
 
 Scrada is een Certified Peppol Access Point dat bedrijven kunnen gebruiken om facturen te versturen via Peppol. 
-Om factuur fraude tegen te gaan moet het bedrijf een KYC (Know Your Customer) uitvoeren. 
+Om factuurfraude tegen te gaan moet het bedrijf een KYC (Know Your Customer) uitvoeren. 
 Hierbij wordt de identiteit van de klant gecontroleerd binnen een business relation. Momenteel doet Scrada dit door via een kopie van de identiteitskaart te verifiëren of de persoon bestuurder is van het bedrijf dat ze opgegeven hebben. 
-Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub \-/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met het GDPR-principe. 
-Het gebruik van identiteitskaarten zorgt voor excessieve dataprocessing (terwijl GDPR staat voor data minimalisatie) en heeft ook expliciete toestemming nodig van de klant, die op elk moment moet ingetrokken kunnen worden. 
+Dit gebeurt aan de hand van de KBO-website (https://kbopub.economie.fgov.be/kbopub \-/zoeknaamfonetischform.html). Dit proces is niet efficiënt samen met de GDPR-principes. 
+Het gebruik van identiteitskaarten zorgt voor excessieve data processing (terwijl GDPR staat voor dataminimalisatie) en heeft ook expliciete toestemming nodig van de klant, die op elk moment moet ingetrokken kunnen worden. 
 Daarnaast is het proces tijdsintensief en bestaat er ook een kans op fouten door handmatige verificatie. Dit kan leiden tot onvoldoende beveiliging van gegevens, wat niet GDPR-conform is.
 Als gevolg daarvan wil Scrada een geautomatiseerd KYC-proces implementeren dat GDPR-conform, fraudeveilig en kostenefficiënt is.
 Hieruit volgt de onderzoeksvraag van deze bachelorproef: Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een 
@@ -39,7 +39,7 @@ De deelvragen die hierbij geformuleerd kunnen worden, zijn opgesplitst in twee d
 \label{sec:stand_van_zaken}
 
 \subsection{Data en GDPR}
-Data heeft hedendaags een grote rol. Het ophalen, verwerken en bewaren hiervan is cruciaal voor het bestaan en succes van bedrijven.
+Data heeft tegenwoordig een grote rol. Het ophalen, verwerken en bewaren hiervan is cruciaal voor het bestaan en succes van bedrijven.
 Daarom werd ook in 2016 een regelgeving hierrond opgesteld, namelijk de GDPR-wetgeving. De General Data Protection Regulation (GDPR) zorgt 
 voor de bescherming van persoonlijke gegevens, wat een fundamenteel recht is binnen de Europese Unie. 
 Deze regels omvatten principes zoals 
@@ -89,7 +89,7 @@ Om automatisering van het KYC-proces bij Scrada te implementeren, zal een combin
 
 \subsection{Onderzoekstechnieken}
 Tijdens de literatuurstudie zal er onderzoek gedaan worden naar de GDPR-regelgeving, KYC-processen en automatiseringstechnologieën. Onder de automatiseringstechnologieën 
-vallen op het eerste zicht Blockchain, API-integraties en OCR (Optical Character Recognition of optische tekenherkenning via gezichts- of vingerafdrukherkenning) samen met AI (Artifical Intelligence) \autocite{KawamuraLeena2022}.
+vallen op het eerste zicht Blockchain, API-integraties en OCR (Optical Character Recognition of optische tekenherkenning via gezichts- of vingerafdrukherkenning) samen met AI (Artificial Intelligence) \autocite{KawamuraLeena2022}.
 Aangezien geautomatiseerde KYC-processen al door verschillende bedrijven gebruikt worden, zal er ook een benchmarking uitgevoerd worden van bestaande oplossingen.
 Dit zal helpen om de voor- en nadelen van verschillende technologieën te begrijpen en te bepalen welke het meest geschikt is voor Scrada.
 Tot slot zal er een proof-of-concept ontwikkeld worden om de gekozen automatiseringstechnologie te ontwerpen en implementeren binnen het KYC-proces van Scrada.
@@ -97,18 +97,18 @@ Tot slot zal er een proof-of-concept ontwikkeld worden om de gekozen automatiser
 \subsection{Tools}
 Om automatisering te implementeren, zullen verschillende tools en technologieën gebruikt worden.
 Voor de ontwikkeling van de PoC zal er gebruik gemaakt worden van programmeertalen zoals Python of JavaScript, afhankelijk van de gekozen technologie.
-Daarnaast zullen ook API-integraties gekoppeld met externe, officiele databanken zoals KBO geimplementeerd kunnen worden voor efficiënte verificatie. 
+Daarnaast zullen ook API-integraties gekoppeld met externe, officiële databanken zoals KBO geimplementeerd kunnen worden voor efficiënte verificatie. 
 OCR en AI-tools zullen gebruikt worden voor het automatisch inlezen en verwerken van documenten. 
 Daarnaast kunnen er ook blockchain-platforms zoals Ethereum of Solana ingezet worden voor veilige en transparante gegevensopslag en -verificatie met als concreet
 idee om One-Time Verification te implementeren, als het ware een digitale paspoort \autocite{KawamuraLeena2022}. Alle sensitieve gegevens kunnen dan veilig off-chain opgeslagen worden (tegenover on-chain, wat publiek is) \autocite{Gagnon2024}.
-Tot slot zullen er ook tools gebruikt worden voor het testen en valideren van de PoC, zoals unit testen/integratietesten (met Pytest of JUnit), API-testing met Postman en beveiligingstesten om
-het nastreven van de GDPR-regels door Audit en Logging.
+Tot slot zullen er ook tools gebruikt worden voor het testen en valideren van de PoC, zoals unit- en integratietesten (met Pytest of JUnit), API-testing met Postman en beveiligingstesten om
+de naleving van de GDPR-regels te verifiëren via audit en logging
 
 \subsection{Tijdschattig}
 \begin{itemize}
   \item \textbf{Week 1--2: Literatuurstudie} \\
   Onderzoek naar GDPR-principes, KYC-processen en bestaande technologieën voor geautomatiseerde identiteits- en bedrijfsverificatie.\\
-  \emph{Deliverable: overzicht van bestaande literatuur en technologieën over geautomatiseerde, GDPR-conformde KYC die toepasselijk zouden kunnen zijn bij Scrada.}
+  \emph{Deliverable: overzicht van bestaande literatuur en technologieën over geautomatiseerde, GDPR-conforme KYC die toepasselijk zouden kunnen zijn bij Scrada.}
 
   \item \textbf{Week 3--4: Analyse van het huidig KYC-proces} \\
   Documenteren van het huidige proces bij Scrada, onderzoeken waar automatisatie of verbetering (bottlenecks) kan toegepast worden rekening houdend met efficiëntie, fraudeveiligheid en GDPR. \\
@@ -116,7 +116,7 @@ het nastreven van de GDPR-regels door Audit en Logging.
 
   \item \textbf{Week 5: Requirementsanalyse} \\
   Opstellen van functionele en niet-functionele eisen voor een geautomatiseerd KYC-proces, rekening houden met de GDPR-vereisten. \\
-  \emph{Deliverable: requirementsdocument met een verbeterde BPMN dat de flow van het verbeterd proces visualiseert.}
+  \emph{Deliverable: requirementsdocument met een verbeterde BPMN dat de flow van het verbeterde proces visualiseert.}
 
   \item \textbf{Week 6--8: Proof-of-Concept ontwikkeling} \\
   Implementatie van een prototype dat identiteit en bedrijfsinformatie automatisch verifieert gebruik makend van passende technologieën. \\
@@ -140,7 +140,7 @@ het nastreven van de GDPR-regels door Audit en Logging.
 \label{sec:verwachte_resultaten}
 
 Het verwachte resultaat van deze bachelorproef is een geautomatiseerd KYC-proces in de vorm van een PoC dat geoptimaliseerd is voor Scrada met de focus op GDPR-conformiteit.
-De PoC zal de huidige bottlenacks aanpakken en de volgende resultaten opleveren, wat een sterke Business Case voor implementatie vormt:
+De PoC zal de huidige bottlenecks aanpakken en de volgende resultaten opleveren, wat een sterke Business Case voor implementatie vormt:
 
 \subsection*{GDPR-Conformiteit \autocite{EuropeanUnion2016}}
 Wat eerst excessieve dataprocessing was die handmatig ingevoerd moest worden, zal de verwerking geminimaliseerd worden door alleen de strikt noodzakelijke gegevens te verzamelen en verwerken
@@ -152,9 +152,9 @@ wat de kans op identiteitsfraude, dat de testen zullen aantonen, zal minimaliser
 
 \subsection*{Kostenefficiëntie \autocite{KawamuraLeena2022}}
 Tot slot zal het geautomatiseerde proces kostenefficiënt zijn door het verminderen van handmatige taken, het versnellen van verificatietijden en het verlagen van operationele kosten.
-Het doel is om de KYC-doorlooptijd met zeker minimum 50 procent in te korten. Aangezien de automatiseringsoplossing wordt intern ontwikkeld en is afgestemd op de specifieke behoeften van Scrada,
+Het doel is om de KYC-doorlooptijd met zeker minimaal 50 procent in te korten. Aangezien de automatiseringsoplossing wordt intern ontwikkeld en is afgestemd op de specifieke behoeften van Scrada,
 worden dure, derde-partij licentiekosten van all-in-one KYC-platforms vermeden. Enkel de directe kosten voor externe data-API's (zoals KBO) zullen als operationele kosten gelden,
-wat resulteert in een significant lagere totale eigendomskost (TCO).
+wat resulteert in een significant lagere totale eigendomskosten (TCO).
 
 Als extra meerwaarde zal dit Scrada helpen om hun klanten beter te bedienen en hun concurrentiepositie te versterken in de markt voor electronische facturatie via Peppol.
 
