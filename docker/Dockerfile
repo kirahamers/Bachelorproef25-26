@@ -1,6 +1,6 @@
 FROM debian:bullseye
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --fix-missing \
     texlive-latex-base \
     texlive-latex-extra \
     texlive-lang-european \
