@@ -21,7 +21,9 @@
 %% \usepackage[chapter]{minted}
 %% If you compile with the make_thesis.{bat,sh} script, use the following
 %% import instead:
-\usepackage[chapter,outputdir=../output]{minted}
+%% Gebruik deze instellingen om de v3 error te forceren te stoppen
+\usepackage[chapter]{minted}
+\setminted{draft}
 \usemintedstyle{solarized-light}
 
 %% Formatting for minted environments.
@@ -72,6 +74,10 @@
 \renewcommand{\cleardoublepage}{\clearpage}
 
 \renewcommand{\arraystretch}{1.2}
+
+\ifxetex
+  \setmathfont{Fira Math}
+\fi
 
 %% Content starts here.
 \begin{document}
