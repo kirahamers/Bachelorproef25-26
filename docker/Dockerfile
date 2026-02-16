@@ -10,7 +10,9 @@ RUN apt-get update && apt-get install -y --fix-missing \
     texlive-xetex \
     python3-pip \
     latexmk \
-    && pip install pygments \
+    && pip3 install pygments \
+    && ln -s /usr/bin/python3 /usr/bin/python \
     && rm -rf /var/lib/apt/lists/*
+
 COPY fonts/ /usr/share/fonts/opentype
 RUN fc-cache -f -v
