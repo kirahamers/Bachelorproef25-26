@@ -1,32 +1,18 @@
-#!/bin/bash
-
-set -o errexit
-set -o nounset
-
-readonly source_dir="${1}"
-readonly output_dir="../output"
-
-# Enable debug output for troubleshooting purposes
-set -x
-
-cd "/bp/${source_dir}"
-
-# Find all main .tex files (containing the \documentclass command)
-source_files=$(grep --files-with-match '\\documentclass' ./*.tex)
-
-set +x
-
 # Loop over all found .tex source files and compile
 for latex_file in ${source_files}; do
-  echo "========== Compiling ${latex_file} =========="
-  set -x
-  latexmk \
-    -file-line-error \
-    -interaction=nonstopmode \
-    -output-directory="${output_dir}" \
-    -shell-escape \
-    -synctex=1 \
-    -xelatex \
-    "${latex_file}"
-  set +x
+  # Get the filename without .tex (e.g., HamersKiraBP)
+  filename=$(basename "${latex_file}" .tex)
+  
+  echo "========== Compiling ${filename} =========="
+  
+  # 1. First pass: Generate auxiliary files in the output folder
+  xelatex -shell-escape -interaction=nonstopmode -output-directory="${output_dir}" "${latex_file}"
+  
+  # 2. Biber: Explicitly tell it where the input and output live
+  # This fixes the "Undefined Citation" errors
+  biber --input-directory "${output_dir}" --output-directory "${output_dir}" "${filename}"
+  
+  # 3. Final passes: Link the bibliography and Table of Contents
+  xelatex -shell-escape -interaction=nonstopmode -output-directory="${output_dir}" "${latex_file}"
+  xelatex -shell-escape -interaction=nonstopmode -output-directory="${output_dir}" "${latex_file}"
 done
