@@ -7,13 +7,16 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
+    # Fix 1: Create the directory so Docker has a place to write
+    - name: Create output directory
+      run: mkdir -p output
+
     - name: Build the Docker image
       run: docker build -t bpimg -f docker/Dockerfile .
       
@@ -26,11 +29,10 @@ jobs:
     - name: Build the poster
       run: docker run --rm -v "$PWD":/bp bpimg sh /bp/docker/render_thesis.sh poster
 
+    # Fix 2: Upload the entire directory to see logs if it fails again
     - uses: actions/upload-artifact@v4
       name: Upload artifacts
       with:
-        name: output
-        path: |
-          output/*.pdf
-          output/*.log
-        if-no-files-found: error
+        name: bachelorproef-output
+        path: output/ 
+        if-no-files-found: warn # Change to warn so you can at least see the logs
