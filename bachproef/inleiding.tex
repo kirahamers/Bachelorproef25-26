@@ -5,7 +5,17 @@
 \chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
 \label{ch:inleiding}
 
-De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te begrijpen en in te zien waarom de onderzoeksvraag de moeite waard is om te onderzoeken. In de inleiding ga je literatuurverwijzingen beperken, zodat de tekst vlot leesbaar blijft. Je kan de inleiding verder onderverdelen in secties als dit de tekst verduidelijkt. Zaken die aan bod kunnen komen in de inleiding~\autocite{Pollefliet2011}:
+In een tijdperk waar digitalisering centraal staat is het cruciaal om alles veilig te laten gebeuren, zoals digitale transacties. 
+Dit onder andere bij elektronische facturen, wat van economisch belang is.
+Een internationale standaard hiervoor is Peppol. Dit netwerk integreert business processen door de manier waarop informatie 
+gestructureerd en uitgewisseld wordt te standaardiseren \autocite{Peppol2022}.
+
+Scrada fungeert als een Certified Peppol Access Point. Om te integriteit van het netwerk te behouden 
+en fraude te voorkomen is het essentieel voor Scrada om veilig en correct een Know Your Customer (KYC of client onboarding) uit te voeren. 
+Dit houdt in dat de identiteit van de klant strict gecontroleerd moet worden binnen een business relation en moet voldoen aan belangrijke regels. 
+In dit onderzoek wordt gefocust hoe dit verificatieproces voor Scrada
+geautomatiseerd en geoptimaliseerd kan worden, zodat deze volledig voldoen aan de conformiteit van Peppol.
+
 
 \begin{itemize}
   \item context, achtergrond
@@ -20,7 +30,15 @@ De inleiding moet de lezer net genoeg informatie verschaffen om het onderwerp te
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Uit je probleemstelling moet duidelijk zijn dat je onderzoek een meerwaarde heeft voor een concrete doelgroep. De doelgroep moet goed gedefinieerd en afgelijnd zijn. Doelgroepen als ``bedrijven,'' ``KMO's'', systeembeheerders, enz.~zijn nog te vaag. Als je een lijstje kan maken van de personen/organisaties die een meerwaarde zullen vinden in deze bachelorproef (dit is eigenlijk je steekproefkader), dan is dat een indicatie dat de doelgroep goed gedefinieerd is. Dit kan een enkel bedrijf zijn of zelfs één persoon (je co-promotor/opdrachtgever).
+Hoewel Scrada als Certified Peppol Access Point een cruciale rol speelt in veilige e-facturatie, zijn er een aantal factoren die een gevaar kunnen vormen voor de veiligheid van het Peppol-netwerk van het bedrijf.
+Momenteel wordt de KYC idnentificatie manueel uitgevoerd aan de hand van een kopie van de identiteitskaart van de klant die gecontroleerd wordt op de openbare KBO-databank (https://kbopub.economie.fgov.be/kbopub
+/zoeknaamfonetischform.html). Dit proces is problematisch voor de primaire doelgroep, de IT- en compliance-afdeling van Scrada. Dit omwille van verschillende redenen:
+\begin{itemize}
+  \item \textbf{GDPR-risico's:} Het verwerken van volledige identiteitskaarten is tegenstrijdig met het principe van dataminimalisatie. 
+  Daarnaast dwingt de huidige werkwijze Scrada om meer persoonsgegevens te verwerken dan noodzakelijk is, wat de naleving van de GDPR-wetgeving bemoeilijkt en onnodige privacyrisico's met zich meebrengt.
+  \item \textbf{Efficiëntie:} De manuele handelingen maken het proces traag en foutgevoelig bij een stijgend aantal klanten. Daarnaast vermoeilijkt dit ook de schaalbaarheid van het bedrijfsproces.
+  \item \textbf{Fraudegevoeligheid:} Handmatige verificatie is minder bestand tegen geavanceerde vormen van identiteitsfraude dan geautomatiseerde, cryptografische methoden.
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
