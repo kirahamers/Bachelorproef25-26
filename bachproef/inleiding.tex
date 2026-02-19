@@ -43,12 +43,46 @@ Momenteel wordt de KYC idnentificatie manueel uitgevoerd aan de hand van een kop
 \section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
 \label{sec:onderzoeksvraag}
 
-Wees zo concreet mogelijk bij het formuleren van je onderzoeksvraag. Een onderzoeksvraag is trouwens iets waar nog niemand op dit moment een antwoord heeft (voor zover je kan nagaan). Het opzoeken van bestaande informatie (bv. ``welke tools bestaan er voor deze toepassing?'') is dus geen onderzoeksvraag. Je kan de onderzoeksvraag verder specifiëren in deelvragen. Bv.~als je onderzoek gaat over performantiemetingen, dan 
+De centrale onderzoeksvraag van deze bachelorproef luidt als volgt:
+\begin{quote}
+    \textit{"Hoe kan het KYC-proces voor identiteitsverificatie op het Peppol-platform van Scrada geautomatiseerd worden op een GDPR-conforme, fraudeveilige en kostenefficiënte manier?"}
+\end{quote}
+
+De deelvragen die bijdragen aan het vormen van een antwoord op deze centrale onderzoeksvraag zijn:
+\subsection{Deelvragen probleemdomein} 
+\begin{itemize}
+    \item {\color{blue} {Hoe verloopt het huidige KYC-proces bij Scrada op het Peppol-platform?}}
+    \item {\color{blue} {Welke problemen ervaart Scrada bij het huidige KYC-proces?}}
+    \item {\color{blue} {Op welke stappen in het proces kan automatisering toegepast worden?}}
+    \item {\color{blue} {Welke technologieën kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}}
+    \item {\color{blue} {Welke gegevens van bedrijven worden verzameld tijdens het KYC-proces en hoe gaat Scrada hiermee om?}}
+    \item {\color{blue} {Wat zijn de kenmerken van een GDPR- \- conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}}
+    \item {\color{blue} {Welke frauderisico’s bestaan er bij het huidige KYC-proces?}}
+    \item {\color{blue} {Welke kosten draagt het huidige KYC-proces bij Scrada?}}
+\end{itemize}
+
+\subsection{Deelvragen oplossingsdomein} 
+\begin{itemize}
+    \item {\color{blue} {Hoe kunnen de geautomatiseerde KYC- \- processen conform blijven aan de GDPR-regels?}}
+    \item {\color{blue} {Welke risico’s bestaan bij het verwerken van persoonsgegevens in een geautomatiseerd KYC-proces?}}
+    \item {\color{blue} {Welke maatregelen/technologieën kunnen worden ingezet om fraude bij het geautomatiseerde KYC-proces te voorkomen?}}
+    \item {\color{blue} {Hoe kan automatisering bijdragen aan kostenreductie zonder nadelig te zijn voor GDPR en fraudeveiligheid?}}
+\end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
-Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor succes? Beschrijf die zo concreet mogelijk. Gaat het bv.\ om een proof-of-concept, een prototype, een verslag met aanbevelingen, een vergelijkende studie, enz.
+De doelstelling van dit onderzoek is om een geautomatiseerd KYC-proces te ontwerpen en te implementeren dat voldoet aan de GDPR-regelgeving, bestand is tegen fraude en kostenefficiënt is voor Scrada. 
+Dit omvat het identificeren van geschikte technologieën, het ontwikkelen van een prototype en het evalueren van de effectiviteit van het nieuwe proces in vergelijking met de huidige methoden.
+Bijgevolg is het resultaat een Proof-of-Concept (PoC) die aantoont dat identiteitsverificatie sneller en veiliger kan zonder de huidige privacyrisico's.
+
+De criteria voor een succesvolle Proof-of-Concept zijn:
+\begin{itemize}
+    \item \textbf{Efficiëntie:} Een reductie van de gemiddelde KYC-doorlooptijd met minimaal 50\%. Daarnaast moet de oplossing ook kostenefficiënt zijn, met een duidelijke kosten-batenanalyse die aantoont dat de implementatie van het geautomatiseerde KYC-proces financieel haalbaar is voor Scrada.
+    \item \textbf{Compliance:} Het elimineren van de noodzaak om volledige kopieën van identiteitskaarten op te slaan, conform aan de GDPR-principes.
+    \item \textbf{Validatie:} Een werkend prototype dat succesvol communiceert met externe databronnen (zoals de KBO API) en de integriteit van de gebruiker verifieert.
+\end{itemize}
+
 
 \section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
 \label{sec:opzet-bachelorproef}
@@ -59,10 +93,14 @@ Wat is het beoogde resultaat van je bachelorproef? Wat zijn de criteria voor suc
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt de theoretische basis gelegd. Hierbij wordt de huidige wetgeving rond de GDPR, de werking van het Peppol-netwerk en moderne KYC-technologieën onderzocht. Dit vormt het referentiekader waarbinnen de automatisering moet plaatsvinden.
 
 In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
 
-% TODO: Vul hier aan voor je eigen hoofstukken, één of twee zinnen per hoofdstuk
+In Hoofdstuk~\ref{ch:analyse} vindt de analyse van de huidige werking bij Scrada plaats. Hier worden de bestaande manuele handelingen in kaart gebracht en getoetst aan de GDPR-principes om te kunnen identificeren waar de grootste bottlenecks liggen en waar automatisering efficiënt kan toegepast worden.
+
+In Hoofdstuk~\ref{ch:implementatie} wordt op basis van die analyse het ontwerp en de ontwikkeling van de Proof-of-Concept beschreven, waarbij de technische keuzes voor automatisering worden uitgelicht.
+
+Hoofdstuk~\ref{ch:evaluatie} bespreekt de resultaten van het onderzoek. Hierbij wordt de geautomatiseerde flow vergeleken met de huidige werkwijze bij Scrada om aan te tonen dat het proces sneller, veiliger en privacyvriendelijker is geworden.
 
 In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
