@@ -7,13 +7,40 @@
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
 
-Dit hoofdstuk bevat je literatuurstudie. De inhoud gaat verder op de inleiding, maar zal het onderwerp van de bachelorproef *diepgaand* uitspitten. De bedoeling is dat de lezer na lezing van dit hoofdstuk helemaal op de hoogte is van de huidige stand van zaken (state-of-the-art) in het onderzoeksdomein. Iemand die niet vertrouwd is met het onderwerp, weet nu voldoende om de rest van het verhaal te kunnen volgen, zonder dat die er nog andere informatie moet over opzoeken \autocite{Pollefliet2011}.
+In het vorige hoofdstuk is de noodzaak voor een efficiënter en veiliger KYC-proces bij Scrada aangetoond. 
+Om een correct werkende automatisering te kunnen ontwerpen, is een grondig begrip van zowel de juridische voorwaarden als de beschikbare technologische bouwstenen essentieel. 
+Dit hoofdstuk onderzoekt het Peppol-ecosysteem, de strenge vereisten van de GDPR en de moderne technologieën die identiteitsverificatie kunnen digitaliseren en efficiënter maken. 
+Dit vormt de theoretische fundering voor de Proof-of-Concept in de latere hoofdstukken.
 
-Je verwijst bij elke bewering die je doet, vakterm die je introduceert, enz.\ naar je bronnen. In \LaTeX{} kan dat met het commando \texttt{$\backslash${textcite\{\}}} of \texttt{$\backslash${autocite\{\}}}. Als argument van het commando geef je de ``sleutel'' van een ``record'' in een bibliografische databank in het Bib\LaTeX{}-formaat (een tekstbestand). Als je expliciet naar de auteur verwijst in de zin (narratieve referentie), gebruik je \texttt{$\backslash${}textcite\{\}}. Soms is de auteursnaam niet expliciet een onderdeel van de zin, dan gebruik je \texttt{$\backslash${}autocite\{\}} (referentie tussen haakjes). Dit gebruik je bv.~bij een citaat, of om in het bijschrift van een overgenomen afbeelding, broncode, tabel, enz. te verwijzen naar de bron. In de volgende paragraaf een voorbeeld van elk.
+\label{sec:Juridisch Kader: Het spanningsveld tussen KYC en GDPR}
 
-\textcite{Knuth1998} schreef een van de standaardwerken over sorteer- en zoekalgoritmen. Experten zijn het erover eens dat cloud computing een interessante opportuniteit vormen, zowel voor gebruikers als voor dienstverleners op vlak van informatietechnologie~\autocite{Creeger2009}.
+Bij KYC-processen worden per definitie persoonsgegevens verwerkt. 
+Het is een kritieke procedure die financiële instellingen en bedrijven helpt om de identiteit van hun klanten te verifiëren, 
+wat essentieel is voor het voorkomen en identificeren van fraude, witwassen van geld en andere illegale activiteiten.
+Hierdoor is het KYC-proces internationaal gestandaardiseerd.
 
-Let er ook op: het \texttt{cite}-commando voor de punt, dus binnen de zin. Je verwijst meteen naar een bron in de eerste zin die erop gebaseerd is, dus niet pas op het einde van een paragraaf.
+Echter, de identificatie en privacyrechten van de klant moeten in evenwicht worden gebracht, wat een uitdaging vormt voor bedrijven zoals Scrada die aan de GDPR-regelgeving moeten voldoen.
+In deze sectie worden de belangrijkste juridische principes van de GDPR besproken die relevant zijn voor het KYC-proces, 
+evenals de uitdagingen en mogelijke oplossingen voor het implementeren van een geautomatiseerd KYC-systeem dat voldoet aan deze regelgeving.
+
+\subsection{Principes van de GDPR}
+Om een geautomatiseerd KYC-proces te creëren dat juridisch conform is aan de GDPR, 
+moet er specifiek rekening worden gehouden met de kernprincipes van de Europese privacywetgeving \autocite{EuropeanUnion2016}. 
+Voor dit onderzoek staan de volgende artikelen centraal:
+\autocite{EuropeanUnion2016}:
+\begin{itemize}
+    \item \textbf{Dataminimalisatie (Art. 5.1c):} TODO
+    \item \textbf{Doelbinding (Art. 5.1b):} TODO
+    \item \textbf{Opslagbeperking (Art. 5.1e):} TODO
+    \item \textbf{Geautomatiseerde besluitvorming (Art. 22):} TODO
+    \item \textbf{Privacy by Design (Art. 25):} TODO
+\end{itemize}
+
+\label{sec:Het gestandaardiseerde KYC-proces}
+Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
+het identificeren van de klant (CIP), het uitvoeren van een gepast cliëntenonderzoek (CDD) en de doorlopende monitoring van de zakelijke relatie.
+Dit gebeurt bij de onboarding van nieuwe klanten (de eerste fase van de customer journey)
+maar ook bij het onderhouden van de huidige klantenrelaties (de latere fases van de customer journey).
 
 \begin{figure}
   \centering
