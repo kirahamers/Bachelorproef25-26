@@ -29,18 +29,25 @@ moet er specifiek rekening worden gehouden met de kernprincipes van de Europese 
 Voor dit onderzoek staan de volgende artikelen centraal:
 \autocite{EuropeanUnion2016}:
 \begin{itemize}
-    \item \textbf{Dataminimalisatie (Art. 5.1c):} TODO
-    \item \textbf{Doelbinding (Art. 5.1b):} TODO
-    \item \textbf{Opslagbeperking (Art. 5.1e):} TODO
-    \item \textbf{Geautomatiseerde besluitvorming (Art. 22):} TODO
-    \item \textbf{Privacy by Design (Art. 25):} TODO
+    \item \textbf{Rechtmatigheid, eerlijkheid en transparantie (Art. 5.1a):} Alle gegevensverwerking moet gebaseerd zijn op een geldige juridische grondslag, eerlijk worden uitgevoerd en transparant zijn voor de betrokken personen.
+    \item \textbf{Doelbinding (Art. 5.1b):} Persoonsgegevens mogen alleen worden verzameld voor specifieke, expliciete en legitieme doeleinden en mogen niet verwerkt worden voor doeleinden die los hiervan staan.
+    \item \textbf{Dataminimalisatie (Art. 5.1c):} Dit principe vereist dat alleen de persoonsgegevens die noodzakelijk zijn voor het specifieke doel van het KYC-proces worden verzameld en verwerkt.
+    \item \textbf{Opslagbeperking (Art. 5.1e):} Persoonsgegevens mogen niet langer worden bewaard dan noodzakelijk is voor de doeleinden waarvoor ze zijn verzameld.
+    \item \textbf{Rechten van betrokkenen (Art. 12-23):} Klanten hebben verschillende rechten onder de GDPR, zoals het recht op toegang tot hun gegevens, het recht op rectificatie, het recht op gegevenswissing en het recht om bezwaar te maken tegen bepaalde vormen van verwerking. Het KYC-systeem moet deze rechten respecteren en faciliteren.
+    \item \textbf{Geautomatiseerde besluitvorming (Art. 22):} Indien het KYC-proces geautomatiseerde besluitvorming omvat, zoals het automatisch goedkeuren of weigeren van een klant, zijn er extra waarborgen nodig om de rechten en vrijheden van de betrokken personen te beschermen.
+    \item \textbf{Privacy by Design (Art. 25):} Bedrijven moeten vanaf het begin van het ontwerp van hun KYC-systeem rekening houden beveiliging en privacy te garanderen, bijvoorbeeld door gegevens te pseudonimiseren of te versleutelen en door strikte toegangscontroles in te voeren.
 \end{itemize}
 
 \label{sec:Het gestandaardiseerde KYC-proces}
 Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
-het identificeren van de klant (CIP), het uitvoeren van een gepast cliëntenonderzoek (CDD) en de doorlopende monitoring van de zakelijke relatie.
-Dit gebeurt bij de onboarding van nieuwe klanten (de eerste fase van de customer journey)
-maar ook bij het onderhouden van de huidige klantenrelaties (de latere fases van de customer journey).
+
+\begin{enumerate}
+    \item \textbf{Customer Identification Program (CIP):} In de eerste fase van het KYC-proces vindt de onboarding plaats. Hier wordt de essentiële informatie van de klant verzameld met behulp van betrouwbare bronnen zoals paspoorten, rijbewijzen of bedrijfsregistraties.
+    \item \textbf{Customer Due Diligence (CDD):} In deze fase wordt de verzamelde informatie geverifieerd aan de hand van betrouwbare, onafhankelijke bronnen. Er wordt onderzocht of het bedrijf legitiem is en of er eventuele risico's verbonden zijn aan de zakelijke relatie, bijvoorbeeld door te controleren op sanctielijsten en te bekijken wat de intenties van de klant zijn.
+    Hierbij wordt gebruik gemaakt van de LSEG World-Check-database, die uitgebreide informatie bevat over individuen en bedrijven die mogelijk sancties of andere risico's vormen. Er kan ook gebruik worden gemaakt van
+andere bronnen zoals de Kruispuntbank van Ondernemingen (KBO), waar alle Belgische ondernemingen en hun identificatiegegevens te vinden zijn en het UBO-register (Ultimate Beneficial Owner), dat inzicht geeft in de uiteindelijke belanghebbenden van een bedrijf.
+    \item \textbf{Ongoing Monitoring:} KYC stopt niet na de onboarding maar wordt tijdens de hele customer journey voortgezet. De zakelijke relatie moet periodiek gecontroleerd worden om te garanderen dat de risicoprofielen actueel blijven en verdachte transactiepatronen tijdig gedetecteerd worden.
+\end{enumerate}
 
 \begin{figure}
   \centering
