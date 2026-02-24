@@ -13,7 +13,7 @@ Dit hoofdstuk onderzoekt het Peppol-ecosysteem, de strenge vereisten van de GDPR
 Dit vormt de theoretische fundering voor de Proof-of-Concept in de latere hoofdstukken.
 
 \label{sec:Juridisch Kader: Het spanningsveld tussen KYC en GDPR}
-
+\label{sec:juridisch-kader}
 Bij KYC-processen worden per definitie persoonsgegevens verwerkt. 
 Het is een kritieke procedure die financiële instellingen en bedrijven helpt om de identiteit van hun klanten te verifiëren, 
 wat essentieel is voor het voorkomen en identificeren van fraude, witwassen van geld en andere illegale activiteiten.
@@ -22,6 +22,19 @@ Hierdoor is het KYC-proces internationaal gestandaardiseerd.
 Echter, de identificatie en privacyrechten van de klant moeten in evenwicht worden gebracht, wat een uitdaging vormt voor bedrijven zoals Scrada die aan de GDPR-regelgeving moeten voldoen.
 In deze sectie worden de belangrijkste juridische principes van de GDPR besproken die relevant zijn voor het KYC-proces, 
 evenals de uitdagingen en mogelijke oplossingen voor het implementeren van een geautomatiseerd KYC-systeem dat voldoet aan deze regelgeving.
+
+\subsection{De Belgische Anti-witwaswetgeving (AML)}
+Bedrijven in België zijn wettelijk verplicht om een KYC-proces te implementeren dat voldoet aan de Belgische 
+anti-witwaswetgeving (AML) \autocite{FODFinancien2026}.
+Deze wetgeving vereist dat bedrijven de identiteit van hun klanten verifiëren, 
+de herkomst van fondsen controleren en verdachte activiteiten melden aan de autoriteiten. 
+De AML-regelgeving is ontworpen om het witwassen van geld, de financiering van terrorisme (de ‘wet AML’) en het verspreiden van massavernietigingswapens
+te voorkomen en te bestrijden, en legt strenge regels op aan bedrijven om ervoor te zorgen dat ze niet onbedoeld betrokken raken bij illegale activiteiten. 
+Het niet naleven van deze wetgeving kan leiden tot zware boetes en reputatieschade, wat de noodzaak benadrukt voor bedrijven zoals Scrada om een veilig en compliant KYC-proces te implementeren.
+Daarom moet hierop de nadruk gezet worden bij het ontwerpen van een geautomatiseerd KYC-systeem, waarbij zowel de juridische vereisten als de operationaliteit van belang zijn.
+Hierbij speelt de Administratie van de Thesaurie een belangrijke rol (een onderdeel van de FOD Financiën) die 
+binnen de federale structuur verantwoordelijk is voor onder meer het beheer van het UBO-register, wat essentieel is voor het identificeren van de uiteindelijke begunstigden 
+van een vennootschap en de opvolging van financiële toepassingen (naast het welgekende beheer van de Belgische schatkist) \autocite{VlaamseOverheid2026}.
 
 \subsection{Principes van de GDPR}
 Om een geautomatiseerd KYC-proces te creëren dat juridisch conform is aan de GDPR, 
@@ -37,6 +50,11 @@ Voor dit onderzoek staan de volgende artikelen centraal:
     \item \textbf{Geautomatiseerde besluitvorming (Art. 22):} Indien het KYC-proces geautomatiseerde besluitvorming omvat, zoals het automatisch goedkeuren of weigeren van een klant, zijn er extra waarborgen nodig om de rechten en vrijheden van de betrokken personen te beschermen.
     \item \textbf{Privacy by Design (Art. 25):} Bedrijven moeten vanaf het begin van het ontwerp van hun KYC-systeem rekening houden beveiliging en privacy te garanderen, bijvoorbeeld door gegevens te pseudonimiseren of te versleutelen en door strikte toegangscontroles in te voeren.
 \end{itemize}
+
+Een van de punten die zorgt voor het spanningsveld tussen KYC en GDPR is de bewaartijd van gegevens (Opslagbeperking (Art. 5.1e)).
+Hoewel de AML-regelgeving vereist dat bepaalde gegevens gedurende een specifieke periode worden bewaard,
+moet dit in overeenstemming zijn met het GDPR-principe van opslagbeperking.
+Bedrijven moeten daarom een duidelijk beleid hebben voor het bewaren en verwijderen van KYC-gegevens, om zowel aan de AML-vereisten als aan de GDPR te voldoen.
 
 \label{sec:Het gestandaardiseerde KYC-proces}
 Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
@@ -65,8 +83,6 @@ andere bronnen zoals de Kruispuntbank van Ondernemingen (KBO), waar alle Belgisc
   \end{minted}
   \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
 \end{listing}
-
-\lipsum[7-20]
 
 \begin{table}
   \centering
