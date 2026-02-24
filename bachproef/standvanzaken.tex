@@ -57,6 +57,7 @@ moet dit in overeenstemming zijn met het GDPR-principe van opslagbeperking.
 Bedrijven moeten daarom een duidelijk beleid hebben voor het bewaren en verwijderen van KYC-gegevens, om zowel aan de AML-vereisten als aan de GDPR te voldoen.
 
 \label{sec:Het gestandaardiseerde KYC-proces}
+\label{sec:kyc-proces}
 Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
 
 \begin{enumerate}
@@ -67,35 +68,62 @@ andere bronnen zoals de Kruispuntbank van Ondernemingen (KBO), waar alle Belgisc
     \item \textbf{Ongoing Monitoring:} KYC stopt niet na de onboarding maar wordt tijdens de hele customer journey voortgezet. De zakelijke relatie moet periodiek gecontroleerd worden om te garanderen dat de risicoprofielen actueel blijven en verdachte transactiepatronen tijdig gedetecteerd worden.
 \end{enumerate}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.8\textwidth]{grail.jpg}
-  \caption[Voorbeeld figuur.]{\label{fig:grail}Voorbeeld van invoegen van een figuur. Zorg altijd voor een uitgebreid bijschrift dat de figuur volledig beschrijft zonder in de tekst te moeten gaan zoeken. Vergeet ook je bronvermelding niet!}
-\end{figure}
+Het manueel uitvoeren van deze stappen is tijdrovend, foutgevoelig en moeilijk schaalbaar, vooral voor bedrijven die een groot aantal klanten moeten onboarden.
+De stappen die binnen een manueel KYC-proces worden ondernomen, verlopen als volgt \autocite{SDKFinance2024}:
+\begin{itemize}
+    \item De klant stuurt de nodige documenten en de status wordt omgezet naar "pending" in het systeem (ervoor was dit "none"). 
+    \item Een KYC-medewerken keurt de documenten goed of af. Dit kan alleen gedaan worden als alle documenten aanwezig zijn.
+    \item Wanneer de documenten goedgekeurd zijn, wordt de status van de klant omgezet naar "approved". Indien er documenten ontbreken of niet overeenkomen, wordt de status teruggezet naar "none" en wordt de klant geïnformeerd dat hij opnieuw moet beginnen.
 
-\begin{listing}
-  \begin{minted}{python}
-    import pandas as pd
-    import seaborn as sns
+\subsection{Huidige werkwijze bij Scrada}
+De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzameling digitaal verloopt, is de verificatiestap volledig afhankelijk van handmatige acties. Het proces ziet er als volgt uit:
 
-    penguins = sns.load_dataset('penguins')
-    sns.relplot(data=penguins, x="flipper_length_mm", y="bill_length_mm", hue="species")
-  \end{minted}
-  \caption[Voorbeeld codefragment]{Voorbeeld van het invoegen van een codefragment.}
+\begin{enumerate}
+    \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens in en uploadt een kopie van de identiteitskaart, waarbij een notificatie wordt gestuurd naar Scrada.
+    \item \textbf{Handmatige verificatie:} Een medewerker voert manueel een opzoeking uit in de Kruispuntbank van Ondernemingen (KBO) en vergelijkt de statutaire bestuurders met de geüploade identiteitsbewijzen.
+    \item \textbf{Statusbeheer:} Bij een correcte match wordt de entiteit handmatig gevalideerd in het systeem. Indien de namen niet overeenkomen, wordt alles gereset en wordt het bedrijf op de hoogte gebracht om de gegevens opnieuw in te voeren.
+    \item \textbf{Dataretentie:} Na enige tijd wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen.
+\end{enumerate}
+
+TODO: geautomiseerd proces beschrijven
+
+In plaats van PDF-documenten te verwerken, communiceert een systeem via API's. Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, 
+is te zien in Listing \ref{lst:api-response}.
+
+\begin{listing}[ht]
+\begin{minted}{json}
+{
+  "enterprise_number": "0123.456.789",
+  "status": "Active",
+  "sanction_check": "Cleared",
+  "ubo_identified": true,
+  "risk_score": "Low"
+}
+\end{minted}
+\caption{Voorbeeld van een JSON API-response voor KYC-verificatie.}
+\label{lst:api-response}
 \end{listing}
 
-\begin{table}
+\begin{figure}[ht]
   \centering
-  \begin{tabular}{lcr}
-    \toprule
-    \textbf{Kolom 1} & \textbf{Kolom 2} & \textbf{Kolom 3} \\
-    $\alpha$         & $\beta$          & $\gamma$         \\
-    \midrule
-    A                & 10.230           & a                \\
-    B                & 45.678           & b                \\
-    C                & 99.987           & c                \\
-    \bottomrule
-  \end{tabular}
-  \caption[Voorbeeld tabel]{\label{tab:example}Voorbeeld van een tabel.}
-\end{table}
+  \includegraphics[width=0.8\textwidth]{peppol_four_corner_model.png}
+  \caption{Het Peppol Four-Corner Model waarbij Corner 2 verantwoordelijk is voor de KYC-verificatie.}
+  \label{fig:peppol-model}
+\end{figure}
 
+In dit model fungeert Scrada als Corner 2. Omdat Peppol een 'Trust Community' is, rust de verantwoordelijkheid bij het Access Point om te garanderen dat de verzender legitiem is, om zo factuurfraude te voorkomen.
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    \textbf{Kenmerk} & \textbf{Handmatig Proces} & \textbf{Geautomatiseerd (Scrada)} \\ \midrule
+    Identificatie    & Kopie ID via e-mail       & Digitale ID (itsme/eID)           \\
+    Bedrijfscheck    & Zoeken in KBO-website     & Real-time API-koppeling           \\
+    Sanctiecontrole  & Handmatige Google-check   & LSEG World-Check API              \\
+    Foutenmarge      & Hoog (menselijk)          & Minimaal (data-gedreven)          \\
+    Bewaarplicht     & Papieren/PDF archief      & Versleutelde Cloud-opslag         \\ \bottomrule
+  \end{tabular}
+  \caption{Vergelijking tussen handmatige KYC en de geautomatiseerde aanpak.}
+  \label{tab:kyc-vergelijking}
+\end{table}
