@@ -12,6 +12,46 @@ Om een correct werkende automatisering te kunnen ontwerpen, is een grondig begri
 Dit hoofdstuk onderzoekt het Peppol-ecosysteem, de strenge vereisten van de GDPR en de moderne technologieën die identiteitsverificatie kunnen digitaliseren en efficiënter maken. 
 Dit vormt de theoretische fundering voor de Proof-of-Concept in de latere hoofdstukken.
 
+\label{sec:het Peppol-ecosysteem en de rol van Scrada}
+Voordat de specifieke verificatieprocessen worden geanalyseerd, 
+is het noodzakelijk om de omgeving waarin Scrada opereert te kaderen. 
+Scrada is een gecertificeerd Peppol Access Point, binnen de sector ook wel een Service Provider genoemd. 
+Peppol is hierbij een 'enabler' die de integratie van bedrijfsprocessen tussen organisaties en overheden wereldwijd 
+vergemakkelijkt door middel van open standaarden \autocite{OpenPeppolMain2024}.
+
+\subsection{Het Four-Corner Model}
+De architectuur van Peppol is gebaseerd op het \textit{Four-Corner Model} (zie Figuur \ref{fig:peppol-model}). 
+Dit model is ontworpen om de beperkingen van traditionele, gesloten 'three-corner' netwerken te doorbreken, 
+waarbij zenders en ontvangers verplicht bij dezelfde provider aangesloten moesten zijn \autocite{PeppolEndUsers2024}. 
+In de Peppol-architectuur zijn de volgende vier partijen betrokken:
+\begin{itemize}
+    \item \textbf{Corner 1 (De Verzender):} Het bedrijf of de organisatie die de elektronische factuur verstuurt (de cliënt van Scrada).
+    \item \textbf{Corner 2 (Access Point Verzender):} De \textit{Service Provider} van de verzender (\textbf{Scrada}), verantwoordelijk voor het veilig op het netwerk brengen van de documenten.
+    \item \textbf{Corner 3 (Access Point Ontvanger):} De \textit{Service Provider} van de ontvanger, die de documenten valideert en aflevert.
+    \item \textbf{Corner 4 (De Ontvanger):} De uiteindelijke ontvanger van de factuur, zoals een overheidsinstantie of een andere onderneming.
+\end{itemize}
+
+\subsection{Scrada als Poortwachter (Corner 2)}
+Binnen dit decentrale model draagt Corner 2 een aanzienlijke verantwoordelijkheid. 
+Omdat het Peppol-netwerk fundamenteel gebaseerd is op gedeeld onderling vertrouwen (trust), 
+gaan Corner 3 en 4 er impliciet van uit dat Corner 2 de identiteit van Corner 1 sluitend heeft geverifieerd 
+voordat toegang tot het netwerk wordt verleend. 
+"Omdat Scrada een officieel erkende Service Provider is, moet het bedrijf zich strikt houden aan het Peppol Interoperability Framework (de werkelijke naam van Peppol). 
+Die zorgt ervoor dat elektronische documenten gestandaardiseerd worden voor validatie en veilige uitwisseling 
+tussen Service Providers wereldwijd. Hierbij wordt gebruikgemaakt van de internationale ISO/IEC 19845-standaard (Universal Business Language), waardoor facturen over grenzen en sectoren heen leesbaar blijven zonder dat zender en ontvanger dezelfde software hoeven te gebruiken \autocite{PeppolFramework2024}.
+Dit is een verplichte set van juridische en technische afspraken die ervoor zorgt dat alle partijen in het netwerk op dezelfde, 
+veilige manier samenwerken \autocite{PeppolServiceProviders2024}."
+Indien een Access Point tekortschiet hun KYC verplichtingen niet vervult, ontstaat het risico dat kwaadwillige actoren toegang krijgen tot het netwerk om op grote schaal frauduleuze facturen te verspreiden. 
+De KYC-procedure is volgens de standaarden van OpenPeppol dan ook geen administratieve formaliteit, maar een belangrijke beveiligingslaag. 
+Deze laag garandeert de authenticiteit van de verzender en beschermt de integriteit van het volledige wereldwijde ecosysteem tegen financiële criminaliteit en identiteitsfraude \autocite{PeppolEndUsers2024}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{peppol_four_corner_model.png}
+  \caption{Het Peppol Four-Corner Model waarbij Corner 2 verantwoordelijk is voor de KYC-verificatie.}
+  \label{fig:peppol-model}
+\end{figure}
+
 \label{sec:Juridisch Kader: Het spanningsveld tussen KYC en GDPR}
 \label{sec:juridisch-kader}
 Bij KYC-processen worden per definitie persoonsgegevens verwerkt. 
@@ -85,10 +125,25 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
     \item \textbf{Dataretentie:} Na enige tijd wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen.
 \end{enumerate}
 
-TODO: geautomiseerd proces beschrijven
+\section{Het Geautomatiseerde KYC-proces (eKYC)}
+In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een "seamless" onboarding, wat zorgt voor een hogere conversie. Volgens \textcite{Deloitte2024} is dit essentieel voor de klanttevredenheid
+terwijl men ook aan de AML-wetgeving voldoet. 
 
-In plaats van PDF-documenten te verwerken, communiceert een systeem via API's. Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, 
-is te zien in Listing \ref{lst:api-response}.
+Bij een geautomatiseerd proces (vaak eKYC genoemd) worden de menselijke handelingen vervangen door API-aanroepen en digitale identiteitsverificatie. 
+De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
+
+\begin{enumerate}
+    \item \textbf{Digitale Identiteitsverificatie:} In plaats van een handmatige upload van een ID-kaart, gebruikt de klant een digitale ID zoals itsme®. 
+    Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen.
+    \item \textbf{Geautomatiseerde Data-extractie en Matching:} Het systeem voert in real-time een API-call uit naar externe bronnen zoals de KBO. 
+    De software vergelijkt automatisch of de persoon in de onboarding voorkomt in de lijst van statutaire bestuurders van de onderneming.
+    Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, is te zien in Listing \ref{lst:api-response}.
+    \item \textbf{Instant Risicobeoordeling:} De verzamelde data wordt direct getoetst aan sanctielijsten en PEP-lijsten (Politically Exposed Persons) via databases zoals LSEG World-Check. 
+    Dit gebeurt zonder dat een medewerker handmatig hoeft te zoeken.
+    \item \textbf{Automatische Statusupdate:} Indien alle controles positief zijn, wordt de status in het systeem onmiddellijk omgezet naar "approved". 
+    Alleen bij onduidelijkheden of een verhoogd risicoprofiel wordt een medewerker gevraagd om de "exception" handmatig te beoordelen.
+    \item \textbf{Veilige Gegevensopslag:} De data wordt direct versleuteld opgeslagen en er wordt automatisch een auditlog bijgehouden voor compliance-doeleinden, wat de kans op GDPR-inbreuken minimaliseert.
+\end{enumerate}
 
 \begin{listing}[ht]
 \begin{minted}{json}
@@ -104,26 +159,17 @@ is te zien in Listing \ref{lst:api-response}.
 \label{lst:api-response}
 \end{listing}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\textwidth]{peppol_four_corner_model.png}
-  \caption{Het Peppol Four-Corner Model waarbij Corner 2 verantwoordelijk is voor de KYC-verificatie.}
-  \label{fig:peppol-model}
-\end{figure}
-
-In dit model fungeert Scrada als Corner 2. Omdat Peppol een 'Trust Community' is, rust de verantwoordelijkheid bij het Access Point om te garanderen dat de verzender legitiem is, om zo factuurfraude te voorkomen.
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{@{}lll@{}}
-    \toprule
-    \textbf{Kenmerk} & \textbf{Handmatig Proces} & \textbf{Geautomatiseerd (Scrada)} \\ \midrule
-    Identificatie    & Kopie ID via e-mail       & Digitale ID (itsme/eID)           \\
-    Bedrijfscheck    & Zoeken in KBO-website     & Real-time API-koppeling           \\
-    Sanctiecontrole  & Handmatige Google-check   & LSEG World-Check API              \\
-    Foutenmarge      & Hoog (menselijk)          & Minimaal (data-gedreven)          \\
-    Bewaarplicht     & Papieren/PDF archief      & Versleutelde Cloud-opslag         \\ \bottomrule
-  \end{tabular}
-  \caption{Vergelijking tussen handmatige KYC en de geautomatiseerde aanpak.}
-  \label{tab:kyc-vergelijking}
+\begin{table}[h!]
+\centering
+\caption{Vergelijking tussen manuele KYC en geautomatiseerde eKYC (gebaseerd op Deloitte en de Bolero case study)}
+\label{tab:kyc-vergelijking}
+\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\hline
+\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{Geautomatiseerd proces (eKYC / itsme®)} \\ \hline
+\textbf{Klantervaring} & Hoog-frictie: handmatige uploads en wachttijden. & \textit{Seamless}: onmiddellijke verificatie via app \autocite{ItsmeBolero2024}. \\ \hline
+\textbf{Data-input} & Foutgevoelig: handmatige overdracht van ID-gegevens. & Foutloos: directe overdracht van geverifieerde data \autocite{ItsmeKYC2024}. \\ \hline
+\textbf{Doorlooptijd} & Dagen: afhankelijk van beschikbaarheid medewerker. & Seconden: real-time besluitvorming \autocite{Deloitte2024}. \\ \hline
+\textbf{Bedrijfscheck} & Manuele opzoeking in KBO-webportaal door medewerker. & Automatische matching via KBO-API koppeling. \\ \hline
+\textbf{Schaalbaarheid} & Moeilijk: werkdruk stijgt lineair met aantal klanten. & Hoog: systeem kan grote volumes simultaan verwerken. \\ \hline
+\end{tabular}
 \end{table}
