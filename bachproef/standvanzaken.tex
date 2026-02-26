@@ -1,3 +1,13 @@
+\usetikzlibrary{arrows.meta, shapes.geometric, calc}
+
+\tikzset{
+    start/.style={circle, draw, thick, fill=green!20, minimum size=0.7cm},
+    end/.style={circle, draw, ultra thick, fill=red!20, minimum size=0.7cm},
+    task/.style={rectangle, draw, thick, fill=blue!5, text width=2.3cm, align=center, minimum height=1cm, rounded corners=2pt, font=\footnotesize},
+    gateway/.style={diamond, draw, thick, fill=yellow!20, text width=1.2cm, align=center, inner sep=0pt, font=\footnotesize},
+    arrow/.style={thick, ->, >=stealth}
+}
+
 \chapter{\IfLanguageName{dutch}{Stand van zaken}{State of the art}}%
 \label{ch:stand-van-zaken}
 
@@ -124,6 +134,49 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
     \item \textbf{Statusbeheer:} Bij een correcte match wordt de entiteit handmatig gevalideerd in het systeem. Indien de namen niet overeenkomen, wordt alles gereset en wordt het bedrijf op de hoogte gebracht om de gegevens opnieuw in te voeren.
     \item \textbf{Dataretentie:} Na enige tijd wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen.
 \end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
+
+        %lanes
+        \draw[thick] (-1, 2.5) -- (12, 2.5); 
+        \draw[thick] (-1, 0.5) -- (12, 0.5); 
+        \draw[thick] (-1, -4.5) -- (12, -4.5); 
+        \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant};
+        \node[rotate=90, font=\bfseries] at (-0.7, -2) {Scrada};
+
+        %flow
+        \node (start) [start] at (0, 1.5) {};
+        \node (input) [task] [right=0.5cm of start] {Invoer data \& upload ID};
+        
+        \node (notif) [task] at (1.5, -1) {Ontvangst notificatie};
+        \node (check) [task] [right=0.7cm of notif] {Manuele check KBO / Buitenland};
+        \node (compare) [task] [right=0.7cm of check] {Match ID vs. Bestuurders};
+        \node (decision) [gateway] [right=0.7cm of compare] {Match?};
+        
+        \node (approve) [task] [below=1cm of decision] {Validatie in systeem};
+        \node (reset) [task] at ($(decision) + (2, 2.5)$) {Reset \& verwittig klant};
+        
+        \node (delete) [task] [left=1.5cm of approve] {Wissen ID (GDPR)};
+        \node (end) [end] [left=1cm of delete] {};
+
+        %connecties
+        \draw [arrow] (start) -- (input);
+        \draw [arrow] (input) -- (notif);
+        \draw [arrow] (notif) -- (check);
+        \draw [arrow] (check) -- (compare);
+        \draw [arrow] (compare) -- (decision);
+        \draw [arrow] (decision) -- node[anchor=east, font=\scriptsize] {Ja} (approve);
+        \draw [arrow] (decision.east) -| node[anchor=south west, font=\scriptsize] {Nee} (reset);
+        \draw [arrow] (reset) -- (input);
+        \draw [arrow] (approve) -- (delete);
+        \draw [arrow] (delete) -- (end);
+
+    \end{tikzpicture}
+    \caption[BPMN Huidig Proces]{BPMN-visualisatie van het huidige manuele KYC-proces bij Scrada (AS-IS).}
+    \label{fig:bpmn-huidig}
+\end{figure}
 
 \section{Het Geautomatiseerde KYC-proces (eKYC)}
 In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een "seamless" onboarding, wat zorgt voor een hogere conversie. Volgens \textcite{Deloitte2024} is dit essentieel voor de klanttevredenheid
