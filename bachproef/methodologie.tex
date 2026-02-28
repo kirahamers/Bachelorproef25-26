@@ -26,5 +26,86 @@
 %% Maak voor elke fase (behalve het literatuuronderzoek) een NIEUW HOOFDSTUK aan
 %% en geef het een gepaste titel.
 
-\lipsum[21-25]
+In dit hoofdstuk wordt de onderzoeksstrategie toegelicht die kan toegepast worden om tot een geautomatiseerd en GDPR-conform KYC-proces voor Scrada te komen. 
+Het onderzoek is opgedeeld in vier fasen, waarbij telkens de link tussen juridische compliance en technische haalbaarheid centraal staat.
 
+\section{Fase 1: Literatuurstudie en Theoretisch Kader}
+De initiële fase van het onderzoek bestond uit de literatuurstudie van relevante wet- en regelgeving (zoals de GDPR) en technische standaarden (zoals Peppol). 
+Deze theoretische basis was essentieel om de context van het probleem te begrijpen en om te voorkomen dat er oplossingen worden ontwikkeld die juridisch niet houdbaar zijn.
+
+De studie focuste op drie hoofdgebieden:
+\begin{enumerate}
+\item \textbf{Wet- en Regelgeving:} Er is een diepgaande analyse uitgevoerd van de \textit{General Data Protection Regulation} (GDPR) en de Belgische anti-witwaswetgeving (AML). Hierbij lag de focus op de principes van dataminimalisatie, opslagbeperking en de juridische bewijslast die rust op financiële tussenpersonen.
+\item \textbf{Technische Standaarden:} Het Peppol-ecosysteem en het bijbehorende Interoperability Framework werden bestudeerd om de rol van Scrada als Service Provider (Corner 2) te definiëren. Dit deel bepaalt de verantwoordelijkheden met betrekking tot het verifiëren van zenders (Corner 1) op het netwerk.
+\item \textbf{Technologische State-of-the-art:} Er is onderzoek gedaan naar bestaande technologieën voor digitale identiteitsverificatie, variërend van gecentraliseerde oplossingen zoals itsme® tot gedecentraliseerde hardware-oplossingen zoals NFC-scanning en AI-gestuurde biometrie (liveness-detectie).
+\end{enumerate}
+
+Deze theoretische basis was essentieel om te voorkomen dat er oplossingen worden ontwikkeld die technisch weliswaar efficiënt zijn, maar juridisch onhoudbaar of niet conform de Peppol-voorschriften blijken te zijn.
+\begin{itemize}
+\item \textbf{Onderzoeksmethode:} Literatuuronderzoek en documentanalyse.
+\item \textbf{Deliverable:} Theoretisch kader voor GDPR-conforme eKYC.
+\end{itemize}
+
+\section{Fase 2: Probleemstelling en Procesanalyse (AS-IS)}
+Na de literatuurstudie werd een diepgaande analyse van de huidige werkwijze binnen Scrada uitgevoerd. 
+Dit werd gedaan aan de hand van interviews met de copromotor, die ook de oprichter van Scrada is en dus een diepe kennis heeft van de interne processen.
+
+Tijdens het interview werd het proces weergegeven van de initiële onboarding tot de uiteindelijke activatie op het Peppol-netwerk. Hierbij werd een \textit{Business Process Model and Notation} (BPMN) gecreëerd
+om de interactie tussen de klant (Corner 1) en de Service Provider (Corner 2) visueel vast te leggen. 
+De focus bij de analyse van het huidige proces lag op het identificeren van kritieke menselijke foutmarges en juridische kwetsbaarheden die de betrouwbaarheid van het KYC-traject ondermijnen.
+
+Uit het interview bleek dat de manuele verificatie van de Kruispuntbank van Ondernemingen (KBO) gepaard gaat met interpretatieproblemen. 
+Specifieke problemen zijn onder meer de inconsistente weergave van namen (zoals het ontbreken van een tweede voornaam in de KBO-data versus het paspoort) en de complexiteit bij het verifiëren van de mandaatstructuur. 
+Het systeem moet verifiëren of de aanvrager wel werkelijk een statutair bestuurder is. Daarnaast is de manuele controle gevoelig voor 'red flags' die momenteel enkel op intuïtie worden gespot, 
+zoals recent opgerichte ondernemingen of afwijkende documenten bij buitenlandse bedrijven waarvoor nog geen geautomatiseerde integratie bestaat. Indien er een verdachte situatie wordt opgemerkt,
+wordeb er momenteel facturen aangevraagd bij de klant om te verifiëren dat de aanvrager daadwerkelijk de juiste persoon is (het kan bijvoorbeeld een persoon zijn met exact dezelfde naam als de bestuurder van het bedrijf), 
+wat een extra administratieve last vormt en de doorlooptijd van het onboardingproces aanzienlijk verlengt. Momenteel wordt er per dag ongeveer 10 minuten tot 1 uur besteed besteed aan deze manuele controles (momenteel is de piek 
+van het jaar nog niet bereikt, maar tijdens de piek kan dit oplopen tot uren per dag), wat op lange termijn een grote inefficiëntie is die geautomatiseerd kan worden.
+
+Op het gebied van juridische en technische kwetsbaarheid kwam naar voren dat het huidige proces van handmatige uploads (foto's of scans van ID-kaarten) kwetsbaar is voor fraude met vervalste documenten. 
+Zonder biometrische verificatie of liveness-detectie kan Scrada momenteel niet met 100 procent zekerheid garanderen dat de persoon op de foto ook de persoon is die de aanvraag indient. 
+Bovendien vormt de verwerking van onversleutelde identiteitsbewijzen een risico onder de GDPR. Hoewel itsme® als een veilige authenticatiemethode wordt beschouwd,
+wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkte flexibiliteit (het vereist een aparte app en is niet universeel toepasbaar, vooral voor buitenlandse klanten).
+
+\begin{itemize}
+    \item \textbf{Onderzoeksmethode:} Interview na literatuurstudie en documentanalyse van de huidige processen.
+    \item \textbf{Deliverable:} AS-IS procesmodel in BPMN en lijst van geïdentificeerde pijnpunten. TODO: BPMN is nog niet geverifieerd door copromotor, maar zal in de volgende versie van de bachelorproef worden toegevoegd.
+    \item Het interview was essentieel om een realistisch beeld te krijgen van de huidige situatie en om de belangrijkste knelpunten te identificeren die de basis vormen voor de verdere ontwikkeling van het artefact.
+\end{itemize}
+
+
+\section{Fase 3: Ontwikkeling van de Proof-of-Concept (TO-BE)}
+De kern van de bachelorproef is de ontwikkeling van de Proof-of-Concept (PoC). Hierbij is gekozen voor een agile ontwikkelingsmethode (iteratief ontwerpen), 
+waarbij functionele onderdelen direct getoetst konden worden aan de technische infrastructuur van Scrada. De architectuur van de PoC bestaat uit drie hoofdcomponenten die samenwerken:
+
+TODO: ontwikkeling van de POC, momenteel is bij de eerste deadline enkel literatuurstudie en procesanalyse uitgevoerd. De volgende fase is de ontwikkeling van de PoC, waarbij de volgende technische uitdagingen centraal staan:
+\begin{enumerate}
+    \item \textbf{Mobiele Hardware-integratie (Flutter):} De mobiele applicatie is ontwikkeld in Flutter, wat een cross-platform oplossing biedt voor zowel Android als iOS. 
+    De app maakt al gebruik van de ingebouwde NFC-functionaliteit die in een volgend interview met de copromotor gedetailleerder toegelicht zal worden.
+    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie zal een AI-model getraind worden op een dataset van gezichtsafbeeldingen om liveness-detectie mogelijk te maken.
+    Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
+    \item \textbf{Backend-Orchestratie (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
+    Hiervoor zal een script worden ontwikkeld om de check met de KBO te automatiseren, waarbij de app automatisch de naam van de bestuurder en het ondernemingsnummer zal uitlezen en vergelijken met de KBO-data. De taal en tools voor deze integratie
+    moeten nog worden bepaald, maar er zal waarschijnlijk gebruik worden gemaakt van een combinatie van Flutter-plugins voor NFC en een REST API-call naar de KBO-database. 
+    Hier wordt de GDPR-logica toegepast, zoals de automatische encryptie en de ingestelde retentieperiode van zes maanden voor auditdoeleinden.
+\end{enumerate}
+
+\begin{itemize}
+    \item \textbf{Onderzoeksmethode:} Iteratieve softwareontwikkeling met continue feedback van de copromotor.
+    \item \textbf{Deliverable:} Functionerend prototype en gedocumenteerd TO-BE procesmodel.
+\end{itemize}
+
+\section{Fase 4: Validatie, Testen en Business Case}
+In de finale fase wordt het artefact geëvalueerd aan de hand van de initiële onderzoeksvraag. De validatie bestaat uit drie testonderdelen:
+
+\begin{itemize}
+    \item \textbf{Technisch-functionele testen:} Het simuleren van foutieve invoer, zoals verlopen identiteitsbewijzen, ongeldige ondernemingsnummers en frauduleuze gezichtsscans (bijvoorbeeld een foto van een foto, een AI gegenereerde afbeelding).
+    \item \textbf{GDPR-validatie:} Een audit op de data-flow om te bevestigen dat er geen excessieve gegevens worden opgeslagen en de gegevens worden automatisch gewist zodra de bewaartermijn is verstreken, zonder dat er een medewerker tussen komt.
+    \item \textbf{Economische evaluatie:} Er wordt een vergelijking gemaakt tussen de operationele kosten van het nieuwe systeem (API-consumptie) versus de manuele loonkost en de kosten van externe SaaS-platforms.
+\end{itemize}
+
+De resultaten van deze testen vormen de basis voor de Business Case die aantoont of de voorgestelde automatisering daadwerkelijk een kostenefficiënte en veilige meerwaarde biedt voor Scrada.
+\begin{itemize}
+    \item \textbf{Onderzoeksmethode:} Functionele acceptatietesten en vergelijkende analyse.
+    \item \textbf{Deliverable:} Evaluatierapport en conclusie van de bachelorproef.
+\end{itemize}

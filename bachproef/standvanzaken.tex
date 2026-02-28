@@ -106,6 +106,10 @@ Hoewel de AML-regelgeving vereist dat bepaalde gegevens gedurende een specifieke
 moet dit in overeenstemming zijn met het GDPR-principe van opslagbeperking.
 Bedrijven moeten daarom een duidelijk beleid hebben voor het bewaren en verwijderen van KYC-gegevens, om zowel aan de AML-vereisten als aan de GDPR te voldoen.
 
+In de praktijk betekent dit voor een Peppol Access Point zoals Scrada dat er een evenwicht gezocht moet worden tussen privacy en bewijslast. 
+Waar de GDPR streeft naar een zo kort mogelijke bewaring, eist de anti-witwaswetgeving dat controles achteraf controleerbaar blijven. 
+Daarom heeft Scrada een van zes maanden voor de documenten verwijderd worden; deze termijn is noodzakelijk om bij audits door OpenPeppol aan te tonen dat de identiteit van elke nieuwe klant op het moment van onboarding correct is geverifieerd.
+
 \label{sec:Het gestandaardiseerde KYC-proces}
 \label{sec:kyc-proces}
 Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
@@ -129,53 +133,69 @@ De stappen die binnen een manueel KYC-proces worden ondernomen, verlopen als vol
 De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzameling digitaal verloopt, is de verificatiestap volledig afhankelijk van handmatige acties. Het proces ziet er als volgt uit:
 
 \begin{enumerate}
-    \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens in en uploadt een kopie van de identiteitskaart, waarbij een notificatie wordt gestuurd naar Scrada.
-    \item \textbf{Handmatige verificatie:} Een medewerker voert manueel een opzoeking uit in de Kruispuntbank van Ondernemingen (KBO) en vergelijkt de statutaire bestuurders met de geüploade identiteitsbewijzen.
+    \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens (minimaal het btw- of ondernemingsnummer en e-mailadres) in via de Flutter-applicatie.
+    Daarna wordt een e-mailverificatie gestuurd om het account te bevestigen. Bij het inloggen wordt VIES (VAT Information Exchange System) geraadpleegd om te controleren of het opgegeven btw-nummer geldig is. 
+    Dit gebeurt via een API-call naar de VIES-webservice, waarbij de response aangeeft of het nummer correct is en welke bedrijfsnaam eraan gekoppeld is.
+    Eenmaal het account is aangemaakt kan de gebruiker een kopie van de identiteitskaart iploaden, waarbij een notificatie wordt gestuurd naar Scrada.
+    \item \textbf{Handmatige verificatie:} Een medewerker voert manueel een opzoeking uit in de Kruispuntbank van Ondernemingen (KBO) en vergelijkt de statutaire bestuurders met de geüploade identiteitsbewijzen. Op dit moment is dit de enige 
+    controle die wordt uitgevoerd.
     \item \textbf{Statusbeheer:} Bij een correcte match wordt de entiteit handmatig gevalideerd in het systeem. Indien de namen niet overeenkomen, wordt alles gereset en wordt het bedrijf op de hoogte gebracht om de gegevens opnieuw in te voeren.
-    \item \textbf{Dataretentie:} Na enige tijd wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen.
+    \item \textbf{Dataretentie:} Na enige tijd (zes maanden) wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen.
 \end{enumerate}
 
 \begin{figure}[ht]
     \centering
     \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
 
-        %lanes
-        \draw[thick] (-1, 2.5) -- (12, 2.5); 
-        \draw[thick] (-1, 0.5) -- (12, 0.5); 
-        \draw[thick] (-1, -4.5) -- (12, -4.5); 
-        \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant};
-        \node[rotate=90, font=\bfseries] at (-0.7, -2) {Scrada};
+        % --- LANES ---
+        \draw[thick] (-1, 2.5) -- (13, 2.5);
+        \draw[thick] (-1, 0.5) -- (13, 0.5); % Scheiding Klant / Systeem
+        \draw[thick] (-1, -5.5) -- (13, -5.5); % Onderlijn Scrada
+        \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant (App)};
+        \node[rotate=90, font=\bfseries] at (-0.7, -2.5) {Scrada (Backend/Staf)};
 
-        %flow
+        % --- FLOW KLANT ---
         \node (start) [start] at (0, 1.5) {};
-        \node (input) [task] [right=0.5cm of start] {Invoer data \& upload ID};
+        \node (input) [task] [right=0.5cm of start] {Invoer BTW-nr \& Email};
+        \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
+        \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
         
-        \node (notif) [task] at (1.5, -1) {Ontvangst notificatie};
-        \node (check) [task] [right=0.7cm of notif] {Manuele check KBO / Buitenland};
-        \node (compare) [task] [right=0.7cm of check] {Match ID vs. Bestuurders};
+        % --- FLOW SYSTEEM & MEDEWERKER ---
+        \node (vies) [task, fill=orange!10] at (2.5, -1.5) {Systeem: API Check VIES};
+        \node (notif) [task] [right=0.7cm of vies] {Systeem: Verstuur Notificatie};
+        
+        \node (kbo_manual) [task] [right=0.7cm of notif] {Medewerker: Opzoeking KBO};
+        \node (compare) [task] [right=0.7cm of kbo_manual] {Handmatige Match ID vs. Bestuurders};
+        
         \node (decision) [gateway] [right=0.7cm of compare] {Match?};
         
-        \node (approve) [task] [below=1cm of decision] {Validatie in systeem};
-        \node (reset) [task] at ($(decision) + (2, 2.5)$) {Reset \& verwittig klant};
+        \node (approve) [task] [below=0.8cm of decision] {Manuele validatie in systeem};
+        \node (reset) [task] at ($(decision) + (2.5, 2.5)$) {Reset \& verwittig klant};
         
-        \node (delete) [task] [left=1.5cm of approve] {Wissen ID (GDPR)};
-        \node (end) [end] [left=1cm of delete] {};
+        \node (retention) [task] [left=1.5cm of approve] {Bewaring 6 mnd (Audit)};
+        \node (delete) [task] [left=1cm of retention] {Wissen ID (GDPR)};
+        \node (end) [end] [left=0.8cm of delete] {};
 
-        %connecties
         \draw [arrow] (start) -- (input);
-        \draw [arrow] (input) -- (notif);
-        \draw [arrow] (notif) -- (check);
-        \draw [arrow] (check) -- (compare);
+        \draw [arrow] (input) -- (vies);
+        \draw [arrow] (vies) -- (verify_mail);
+        \draw [arrow] (verify_mail) -- (upload);
+        \draw [arrow] (upload) -- (notif);
+        \draw [arrow] (notif) -- (kbo_manual);
+        \draw [arrow] (kbo_manual) -- (compare);
         \draw [arrow] (compare) -- (decision);
+        
         \draw [arrow] (decision) -- node[anchor=east, font=\scriptsize] {Ja} (approve);
         \draw [arrow] (decision.east) -| node[anchor=south west, font=\scriptsize] {Nee} (reset);
         \draw [arrow] (reset) -- (input);
-        \draw [arrow] (approve) -- (delete);
+        
+        \draw [arrow] (approve) -- (retention);
+        \draw [arrow] (retention) -- (delete);
         \draw [arrow] (delete) -- (end);
 
     \end{tikzpicture}
-    \caption[BPMN Huidig Proces]{BPMN-visualisatie van het huidige manuele KYC-proces bij Scrada (AS-IS).}
-    \label{fig:bpmn-huidig}
+    \caption[BPMN Huidig Proces met VIES-check]{Gedetailleerde BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
+    \label{fig:bpmn-huidig-vies}
 \end{figure}
 
 \section{Het Geautomatiseerde KYC-proces (eKYC)}
@@ -187,7 +207,10 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 
 \begin{enumerate}
     \item \textbf{Digitale Identiteitsverificatie:} In plaats van een handmatige upload van een ID-kaart, gebruikt de klant een digitale ID zoals itsme®. 
-    Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen.
+    Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen. Echter, dure externe Saas-oplossingen zoals itsme® worden best vermeden 
+    aangezien de jaarlijkse licentiekosten van dergelijke platforms kunnen oplopen tot €50.000, wat niet kostenefficiënt is voor een bedrijf als Scrada dat een groot aantal klanten moet onboarden. 
+    In plaats daarvan kan er gebruik worden gemaakt van de NFC-technologie die in moderne identiteitsbewijzen is geïntegreerd, waardoor een directe uitlezing van de chip mogelijk is via een mobiele app.
+    Daarnaast kan ook gebruik worden gemaakt van biometrische verificatie, zoals gezichtsherkenning en liveness-detectie, om te garanderen dat de persoon die de verificatie uitvoert daadwerkelijk fysiek aanwezig is en geen gebruik maakt van een foto of masker.
     \item \textbf{Geautomatiseerde Data-extractie en Matching:} Het systeem voert in real-time een API-call uit naar externe bronnen zoals de KBO. 
     De software vergelijkt automatisch of de persoon in de onboarding voorkomt in de lijst van statutaire bestuurders van de onderneming.
     Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, is te zien in Listing \ref{lst:api-response}.
