@@ -17,6 +17,8 @@
 
 % Pas na deze inleidende paragraaf komt de eerste sectiehoofding.
 
+TODO nog meer academische bronnen toevoegen
+
 In het vorige hoofdstuk is de noodzaak voor een efficiënter en veiliger KYC-proces bij Scrada aangetoond. 
 Om een correct werkende automatisering te kunnen ontwerpen, is een grondig begrip van zowel de juridische voorwaarden als de beschikbare technologische bouwstenen essentieel. 
 Dit hoofdstuk onderzoekt het Peppol-ecosysteem, de strenge vereisten van de GDPR en de moderne technologieën die identiteitsverificatie kunnen digitaliseren en efficiënter maken. 
@@ -36,21 +38,21 @@ waarbij zenders en ontvangers verplicht bij dezelfde provider aangesloten moeste
 In de Peppol-architectuur zijn de volgende vier partijen betrokken:
 \begin{itemize}
     \item \textbf{Corner 1 (De Verzender):} Het bedrijf of de organisatie die de elektronische factuur verstuurt (de cliënt van Scrada).
-    \item \textbf{Corner 2 (Access Point Verzender):} De \textit{Service Provider} van de verzender (\textbf{Scrada}), verantwoordelijk voor het veilig op het netwerk brengen van de documenten.
+    \item \textbf{Corner 2 (Access Point Verzender):} De \textit{Service Provider} van de verzender (Scrada), verantwoordelijk voor het veilig op het netwerk brengen van de documenten.
     \item \textbf{Corner 3 (Access Point Ontvanger):} De \textit{Service Provider} van de ontvanger, die de documenten valideert en aflevert.
     \item \textbf{Corner 4 (De Ontvanger):} De uiteindelijke ontvanger van de factuur, zoals een overheidsinstantie of een andere onderneming.
 \end{itemize}
 
 \subsection{Scrada als Poortwachter (Corner 2)}
-Binnen dit decentrale model draagt Corner 2 een aanzienlijke verantwoordelijkheid. 
+Binnen dit decentrale model draagt Corner 2 een grote verantwoordelijkheid. 
 Omdat het Peppol-netwerk fundamenteel gebaseerd is op gedeeld onderling vertrouwen (trust), 
 gaan Corner 3 en 4 er impliciet van uit dat Corner 2 de identiteit van Corner 1 sluitend heeft geverifieerd 
 voordat toegang tot het netwerk wordt verleend. 
-"Omdat Scrada een officieel erkende Service Provider is, moet het bedrijf zich strikt houden aan het Peppol Interoperability Framework (de werkelijke naam van Peppol). 
+Omdat Scrada een officieel erkende Service Provider is, moet het bedrijf zich strikt houden aan het Peppol Interoperability Framework (de werkelijke naam van Peppol). 
 Die zorgt ervoor dat elektronische documenten gestandaardiseerd worden voor validatie en veilige uitwisseling 
 tussen Service Providers wereldwijd. Hierbij wordt gebruikgemaakt van de internationale ISO/IEC 19845-standaard (Universal Business Language), waardoor facturen over grenzen en sectoren heen leesbaar blijven zonder dat zender en ontvanger dezelfde software hoeven te gebruiken \autocite{PeppolFramework2024}.
 Dit is een verplichte set van juridische en technische afspraken die ervoor zorgt dat alle partijen in het netwerk op dezelfde, 
-veilige manier samenwerken \autocite{PeppolServiceProviders2024}."
+veilige manier samenwerken \autocite{PeppolServiceProviders2024}.
 Indien een Access Point tekortschiet hun KYC verplichtingen niet vervult, ontstaat het risico dat kwaadwillige actoren toegang krijgen tot het netwerk om op grote schaal frauduleuze facturen te verspreiden. 
 De KYC-procedure is volgens de standaarden van OpenPeppol dan ook geen administratieve formaliteit, maar een belangrijke beveiligingslaag. 
 Deze laag garandeert de authenticiteit van de verzender en beschermt de integriteit van het volledige wereldwijde ecosysteem tegen financiële criminaliteit en identiteitsfraude \autocite{PeppolEndUsers2024}.
@@ -88,18 +90,25 @@ van een vennootschap en de opvolging van financiële toepassingen (naast het wel
 
 \subsection{Principes van de GDPR}
 Om een geautomatiseerd KYC-proces te creëren dat juridisch conform is aan de GDPR, 
-moet er specifiek rekening worden gehouden met de kernprincipes van de Europese privacywetgeving \autocite{EuropeanUnion2016}. 
-Voor dit onderzoek staan de volgende artikelen centraal:
+moet er specifiek rekening worden gehouden met de kernprincipes van de Europese privacywetgeving. 
+Voor dit onderzoek staan de volgende artikelen centraal
 \autocite{EuropeanUnion2016}:
 \begin{itemize}
     \item \textbf{Rechtmatigheid, eerlijkheid en transparantie (Art. 5.1a):} Alle gegevensverwerking moet gebaseerd zijn op een geldige juridische grondslag, eerlijk worden uitgevoerd en transparant zijn voor de betrokken personen.
     \item \textbf{Doelbinding (Art. 5.1b):} Persoonsgegevens mogen alleen worden verzameld voor specifieke, expliciete en legitieme doeleinden en mogen niet verwerkt worden voor doeleinden die los hiervan staan.
     \item \textbf{Dataminimalisatie (Art. 5.1c):} Dit principe vereist dat alleen de persoonsgegevens die noodzakelijk zijn voor het specifieke doel van het KYC-proces worden verzameld en verwerkt.
     \item \textbf{Opslagbeperking (Art. 5.1e):} Persoonsgegevens mogen niet langer worden bewaard dan noodzakelijk is voor de doeleinden waarvoor ze zijn verzameld.
-    \item \textbf{Rechten van betrokkenen (Art. 12-23):} Klanten hebben verschillende rechten onder de GDPR, zoals het recht op toegang tot hun gegevens, het recht op rectificatie, het recht op gegevenswissing en het recht om bezwaar te maken tegen bepaalde vormen van verwerking. Het KYC-systeem moet deze rechten respecteren en faciliteren.
+    \item \textbf{Rechten van betrokkenen (Art. 12-23):} Klanten hebben verschillende rechten onder de GDPR, zoals het recht op toegang tot hun gegevens, het recht op rectificatie, het recht op gegevenswissing en het recht om bezwaar te maken tegen bepaalde vormen van verwerking. Het KYC-systeem moet deze rechten respecteren en vergemakkelijken.
     \item \textbf{Geautomatiseerde besluitvorming (Art. 22):} Indien het KYC-proces geautomatiseerde besluitvorming omvat, zoals het automatisch goedkeuren of weigeren van een klant, zijn er extra waarborgen nodig om de rechten en vrijheden van de betrokken personen te beschermen.
     \item \textbf{Privacy by Design (Art. 25):} Bedrijven moeten vanaf het begin van het ontwerp van hun KYC-systeem rekening houden beveiliging en privacy te garanderen, bijvoorbeeld door gegevens te pseudonimiseren of te versleutelen en door strikte toegangscontroles in te voeren.
 \end{itemize}
+
+Het principe van \textit{Privacy by Design} wordt in de verder uitgediept door het concept van Data Sovereignty (datasoevereiniteit). De GDPR focust op de rechten van individuen, terwijl data soevereiniteit zich richt op de controle over data-assets.
+In recent onderzoek van \textcite{vonScherenberg2024} wordt dit concept verder uitgewerkt binnen de \textit{Information Systems}. Data soevereiniteit wordt hierbij gebruikt
+voor digitale zelfbeschikking, waarbij zeven kernaspecten (waaronder vertrouwen, infrastructuur en contractuele afspraken) samenwerken om controle over een \textit{data asset} te waarborgen. 
+Voor Scrada betekent dit dat de technische infrastructuur (de app en backend) niet enkel data verzamelt, maar optreedt als een handhavingsmechanisme dat de soevereiniteit van de klant garandeert gedurende de volledige levenscyclus van de gegevens \autocite{vonScherenberg2024}.
+Volgens \textcite{Kumar2020} is het essentieel om de inefficiëntie van huidige KYC-systemen aan te pakken door de controle over persoonlijke data bij de klant zelf te leggen. 
+Dit verhoogt niet alleen de privacy door dataminimalisatie, maar verlaagt ook de operationele risico's voor de verwerker, aangezien er minder gevoelige data centraal beheerd hoeft te worden.
 
 Een van de punten die zorgt voor het spanningsveld tussen KYC en GDPR is de bewaartijd van gegevens (Opslagbeperking (Art. 5.1e)).
 Hoewel de AML-regelgeving vereist dat bepaalde gegevens gedurende een specifieke periode worden bewaard,
@@ -210,6 +219,7 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen. Echter, dure externe Saas-oplossingen zoals itsme® worden best vermeden 
     aangezien de jaarlijkse licentiekosten van dergelijke platforms kunnen oplopen tot €50.000, wat niet kostenefficiënt is voor een bedrijf als Scrada dat een groot aantal klanten moet onboarden. 
     In plaats daarvan kan er gebruik worden gemaakt van de NFC-technologie die in moderne identiteitsbewijzen is geïntegreerd, waardoor een directe uitlezing van de chip mogelijk is via een mobiele app.
+    De keuze voor een oplossing via NFC-technologie sluit aan bij de visie van \textcite{Kumar2020}, die stellen dat een modern eKYC-proces gebruik moet maken van digitale handtekeningen en asymmetrische cryptografie om een 'Single Source of Truth' te creëren.
     Daarnaast kan ook gebruik worden gemaakt van biometrische verificatie, zoals gezichtsherkenning en liveness-detectie, om te garanderen dat de persoon die de verificatie uitvoert daadwerkelijk fysiek aanwezig is en geen gebruik maakt van een foto of masker.
     \item \textbf{Geautomatiseerde Data-extractie en Matching:} Het systeem voert in real-time een API-call uit naar externe bronnen zoals de KBO. 
     De software vergelijkt automatisch of de persoon in de onboarding voorkomt in de lijst van statutaire bestuurders van de onderneming.
@@ -218,7 +228,13 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     Dit gebeurt zonder dat een medewerker handmatig hoeft te zoeken.
     \item \textbf{Automatische Statusupdate:} Indien alle controles positief zijn, wordt de status in het systeem onmiddellijk omgezet naar "approved". 
     Alleen bij onduidelijkheden of een verhoogd risicoprofiel wordt een medewerker gevraagd om de "exception" handmatig te beoordelen.
-    \item \textbf{Veilige Gegevensopslag:} De data wordt direct versleuteld opgeslagen en er wordt automatisch een auditlog bijgehouden voor compliance-doeleinden, wat de kans op GDPR-inbreuken minimaliseert.
+    \item \textbf{Veilige Gegevensopslag:} De data wordt direct versleuteld opgeslagen en er wordt automatisch een auditlog bijgehouden voor compliance-doeleinden.
+    Aansluitend bij het model van \textcite{Kumar2020} zorgt het gebruik van cryptografische hashes en digitale handtekeningen ervoor dat de integriteit van de geverifieerde data gewaarborgd blijft.
+    In plaats van gewoon een scan op te slaan, wordt een cryptografisch bewijs bewaard dat aantoont dat de identiteit op een specifiek moment correct is gecontroleerd, wat de kans op GDPR-inbreuken en identiteitsfraude minimaliseert.
+    Daarnaast zorgt dit er ook voor dat de klant bij een wijziging in zijn gegevens (zoals een adreswijziging) niet opnieuw een volledige verificatie hoeft te doorlopen, aangezien de geverifieerde identiteit nog steeds geldig is zolang de kerngegevens overeenkomen.
+    Dit sluit ook aan bij usage control, zoals beschreven door \textcite{vonScherenberg2024}. Waar traditionele access control enkel bepaalt wie toegang krijgt tot de data, 
+    focust usage control zich op wat er met de data gebeurt nadat de toegang is verleend. Door de bewaartermijn en het gebruiksdoel (uitsluitend KYC-verificatie) programmatisch vast te leggen in de infrastructuur, 
+    wordt het wantrouwen tussen de data provider (klant) en data consumer (Scrada) geminimaliseerd en ontstaat een veilig ecosysteem voor data-uitwisseling \autocite{vonScherenberg2024}.
 \end{enumerate}
 
 \begin{listing}[ht]
@@ -247,5 +263,8 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 \textbf{Doorlooptijd} & Dagen: afhankelijk van beschikbaarheid medewerker. & Seconden: real-time besluitvorming \autocite{Deloitte2024}. \\ \hline
 \textbf{Bedrijfscheck} & Manuele opzoeking in KBO-webportaal door medewerker. & Automatische matching via KBO-API koppeling. \\ \hline
 \textbf{Schaalbaarheid} & Moeilijk: werkdruk stijgt lineair met aantal klanten. & Hoog: systeem kan grote volumes simultaan verwerken. \\ \hline
+\textbf{Data Sovereignty} & Versnipperd: data rust bij de provider in statische kopieën. & \textit{Data Sovereignty}: klant behoudt controle via technische handhaving \autocite{vonScherenberg2024}. \\ \hline
 \end{tabular}
 \end{table}
+
+TODO afbeeldingen, tabellen vooraan bachelorproef steken (lijst van tabellen, figuren, ...)

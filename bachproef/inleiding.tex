@@ -17,21 +17,21 @@ In dit onderzoek wordt gefocust hoe dit verificatieproces voor Scrada
 geautomatiseerd en geoptimaliseerd kan worden, zodat deze volledig voldoen aan de conformiteit van Peppol.
 
 
-\begin{itemize}
-  \item context, achtergrond
-  \item afbakenen van het onderwerp
-  \item verantwoording van het onderwerp, methodologie
-  \item probleemstelling
-  \item onderzoeksdoelstelling
-  \item onderzoeksvraag
-  \item \ldots
-\end{itemize}
+%\begin{itemize}
+%  \item context, achtergrond
+%  \item afbakenen van het onderwerp
+%  \item verantwoording van het onderwerp, methodologie
+%  \item probleemstelling
+%  \item onderzoeksdoelstelling
+%  \item onderzoeksvraag
+%  \item \ldots
+%\end{itemize}
 
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
 Hoewel Scrada als Certified Peppol Access Point een cruciale rol speelt in veilige e-facturatie, zijn er een aantal factoren die een gevaar kunnen vormen voor de veiligheid van het Peppol-netwerk van het bedrijf.
-Momenteel wordt de KYC idnentificatie manueel uitgevoerd aan de hand van een kopie van de identiteitskaart van de klant die gecontroleerd wordt op de openbare KBO-databank (https://kbopub.economie.fgov.be/kbopub
+Momenteel wordt de KYC idnentificatie manueel uitgevoerd aan de hand van een kopie van de identiteitskaart van de klant die gecontroleerd wordt op de openbare KBO-databank \ (https://kbopub.economie.fgov.be/kbopub
 /zoeknaamfonetischform.html). Dit proces is problematisch voor de primaire doelgroep, de IT- en compliance-afdeling van Scrada. Dit omwille van verschillende redenen:
 \begin{itemize}
   \item \textbf{GDPR-risico's:} Het verwerken van volledige identiteitskaarten is tegenstrijdig met het principe van dataminimalisatie. 
@@ -51,22 +51,22 @@ De centrale onderzoeksvraag van deze bachelorproef luidt als volgt:
 De deelvragen die bijdragen aan het vormen van een antwoord op deze centrale onderzoeksvraag zijn:
 \subsection{Deelvragen probleemdomein} 
 \begin{itemize}
-    \item {\color{blue} {Hoe verloopt het huidige KYC-proces bij Scrada op het Peppol-platform?}}
-    \item {\color{blue} {Welke problemen ervaart Scrada bij het huidige KYC-proces?}}
-    \item {\color{blue} {Op welke stappen in het proces kan automatisering toegepast worden?}}
-    \item {\color{blue} {Welke technologieën kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}}
-    \item {\color{blue} {Welke gegevens van bedrijven worden verzameld tijdens het KYC-proces en hoe gaat Scrada hiermee om?}}
-    \item {\color{blue} {Wat zijn de kenmerken van een GDPR- \- conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}}
-    \item {\color{blue} {Welke frauderisico’s bestaan er bij het huidige KYC-proces?}}
-    \item {\color{blue} {Welke kosten draagt het huidige KYC-proces bij Scrada?}}
+    \item {{Hoe verloopt het huidige KYC-proces bij Scrada op het Peppol-platform?}}
+    \item {{Welke problemen ervaart Scrada bij het huidige KYC-proces?}}
+    \item {{Op welke stappen in het proces kan automatisering toegepast worden?}}
+    \item {{Welke technologieën kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}}
+    \item {{Welke gegevens van bedrijven worden verzameld tijdens het KYC-proces en hoe gaat Scrada hiermee om?}}
+    \item {{Wat zijn de kenmerken van een GDPR- \- conforme authenticatieprocedure en welke voordelen heeft deze tegenover de huidige methode bij Scrada?}}
+    \item {{Welke frauderisico’s bestaan er bij het huidige KYC-proces?}}
+    \item {{Welke kosten draagt het huidige KYC-proces bij Scrada?}}
 \end{itemize}
 
 \subsection{Deelvragen oplossingsdomein} 
 \begin{itemize}
-    \item {\color{blue} {Hoe kunnen de geautomatiseerde KYC- \- processen conform blijven aan de GDPR-regels?}}
-    \item {\color{blue} {Welke risico’s bestaan bij het verwerken van persoonsgegevens in een geautomatiseerd KYC-proces?}}
-    \item {\color{blue} {Welke maatregelen/technologieën kunnen worden ingezet om fraude bij het geautomatiseerde KYC-proces te voorkomen?}}
-    \item {\color{blue} {Hoe kan automatisering bijdragen aan kostenreductie zonder nadelig te zijn voor GDPR en fraudeveiligheid?}}
+    \item {{Hoe kunnen de geautomatiseerde KYC- \- processen conform blijven aan de GDPR-regels?}}
+    \item {{Welke risico’s bestaan bij het verwerken van persoonsgegevens in een geautomatiseerd KYC-proces?}}
+    \item {{Welke maatregelen/technologieën kunnen worden ingezet om fraude bij het geautomatiseerde KYC-proces te voorkomen?}}
+    \item {{Hoe kan automatisering bijdragen aan kostenreductie zonder nadelig te zijn voor GDPR en fraudeveiligheid?}}
 \end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
@@ -93,14 +93,10 @@ De criteria voor een succesvolle Proof-of-Concept zijn:
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
+TODO de opbouw laten kloppen
 In Hoofdstuk~\ref{ch:stand-van-zaken} wordt de theoretische basis gelegd. Hierbij wordt de huidige wetgeving rond de GDPR, de werking van het Peppol-netwerk en moderne KYC-technologieën onderzocht. Dit vormt het referentiekader waarbinnen de automatisering moet plaatsvinden.
-
-In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
-
 In Hoofdstuk~\ref{ch:analyse} vindt de analyse van de huidige werking bij Scrada plaats. Hier worden de bestaande manuele handelingen in kaart gebracht en getoetst aan de GDPR-principes om te kunnen identificeren waar de grootste bottlenecks liggen en waar automatisering efficiënt kan toegepast worden.
-
+In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
 In Hoofdstuk~\ref{ch:implementatie} wordt op basis van die analyse het ontwerp en de ontwikkeling van de Proof-of-Concept beschreven, waarbij de technische keuzes voor automatisering worden uitgelicht.
-
 Hoofdstuk~\ref{ch:evaluatie} bespreekt de resultaten van het onderzoek. Hierbij wordt de geautomatiseerde flow vergeleken met de huidige werkwijze bij Scrada om aan te tonen dat het proces sneller, veiliger en privacyvriendelijker is geworden.
-
-In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
+In Hoofdstuk~\ref{ch:conclusie} tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
