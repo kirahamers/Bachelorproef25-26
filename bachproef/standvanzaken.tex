@@ -156,20 +156,17 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
     \centering
     \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
 
-        % --- LANES ---
         \draw[thick] (-1, 2.5) -- (13, 2.5);
-        \draw[thick] (-1, 0.5) -- (13, 0.5); % Scheiding Klant / Systeem
-        \draw[thick] (-1, -5.5) -- (13, -5.5); % Onderlijn Scrada
+        \draw[thick] (-1, 0.5) -- (13, 0.5);
+        \draw[thick] (-1, -5.5) -- (13, -5.5);
         \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant (App)};
         \node[rotate=90, font=\bfseries] at (-0.7, -2.5) {Scrada (Backend/Staf)};
 
-        % --- FLOW KLANT ---
         \node (start) [start] at (0, 1.5) {};
         \node (input) [task] [right=0.5cm of start] {Invoer BTW-nr \& Email};
         \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
         \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
         
-        % --- FLOW SYSTEEM & MEDEWERKER ---
         \node (vies) [task, fill=orange!10] at (2.5, -1.5) {Systeem: API Check VIES};
         \node (notif) [task] [right=0.7cm of vies] {Systeem: Verstuur Notificatie};
         
