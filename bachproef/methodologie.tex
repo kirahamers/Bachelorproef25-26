@@ -59,7 +59,7 @@ Specifieke problemen zijn onder meer de inconsistente weergave van namen (zoals 
 Het systeem moet verifiëren of de aanvrager wel werkelijk een statutair bestuurder is. Daarnaast is de manuele controle gevoelig voor 'red flags' die momenteel enkel op intuïtie worden gespot, 
 zoals recent opgerichte ondernemingen of afwijkende documenten bij buitenlandse bedrijven waarvoor nog geen geautomatiseerde integratie bestaat. Indien er een verdachte situatie wordt opgemerkt,
 wordeb er momenteel facturen aangevraagd bij de klant om te verifiëren dat de aanvrager daadwerkelijk de juiste persoon is (het kan bijvoorbeeld een persoon zijn met exact dezelfde naam als de bestuurder van het bedrijf), 
-wat een extra administratieve last vormt en de doorlooptijd van het onboardingproces aanzienlijk verlengt. Momenteel wordt er per dag ongeveer 10 minuten tot 1 uur besteed besteed aan deze manuele controles (momenteel is de piek 
+wat een extra administratieve last vormt en de doorlooptijd van het onboardingproces aanzienlijk verlengt. Momenteel wordt er per dag ongeveer 10 minuten tot 1 uur besteed aan deze manuele controles (momenteel is de piek 
 van het jaar nog niet bereikt, maar tijdens de piek kan dit oplopen tot uren per dag), wat op lange termijn een grote inefficiëntie is die geautomatiseerd kan worden.
 
 Op het gebied van juridische en technische kwetsbaarheid kwam naar voren dat het huidige proces van handmatige uploads (foto's of scans van ID-kaarten) kwetsbaar is voor fraude met vervalste documenten. 
@@ -81,8 +81,8 @@ waarbij functionele onderdelen direct getoetst konden worden aan de technische i
 TODO: ontwikkeling van de POC, momenteel is bij de eerste deadline enkel literatuurstudie en procesanalyse uitgevoerd. De volgende fase is de ontwikkeling van de PoC, waarbij de volgende technische uitdagingen centraal staan:
 \begin{enumerate}
     \item \textbf{Mobiele Hardware-integratie (Flutter):} De mobiele applicatie is ontwikkeld in Flutter, wat een cross-platform oplossing biedt voor zowel Android als iOS. 
-    De app maakt al gebruik van de ingebouwde NFC-functionaliteit die in een volgend interview met de copromotor gedetailleerder toegelicht zal worden.
-    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie zal een AI-model getraind worden op een dataset van gezichtsafbeeldingen om liveness-detectie mogelijk te maken.
+    De app maakt al gebruik van de ingebouwde NFC-functionaliteit die in een opgekomend gesprek met de copromotor gedetailleerder toegelicht zal worden.
+    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie zal een AI-model geconfigureerd en geïntegreerd worden op een dataset van gezichtsafbeeldingen om liveness-detectie mogelijk te maken.
     Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
     \item \textbf{Backend-Orchestratie (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
     Hiervoor zal een script worden ontwikkeld om de check met de KBO te automatiseren, waarbij de app automatisch de naam van de bestuurder en het ondernemingsnummer zal uitlezen en vergelijken met de KBO-data. De taal en tools voor deze integratie

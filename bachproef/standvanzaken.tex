@@ -104,10 +104,10 @@ Voor dit onderzoek staan de volgende artikelen centraal
 \end{itemize}
 
 Het principe van \textit{Privacy by Design} wordt in de verder uitgediept door het concept van Data Sovereignty (datasoevereiniteit). De GDPR focust op de rechten van individuen, terwijl data soevereiniteit zich richt op de controle over data-assets.
-In recent onderzoek van \textcite{vonScherenberg2024} wordt dit concept verder uitgewerkt binnen de \textit{Information Systems}. Data soevereiniteit wordt hierbij gebruikt
+In recent onderzoek van \autocite{vonScherenberg2024} wordt dit concept verder uitgewerkt binnen de \textit{Information Systems}. Data soevereiniteit wordt hierbij gebruikt
 voor digitale zelfbeschikking, waarbij zeven kernaspecten (waaronder vertrouwen, infrastructuur en contractuele afspraken) samenwerken om controle over een \textit{data asset} te waarborgen. 
 Voor Scrada betekent dit dat de technische infrastructuur (de app en backend) niet enkel data verzamelt, maar optreedt als een handhavingsmechanisme dat de soevereiniteit van de klant garandeert gedurende de volledige levenscyclus van de gegevens \autocite{vonScherenberg2024}.
-Volgens \textcite{Kumar2020} is het essentieel om de inefficiëntie van huidige KYC-systemen aan te pakken door de controle over persoonlijke data bij de klant zelf te leggen. 
+Volgens \autocite{Kumar2020} is het essentieel om de inefficiëntie van huidige KYC-systemen aan te pakken door de controle over persoonlijke data bij de klant zelf te leggen. 
 Dit verhoogt niet alleen de privacy door dataminimalisatie, maar verlaagt ook de operationele risico's voor de verwerker, aangezien er minder gevoelige data centraal beheerd hoeft te worden.
 
 Een van de punten die zorgt voor het spanningsveld tussen KYC en GDPR is de bewaartijd van gegevens (Opslagbeperking (Art. 5.1e)).
@@ -121,7 +121,7 @@ Daarom heeft Scrada een van zes maanden voor de documenten verwijderd worden; de
 
 \label{sec:Het gestandaardiseerde KYC-proces}
 \label{sec:kyc-proces}
-Volgens de \textcite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
+Volgens de \autocite{LSEG2024} bestaat een effectief proces uit drie essentiële stappen: 
 
 \begin{enumerate}
     \item \textbf{Customer Identification Program (CIP):} In de eerste fase van het KYC-proces vindt de onboarding plaats. Hier wordt de essentiële informatie van de klant verzameld met behulp van betrouwbare bronnen zoals paspoorten, rijbewijzen of bedrijfsregistraties.
@@ -205,7 +205,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
 \end{figure}
 
 \section{Het Geautomatiseerde KYC-proces (eKYC)}
-In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een "seamless" onboarding, wat zorgt voor een hogere conversie. Volgens \textcite{Deloitte2024} is dit essentieel voor de klanttevredenheid
+In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een "seamless" onboarding, wat zorgt voor een hogere conversie. Volgens \autocite{Deloitte2024} is dit essentieel voor de klanttevredenheid
 terwijl men ook aan de AML-wetgeving voldoet. 
 
 Bij een geautomatiseerd proces (vaak eKYC genoemd) worden de menselijke handelingen vervangen door API-aanroepen en digitale identiteitsverificatie. 
@@ -216,7 +216,7 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen. Echter, dure externe Saas-oplossingen zoals itsme® worden best vermeden 
     aangezien de jaarlijkse licentiekosten van dergelijke platforms kunnen oplopen tot €50.000, wat niet kostenefficiënt is voor een bedrijf als Scrada dat een groot aantal klanten moet onboarden. 
     In plaats daarvan kan er gebruik worden gemaakt van de NFC-technologie die in moderne identiteitsbewijzen is geïntegreerd, waardoor een directe uitlezing van de chip mogelijk is via een mobiele app.
-    De keuze voor een oplossing via NFC-technologie sluit aan bij de visie van \textcite{Kumar2020}, die stellen dat een modern eKYC-proces gebruik moet maken van digitale handtekeningen en asymmetrische cryptografie om een 'Single Source of Truth' te creëren.
+    De keuze voor een oplossing via NFC-technologie sluit aan bij de visie van \autocite{Kumar2020}, die stellen dat een modern eKYC-proces gebruik moet maken van digitale handtekeningen en asymmetrische cryptografie om een 'Single Source of Truth' te creëren.
     Daarnaast kan ook gebruik worden gemaakt van biometrische verificatie, zoals gezichtsherkenning en liveness-detectie, om te garanderen dat de persoon die de verificatie uitvoert daadwerkelijk fysiek aanwezig is en geen gebruik maakt van een foto of masker.
     \item \textbf{Geautomatiseerde Data-extractie en Matching:} Het systeem voert in real-time een API-call uit naar externe bronnen zoals de KBO. 
     De software vergelijkt automatisch of de persoon in de onboarding voorkomt in de lijst van statutaire bestuurders van de onderneming.
@@ -226,10 +226,10 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     \item \textbf{Automatische Statusupdate:} Indien alle controles positief zijn, wordt de status in het systeem onmiddellijk omgezet naar "approved". 
     Alleen bij onduidelijkheden of een verhoogd risicoprofiel wordt een medewerker gevraagd om de "exception" handmatig te beoordelen.
     \item \textbf{Veilige Gegevensopslag:} De data wordt direct versleuteld opgeslagen en er wordt automatisch een auditlog bijgehouden voor compliance-doeleinden.
-    Aansluitend bij het model van \textcite{Kumar2020} zorgt het gebruik van cryptografische hashes en digitale handtekeningen ervoor dat de integriteit van de geverifieerde data gewaarborgd blijft.
+    Aansluitend bij het model van \autocite{Kumar2020} zorgt het gebruik van cryptografische hashes en digitale handtekeningen ervoor dat de integriteit van de geverifieerde data gewaarborgd blijft.
     In plaats van gewoon een scan op te slaan, wordt een cryptografisch bewijs bewaard dat aantoont dat de identiteit op een specifiek moment correct is gecontroleerd, wat de kans op GDPR-inbreuken en identiteitsfraude minimaliseert.
     Daarnaast zorgt dit er ook voor dat de klant bij een wijziging in zijn gegevens (zoals een adreswijziging) niet opnieuw een volledige verificatie hoeft te doorlopen, aangezien de geverifieerde identiteit nog steeds geldig is zolang de kerngegevens overeenkomen.
-    Dit sluit ook aan bij usage control, zoals beschreven door \textcite{vonScherenberg2024}. Waar traditionele access control enkel bepaalt wie toegang krijgt tot de data, 
+    Dit sluit ook aan bij usage control, zoals beschreven door \autocite{vonScherenberg2024}. Waar traditionele access control enkel bepaalt wie toegang krijgt tot de data, 
     focust usage control zich op wat er met de data gebeurt nadat de toegang is verleend. Door de bewaartermijn en het gebruiksdoel (uitsluitend KYC-verificatie) programmatisch vast te leggen in de infrastructuur, 
     wordt het wantrouwen tussen de data provider (klant) en data consumer (Scrada) geminimaliseerd en ontstaat een veilig ecosysteem voor data-uitwisseling \autocite{vonScherenberg2024}.
 \end{enumerate}
