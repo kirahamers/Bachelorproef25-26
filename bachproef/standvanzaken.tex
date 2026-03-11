@@ -155,6 +155,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
 
 \begin{figure}[ht]
     \centering
+    \resizebox{\textwidth}{!}{
     \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
 
         \draw[thick] (-1, 2.5) -- (13, 2.5);
@@ -168,7 +169,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
         \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
         \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
         
-        \node (vies) [task, fill=orange!10] at (2.5, -1.5) {Systeem: API Check VIES};
+        \node (vies) [task, fill=orange!10, below=1.5cm of upload] {Systeem: API Check VIES};
         \node (notif) [task] [right=0.7cm of vies] {Systeem: Verstuur Notificatie};
         
         \node (kbo_manual) [task] [right=0.7cm of notif] {Medewerker: Opzoeking KBO};
@@ -201,6 +202,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
         \draw [arrow] (delete) -- (end);
 
     \end{tikzpicture}
+    }
     \caption[BPMN Huidig Proces met VIES-check]{BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
     \label{fig:bpmn-huidig-vies}
 \end{figure}
