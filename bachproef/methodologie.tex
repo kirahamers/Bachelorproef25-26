@@ -47,8 +47,89 @@ Deze theoretische basis was essentieel om te voorkomen dat er oplossingen worden
 \end{itemize}
 
 \section{Fase 2: Probleemstelling en Procesanalyse (AS-IS)}
-Na de literatuurstudie werd een diepgaande analyse van de huidige werkwijze binnen Scrada uitgevoerd. 
-Dit werd gedaan aan de hand van interviews met de copromotor, die ook de oprichter van Scrada is en dus een diepe kennis heeft van de interne processen.
+Da de literatuurstudie werd er onderzoek gedaan naar het huidge proces bij Scrada, waarbij momenteel de manuele verificatie van de KBO centraal staat.
+Om gericht onderzoek te doen vond een interview plaats met de copromotor, die ook de oprichter van Scrada is en dus een diepe kennis heeft van de interne processen.
+
+De vragen die tijdens het interview gevraagd werden waren opgesteld aan de hand van de literatuurstudie, waarbij de focus lag op het identificeren van de belangrijkste pijnpunten in het huidige proces en de juridische en technische kwetsbaarheden die daarmee gepaard gaan.
+De vragen zijn als volgt geformuleerd:
+\begin{itemize}
+    \item Welke gegevens moet de klant minimaal ingeven? Is er een voorkeur voor het gebruik van het ondernemingsnummer, of is er ook ruimte voor alternatieve methoden zoals e-mailverificatie of telefoonnummervalidatie?
+    \item Wat zijn de belangrijkste 'red flags' die momenteel handmatig gespot wordt tijdens het onboardingproces? (Bijv. bedrijven die pas 2 dagen bestaan, buitenlandse bestuurders bij Belgische firma's, etc.)
+    \item Wanneer worden de documenten verwijderd? Worden deze na 30 dagen verwijderd, of direct na validatie? (In de huidige situatie worden de documenten handmatig verwijderd, maar er is een wens om dit te automatiseren volgens de GDPR-principes van opslagbeperking).
+    \item Is er een voorkeur voor een specifieke methode van digitale ID zoals itsme® (populair in België)? Of kijken we eerder naar eID-uitlezers of NFC-scanning van paspoorten?
+    \item Hoe groot is de zorg binnen Scrada voor vervalste digitale documenten? Moet de PoC liveness-detectie (bijv. een selfie-video) ondersteunen? (biometrics)
+    \item In welke taal of framework wordt de huidige frontend van Scrada geschreven? (Bijv. Angular, React, Vue?). Dit zodat het PoC hierop kan aansluiten en de integrate vlot kan verlopen.
+    \item Is er een test-omgeving of een set met 'dummy' klantgegevens die ik gebruikt mag worden voor het onderzoek, zodat er niet met echte persoonsgegevens gewerkt wordt?
+\end{itemize}
+
+\subsection{Huidige werkwijze bij Scrada}
+De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzameling digitaal verloopt, is de verificatiestap volledig afhankelijk van handmatige acties. Het proces ziet er als volgt uit:
+
+\begin{enumerate}
+    \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens (minimaal het btw- of ondernemingsnummer en e-mailadres) in via de Flutter-applicatie.
+    Daarna wordt een e-mailverificatie gestuurd om het account te bevestigen. Bij het inloggen wordt VIES (VAT Information Exchange System) geraadpleegd om te controleren of het opgegeven btw-nummer geldig is. 
+    Dit gebeurt via een API-call naar de VIES-webservice, waarbij de response aangeeft of het nummer correct is en welke bedrijfsnaam eraan gekoppeld is.
+    Eenmaal het account is aangemaakt kan de gebruiker een kopie van de identiteitskaart uploaden, waarbij een notificatie wordt gestuurd naar Scrada.
+    \item \textbf{Handmatige verificatie:} Een medewerker voert manueel een opzoeking uit in de Kruispuntbank van Ondernemingen (KBO) en vergelijkt de statutaire bestuurders met de geüploade identiteitsbewijzen. Op dit moment is dit de enige 
+    controle die wordt uitgevoerd.
+    \item \textbf{Statusbeheer:} Bij een correcte match wordt de entiteit handmatig gevalideerd in het systeem. Indien de namen niet overeenkomen, wordt alles gereset en wordt het bedrijf op de hoogte gebracht om de gegevens opnieuw in te voeren.
+    \item \textbf{Dataretentie:} Na enige tijd (zes maanden) wordt de kopie van de identiteitskaart handmatig of na een ingestelde periode gewist om te voldoen aan de GDPR-richtlijnen. De termijn van zes maanden is noodzakelijk om bij audits door OpenPeppol aan te tonen dat de identiteit 
+    van elke nieuwe klant op het moment van onboarding correct is geverifieerd.
+\end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \resizebox{\textwidth}{!}{
+    \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
+
+        \draw[thick] (-1, 2.5) -- (13, 2.5);
+        \draw[thick] (-1, 0.5) -- (13, 0.5);
+        \draw[thick] (-1, -5.5) -- (13, -5.5);
+        \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant (App)};
+        \node[rotate=90, font=\bfseries] at (-0.7, -2.5) {Scrada (Backend/Staf)};
+
+        \node (start) [start] at (0, 1.5) {};
+        \node (input) [task] [right=0.5cm of start] {Invoer BTW-nr \& Email};
+        \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
+        \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
+        
+        \node (vies) [task, fill=orange!10, below=1.5cm of upload] {Systeem: API Check VIES};
+        \node (notif) [task] [right=0.7cm of vies] {Systeem: Verstuur Notificatie};
+        
+        \node (kbo_manual) [task] [right=0.7cm of notif] {Medewerker: Opzoeking KBO};
+        \node (compare) [task] [right=0.7cm of kbo_manual] {Handmatige Match ID vs. Bestuurders};
+        
+        \node (decision) [gateway] [right=0.7cm of compare] {Match?};
+        
+        \node (approve) [task] [below=0.8cm of decision] {Manuele validatie in systeem};
+        \node (reset) [task] at ($(decision) + (2.5, 2.5)$) {Reset \& verwittig klant};
+        
+        \node (retention) [task] [left=1.5cm of approve] {Bewaring 6 mnd (Audit)};
+        \node (delete) [task] [left=1cm of retention] {Wissen ID (GDPR)};
+        \node (end) [end] [left=0.8cm of delete] {};
+
+        \draw [arrow] (start) -- (input);
+        \draw [arrow] (input) -- (vies);
+        \draw [arrow] (vies) -- (verify_mail);
+        \draw [arrow] (verify_mail) -- (upload);
+        \draw [arrow] (upload) -- (notif);
+        \draw [arrow] (notif) -- (kbo_manual);
+        \draw [arrow] (kbo_manual) -- (compare);
+        \draw [arrow] (compare) -- (decision);
+        
+        \draw [arrow] (decision) -- node[anchor=east, font=\scriptsize] {Ja} (approve);
+        \draw [arrow] (decision.east) -| node[anchor=south west, font=\scriptsize] {Nee} (reset);
+        \draw [arrow] (reset) -- (input);
+        
+        \draw [arrow] (approve) -- (retention);
+        \draw [arrow] (retention) -- (delete);
+        \draw [arrow] (delete) -- (end);
+
+    \end{tikzpicture}
+    }
+    \caption[BPMN Huidig Proces met VIES-check]{BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
+    \label{fig:bpmn-huidig-vies}
+\end{figure}
 
 Tijdens het interview werd het proces weergegeven van de initiële onboarding tot de uiteindelijke activatie op het Peppol-netwerk. Hierbij werd een \textit{Business Process Model and Notation} (BPMN) gecreëerd
 om de interactie tussen de klant (Corner 1) en de Service Provider (Corner 2) visueel vast te leggen. 
