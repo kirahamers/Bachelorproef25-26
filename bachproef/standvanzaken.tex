@@ -53,7 +53,7 @@ Die zorgt ervoor dat elektronische documenten gestandaardiseerd worden voor vali
 tussen Service Providers wereldwijd. Hierbij wordt gebruikgemaakt van de internationale ISO/IEC 19845-standaard (Universal Business Language), waardoor facturen over grenzen en sectoren heen leesbaar blijven zonder dat zender en ontvanger dezelfde software hoeven te gebruiken \autocite{PeppolFramework2024}.
 Dit is een verplichte set van juridische en technische afspraken die ervoor zorgt dat alle partijen in het netwerk op dezelfde, 
 veilige manier samenwerken \autocite{PeppolServiceProviders2024}.
-Indien een Access Point tekortschiet hun KYC verplichtingen niet vervult, ontstaat het risico dat kwaadwillige actoren toegang krijgen tot het netwerk om op grote schaal frauduleuze facturen te verspreiden. 
+Indien een Access Point hun KYC verplichtingen niet vervult, ontstaat het risico dat kwaadwillige actoren toegang krijgen tot het netwerk om op grote schaal frauduleuze facturen te verspreiden. 
 De KYC-procedure is volgens de standaarden van OpenPeppol dan ook geen administratieve formaliteit, maar een belangrijke beveiligingslaag. 
 Deze laag garandeert de authenticiteit van de verzender en beschermt de integriteit van het volledige wereldwijde ecosysteem tegen financiële criminaliteit en identiteitsfraude \autocite{PeppolEndUsers2024}.
 
@@ -103,7 +103,7 @@ Voor dit onderzoek staan de volgende artikelen centraal
     \item \textbf{Privacy by Design (Art. 25):} Bedrijven moeten vanaf het begin van het ontwerp van hun KYC-systeem rekening houden beveiliging en privacy te garanderen, bijvoorbeeld door gegevens te pseudonimiseren of te versleutelen en door strikte toegangscontroles in te voeren.
 \end{itemize}
 
-Het principe van \textit{Privacy by Design} wordt in de verder uitgediept door het concept van Data Sovereignty (datasoevereiniteit). De GDPR focust op de rechten van individuen, terwijl data soevereiniteit zich richt op de controle over data-assets.
+Het principe van \textit{Privacy by Design} wordt verder uitgediept door het concept van Data Sovereignty (datasoevereiniteit). De GDPR focust op de rechten van individuen, terwijl data soevereiniteit zich richt op de controle over data-assets.
 In recent onderzoek van \autocite{vonScherenberg2024} wordt dit concept verder uitgewerkt binnen de \textit{Information Systems}. Data soevereiniteit wordt hierbij gebruikt
 voor digitale zelfbeschikking, waarbij zeven kernaspecten (waaronder vertrouwen, infrastructuur en contractuele afspraken) samenwerken om controle over een \textit{data asset} te waarborgen. 
 Voor Scrada betekent dit dat de technische infrastructuur (de app en backend) niet enkel data verzamelt, maar optreedt als een handhavingsmechanisme dat de soevereiniteit van de klant garandeert gedurende de volledige levenscyclus van de gegevens \autocite{vonScherenberg2024}.
@@ -117,7 +117,7 @@ Bedrijven moeten daarom een duidelijk beleid hebben voor het bewaren en verwijde
 
 In de praktijk betekent dit voor een Peppol Access Point zoals Scrada dat er een evenwicht gezocht moet worden tussen privacy en bewijslast. 
 Waar de GDPR streeft naar een zo kort mogelijke bewaring, eist de anti-witwaswetgeving dat controles achteraf controleerbaar blijven. 
-Daarom heeft Scrada een van zes maanden voor de documenten verwijderd worden; deze termijn is noodzakelijk om bij audits door OpenPeppol aan te tonen dat de identiteit van elke nieuwe klant op het moment van onboarding correct is geverifieerd.
+Daarom heeft Scrada een periode van zes maanden voor de documenten verwijderd worden; deze termijn is noodzakelijk om bij audits door OpenPeppol aan te tonen dat de identiteit van elke nieuwe klant op het moment van onboarding correct is geverifieerd.
 
 \label{sec:Het gestandaardiseerde KYC-proces}
 \label{sec:kyc-proces}
@@ -134,9 +134,9 @@ andere bronnen zoals de Kruispuntbank van Ondernemingen (KBO), waar alle Belgisc
 Het manueel uitvoeren van deze stappen is tijdrovend, foutgevoelig en moeilijk schaalbaar, vooral voor bedrijven die een groot aantal klanten moeten onboarden.
 De stappen die binnen een manueel KYC-proces worden ondernomen, verlopen als volgt \autocite{SDKFinance2024}:
 \begin{itemize}
-    \item De klant stuurt de nodige documenten en de status wordt omgezet naar "pending" in het systeem (ervoor was dit "none"). 
+    \item De klant stuurt de nodige documenten en de status wordt omgezet naar ``pending'' in het systeem (ervoor was dit ``none''). 
     \item Een KYC-medewerken keurt de documenten goed of af. Dit kan alleen gedaan worden als alle documenten aanwezig zijn.
-    \item Wanneer de documenten goedgekeurd zijn, wordt de status van de klant omgezet naar "approved". Indien er documenten ontbreken of niet overeenkomen, wordt de status teruggezet naar "none" en wordt de klant geïnformeerd dat hij opnieuw moet beginnen.
+    \item Wanneer de documenten goedgekeurd zijn, wordt de status van de klant omgezet naar ``approved''. Indien er documenten ontbreken of niet overeenkomen, wordt de status teruggezet naar ``none'' en wordt de klant geïnformeerd dat hij opnieuw moet beginnen.
 \end{itemize}
 
 \subsection{Huidige werkwijze bij Scrada}
@@ -146,7 +146,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
     \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens (minimaal het btw- of ondernemingsnummer en e-mailadres) in via de Flutter-applicatie.
     Daarna wordt een e-mailverificatie gestuurd om het account te bevestigen. Bij het inloggen wordt VIES (VAT Information Exchange System) geraadpleegd om te controleren of het opgegeven btw-nummer geldig is. 
     Dit gebeurt via een API-call naar de VIES-webservice, waarbij de response aangeeft of het nummer correct is en welke bedrijfsnaam eraan gekoppeld is.
-    Eenmaal het account is aangemaakt kan de gebruiker een kopie van de identiteitskaart iploaden, waarbij een notificatie wordt gestuurd naar Scrada.
+    Eenmaal het account is aangemaakt kan de gebruiker een kopie van de identiteitskaart uploaden, waarbij een notificatie wordt gestuurd naar Scrada.
     \item \textbf{Handmatige verificatie:} Een medewerker voert manueel een opzoeking uit in de Kruispuntbank van Ondernemingen (KBO) en vergelijkt de statutaire bestuurders met de geüploade identiteitsbewijzen. Op dit moment is dit de enige 
     controle die wordt uitgevoerd.
     \item \textbf{Statusbeheer:} Bij een correcte match wordt de entiteit handmatig gevalideerd in het systeem. Indien de namen niet overeenkomen, wordt alles gereset en wordt het bedrijf op de hoogte gebracht om de gegevens opnieuw in te voeren.
@@ -201,12 +201,12 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
         \draw [arrow] (delete) -- (end);
 
     \end{tikzpicture}
-    \caption[BPMN Huidig Proces met VIES-check]{Gedetailleerde BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
+    \caption[BPMN Huidig Proces met VIES-check]{BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
     \label{fig:bpmn-huidig-vies}
 \end{figure}
 
 \section{Het Geautomatiseerde KYC-proces (eKYC)}
-In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een "seamless" onboarding, wat zorgt voor een hogere conversie. Volgens \autocite{Deloitte2024} is dit essentieel voor de klanttevredenheid
+In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een ``seamless'' onboarding, wat zorgt voor een hogere conversie. Volgens \autocite{Deloitte2024} is dit essentieel voor de klanttevredenheid
 terwijl men ook aan de AML-wetgeving voldoet. 
 
 Bij een geautomatiseerd proces (vaak eKYC genoemd) worden de menselijke handelingen vervangen door API-aanroepen en digitale identiteitsverificatie. 
@@ -224,8 +224,8 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, is te zien in Listing \ref{lst:api-response}.
     \item \textbf{Instant Risicobeoordeling:} De verzamelde data wordt direct getoetst aan sanctielijsten en PEP-lijsten (Politically Exposed Persons) via databases zoals LSEG World-Check. 
     Dit gebeurt zonder dat een medewerker handmatig hoeft te zoeken.
-    \item \textbf{Automatische Statusupdate:} Indien alle controles positief zijn, wordt de status in het systeem onmiddellijk omgezet naar "approved". 
-    Alleen bij onduidelijkheden of een verhoogd risicoprofiel wordt een medewerker gevraagd om de "exception" handmatig te beoordelen.
+    \item \textbf{Automatische Statusupdate:} Indien alle controles positief zijn, wordt de status in het systeem onmiddellijk omgezet naar ``approved''. 
+    Alleen bij onduidelijkheden of een verhoogd risicoprofiel wordt een medewerker gevraagd om de ``exception'' handmatig te beoordelen.
     \item \textbf{Veilige Gegevensopslag:} De data wordt direct versleuteld opgeslagen en er wordt automatisch een auditlog bijgehouden voor compliance-doeleinden.
     Aansluitend bij het model van \autocite{Kumar2020} zorgt het gebruik van cryptografische hashes en digitale handtekeningen ervoor dat de integriteit van de geverifieerde data gewaarborgd blijft.
     In plaats van gewoon een scan op te slaan, wordt een cryptografisch bewijs bewaard dat aantoont dat de identiteit op een specifiek moment correct is gecontroleerd, wat de kans op GDPR-inbreuken en identiteitsfraude minimaliseert.
