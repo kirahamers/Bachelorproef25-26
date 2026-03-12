@@ -182,6 +182,28 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 \label{lst:api-response}
 \end{listing}
 
+\section{Blockchain-gebaseerde KYC-automatisering}
+Hoewel API-koppelingen met bronnen zoals de KBO de verificatie versnellen, blijft er een centraal punt van vertrouwen en verantwoordelijkheid bestaan bij de Service Provider (Corner 2).
+Om deze afhankelijkheid te verminderen en de controle over de data bij de klant te leggen, kan er gebruikt worden gemaakt van blockchain-technologie.
+Recent onderzoek van \autocite{Malhotra2022} toont aan dat blockchain-technologie (Distributed Ledger Technology of DLT) de efficiëntie van KYC kan verbeteren door redundante processen te elimineren.
+
+\subsection{De technologische bouwstenen van een blockchain-gebaseerd KYC-systeem \autocite{Malhotra2022}}
+In een blockchain-ecosysteem is de klant een actieve node die zelf controle heeft over zijn data. 
+In plaats van documenten fysiek op de chain op te slaan, wat inefficiënt is en strijdig met de GDPR-opslagbeperking, wordt gebruikgemaakt van een hybride model:
+\begin{itemize}
+    \item \textbf{Off-chain opslag (de data-laag):} Door beperkte opslag op de blockchain wordt aangeraden om de geëncrypteerde KYC-documenten op te slaan in gedecentraliseerde systemen zoals IPFS (InterPlanetary File System), waar data omgezet wordt naar JSON-formaat.
+    \item \textbf{On-chain validatie (de blockchain-laag):} Alleen de cryptografische hashes van de documenten worden op de blockchain geplaatst. Dit zorgt voor de onveranderlijkheid (immutability) en integriteit van de gegevens zonder de privacy te schenden, aangezien de data niet publiek is op de ledger.
+    \item \textbf{Smart Contracts (de logische laag):} Zelf-uitvoerende codes automatiseren de toegang. Wanneer een organisatie (bijv. Corner 3 in het Peppol-model) de identiteit wil verifiëren, roept het systeem een smart contract aan dat de klant om expliciete toestemming vraagt. Pas na deze toestemming wordt de hash vrijgegeven om de authenticiteit van de off-chain data te bevestigen.
+    Volgens \autocite{Yadav2020} zorgt dit model voor een bijna onkraakbare cryptografische beveiliging voor financiële transacties.
+\end{itemize}
+
+\subsection{Economische en structurele impact}
+Het gebruik van een consortium blockchain-model, waarbij meerdere organisaties samenwerken volgens gedefinieerde protocollen, kan de efficiëntie van de sector aanzienlijk verhogen.
+\begin{itemize}
+\item \textbf{Kostenbesparing:} Handmatige processen leiden tot hoge onderhouds- en verificatiekosten. Er wordt volgens \autocite{Yadav2020} geschat dat een geautomatiseerd blockchain-systeem wereldwijd tot 27 miljard dollar aan jaarlijkse kosten kan besparen.
+\item \textbf{Eliminatie van redundantie:} Door gebruik te maken van de functies van DLT wordt de noodzaak voor tussenpersonen (third-parties) geelimineerd, wat dubbel werk en onnodige vertragingen in het KYC-proces voorkomt.
+\end{itemize}
+
 \begin{table}[h!]
 \centering
 \caption{Vergelijking tussen manuele KYC en geautomatiseerde eKYC (gebaseerd op Deloitte en de Bolero case study)}
@@ -197,5 +219,3 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 \textbf{Data Sovereignty} & Versnipperd: data rust bij de provider in statische kopieën. & \textit{Data Sovereignty}: klant behoudt controle via technische handhaving \autocite{vonScherenberg2024}. \\ \hline
 \end{tabular}
 \end{table}
-
-TODO afbeeldingen, tabellen vooraan bachelorproef steken (lijst van tabellen, figuren, ...)
