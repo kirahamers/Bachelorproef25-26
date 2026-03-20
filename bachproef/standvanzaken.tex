@@ -168,6 +168,9 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     wordt het wantrouwen tussen de data provider (klant) en data consumer (Scrada) geminimaliseerd en ontstaat een veilig ecosysteem voor data-uitwisseling \autocite{vonScherenberg2024}.
 \end{enumerate}
 
+Natuurlijk zijn geautomatiseerde KYC-processen niet altijd foutloos. Wanneer er twijfel is over de authenticiteit van de documenten of wanneer er een risicoprofiel wordt gedetecteerd, 
+dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet een medewerker inspringen om een beslissing te nemen, zoals het goedkeuren of afwijzen van de klant, of het vragen van aanvullende informatie.
+
 \begin{listing}[ht]
 \begin{minted}{json}
 {
@@ -181,6 +184,28 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 \caption{Voorbeeld van een JSON API-response voor KYC-verificatie.}
 \label{lst:api-response}
 \end{listing}
+
+\subsection{Biometrische Identiteitsverificatie en liveness-detectie}
+Om de authenticiteit van een identeitskaart te garanderen, kan er ook gebruik worden gemaakt van biometrische verificatie.
+Dit kan aan de hand van gezichtsherkenning via een foto of video van de klant die vergeleken wordt met de foto op het identiteitsbewijs, die via
+een NFC-chip wordt afgelezen. Indien de identiteitskaart geen NFC-chip bevat, kan er ook gebruik worden gemaakt van OCR (Optical Character Recognition) om de gegevens van de kaart te bekijken.
+de preprocessing is hierbij van groot belang, aangezien de kwaliteit van de input(zoals een slechte belichting of een lage resolutie) de nauwkeurigheid van OCR kan beïnvloeden. Daarbij wordt ook feature recognition toegepast, waarbij specifieke kenmerken van het document worden herkend, zoals de lay-out, het lettertype en de aanwezigheid van beveiligingskenmerken (zoals hologrammen of watermerken), wat helpt om vervalsingen te detecteren.
+OCR kan samen gebruikt worden met AI om ook ICR (Intelligent Character Recognition) toe te passen, waarbij de software niet alleen de tekst herkent, maar ook de context begrijpt, 
+zoals het onderscheiden van een naam, adres of geboortedatum (\autocite{IBM_OCR_2024}).
+
+Volgens een recente literatuurstudie van \autocite(FaceLivenessMDPI2023) is gezichtsherkenning een cruciaal onderdeel van biometrische authenticatie
+om bepaalde spoofing-aanvallen te voorkomen, zoals print- en replay-attacks. Hierbij worden er foto's op papier of video's op schermen gebruikt in de plaats van een echt gezicht.
+Het gebruik van Deep Learning-modellen zorgt ervoor dat verschillen in textuur, beweging en 3D-structuur kunnen worden geanalyseerd om te bepalen of het gezicht echt is of een afbeelding, 
+war ervoor zorgt dat de nauwkeurigheid van het KYC-proces verbetert en de kans op identiteitsfraude vermindert.
+
+\section{Software-architectuur en API-integraties}
+Om een geautomatiseerd KYC-proces te implementeren die de eerder besproken technologieën gebruikt, is een robuuste software-architectuur nodig die 
+integreert met de hardware en externe bronnen zoals de KBO en LSEG World-Check. Bij moderne applicaties wordt er gebruikt gemaakt van cross-platform frameworks (zoals React Native of Flutter), 
+die gebruik maken van plugins om zo de KYC-functionaliteit te integreren zoals de biometrische verificatie via de camera en het uitlezen van de NFC-chip \autocite{FlutterArch2024}.
+
+Daarnaast is de backend verantwoordelijk is voor de API-integraties, dataopslag en het beheer van de KYC-statussen.
+Deze is belangrijk voor het gebruik van de KBO, VIES of LSEG World-Check API's, waarbij er gebruik wordt gemaakt van een API Gateway om de communicatie tussen de frontend en de verschillende externe services te coördineren
+zonder dat de frontend rechtstreeks in verbinding staat met gevoelige externe endpoints. Hierdoor is reverse engineering minder succesvol, aangezien de API Gateway een extra laag van beveiliging biedt \autocite{MicrosoftMicroservices2024}.
 
 \section{Blockchain-gebaseerde KYC-automatisering}
 Hoewel API-koppelingen met bronnen zoals de KBO de verificatie versnellen, blijft er een centraal punt van vertrouwen en verantwoordelijkheid bestaan bij de Service Provider (Corner 2).

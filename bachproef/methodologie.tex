@@ -161,11 +161,11 @@ waarbij functionele onderdelen direct getoetst konden worden aan de technische i
 
 TODO: ontwikkeling van de POC, momenteel is bij de eerste deadline enkel literatuurstudie en procesanalyse uitgevoerd. De volgende fase is de ontwikkeling van de PoC, waarbij de volgende technische uitdagingen centraal staan:
 \begin{enumerate}
-    \item \textbf{Mobiele Hardware-integratie (Flutter):} De mobiele applicatie is ontwikkeld in Flutter, wat een cross-platform oplossing biedt voor zowel Android als iOS. 
-    De app maakt al gebruik van de ingebouwde NFC-functionaliteit die in een opgekomend gesprek met de copromotor gedetailleerder toegelicht zal worden.
+    \item \textbf{Mobiele Hardware-integratie (Flutter):} Aangezien de applicatie gebouwd is in Flutter, zal de PoC gebruik maken van Flutter-plugins om te kunnen samenwerken met de smartphone-hardware.
+    Hierbij wordt in de plaats van het handmatig scannen van identiteitskaarten gebruikt gemaakt van het uitlezen van NFC-chips in identiteitskaarten.
     \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie zal een AI-model geconfigureerd en geïntegreerd worden op een dataset van gezichtsafbeeldingen om liveness-detectie mogelijk te maken.
-    Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
-    \item \textbf{Backend-Orchestratie (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
+    Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces, waarbij een selfie of video van de gebruiker vergeleken wordt met de geverifieerde foto uit de NFC-chip of OCR-scan. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
+    \item \textbf{Backend samenwerking (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
     Hiervoor zal een script worden ontwikkeld om de check met de KBO te automatiseren, waarbij de app automatisch de naam van de bestuurder en het ondernemingsnummer zal uitlezen en vergelijken met de KBO-data. De taal en tools voor deze integratie
     moeten nog worden bepaald, maar er zal waarschijnlijk gebruik worden gemaakt van een combinatie van Flutter-plugins voor NFC en een REST API-call naar de KBO-database. 
     Hier wordt de GDPR-logica toegepast, zoals de automatische encryptie en de ingestelde retentieperiode van zes maanden voor auditdoeleinden.
