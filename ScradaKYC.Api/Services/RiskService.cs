@@ -1,3 +1,5 @@
+namespace ScradaKYC.Api.Services
+{
 public class RiskService
 {
     public string CalculateRisk(string status, string ondernemingsnummer)
@@ -16,4 +18,5 @@ public class RiskService
             _ => "High"
         };
     }
+}
 }

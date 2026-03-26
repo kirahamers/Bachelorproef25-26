@@ -1,44 +1,18 @@
-using System.Net.Http;
-using System.Text.Json;
-
-public class KboService
+namespace ScradaKYC.Api.Services
 {
-    private readonly HttpClient _httpClient;
-
-    public KboService(HttpClient httpClient)
+    public class KboService
     {
-        _httpClient = httpClient;
-    }
-
-    public async Task<object> GetCompanyAsync(string ondernemingsnummer)
-    {
-        var url = $"https://kbopub.economie.fgov.be/kbo-open-data/api/enterprise/{ondernemingsnummer}";
-
-        var response = await _httpClient.GetAsync(url);
-
-        if (!response.IsSuccessStatusCode)
+        //WSConsultAgentEnterprise webservice
+        public string[] GetBestuurders(string ondernemingsnummer)
         {
-            throw new Exception($"KBO API error: {response.StatusCode}");
+            //mock data
+            return new[] { "Jane Doe", "John Doe" };
         }
 
-        var content = await response.Content.ReadAsStringAsync();
-
-        var json = JsonDocument.Parse(content);
-
-        var root = json.RootElement;
-
-        var naam = root
-            .GetProperty("denomination")
-            .GetProperty("fullName")
-            .GetString();
-
-        var status = root.GetProperty("status").GetString();
-
-        return new
+        public string GetStatus(string ondernemingsnummer)
         {
-            enterprise_number = ondernemingsnummer,
-            name = naam,
-            status = status
-        };
+            //mock data
+            return "ACTIVE";
+        }
     }
 }
