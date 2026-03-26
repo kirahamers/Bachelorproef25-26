@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "C5cwOQnrqgMxSDk8peiDBULehsaA621lFNLTdrVvOBU=",
+  "Source": "ScradaKYC.Api",
+  "BasePath": "_content/ScradaKYC.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

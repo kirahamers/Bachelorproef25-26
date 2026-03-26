@@ -157,7 +157,20 @@ wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkt
 
 \section{Fase 3: Ontwikkeling van de Proof-of-Concept (TO-BE)}
 De kern van de bachelorproef is de ontwikkeling van de Proof-of-Concept (PoC). Hierbij is gekozen voor een agile ontwikkelingsmethode (iteratief ontwerpen), 
-waarbij functionele onderdelen direct getoetst konden worden aan de technische infrastructuur van Scrada. De architectuur van de PoC bestaat uit drie hoofdcomponenten die samenwerken:
+waarbij functionele onderdelen afgestemd konden worden aan de technische infrastructuur van Scrada. De architectuur van de PoC bestaat uit drie hoofdcomponenten die samenwerken:
+
+In deze Proof-of-Concept wordt gebruikgemaakt van de KBO Open Data webservice om bedrijfsgegevens in real-time op te halen. 
+Dit gebeurt via een .NET backend die fungeert als tussenlaag tussen de mobiele applicatie en de externe databron. 
+Deze architectuur voorkomt directe blootstelling van externe endpoints en laat toe om bijkomende validatielogica (zoals risicoscores) centraal te beheren.
+
+De KBO-webservice bevat geen volledige informatie over bestuurders of uiteindelijke begunstigden (UBO). 
+Daarom wordt deze integratie in de Proof-of-Concept beperkt tot basisverificatie van ondernemingsstatus en identificatiegegevens.
+
+Hoewel de controle op sanctielijsten via LSEG World-Check een cruciaal onderdeel is van het theoretische KYC-proces, 
+is de daadwerkelijke technische integratie hiervan buiten de scope (Out of Scope) van deze Proof-of-Concept gehouden. 
+LSEG is een gesloten, commercieel en duur B2B (Business-to-Business) systeem dat zware licenties en specifieke authenticatie vereist, 
+wat niet haalbaar is binnen de kaders van dit academisch onderzoek doordat een betaald en zakelijk contract hiervoor vereist is. 
+De focus van de PoC ligt primair op de automatische KBO-verificatie en de identiteitsmatching
 
 TODO: ontwikkeling van de POC, momenteel is bij de eerste deadline enkel literatuurstudie en procesanalyse uitgevoerd. De volgende fase is de ontwikkeling van de PoC, waarbij de volgende technische uitdagingen centraal staan:
 \begin{enumerate}
@@ -167,7 +180,7 @@ TODO: ontwikkeling van de POC, momenteel is bij de eerste deadline enkel literat
     Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces, waarbij een selfie of video van de gebruiker vergeleken wordt met de geverifieerde foto uit de NFC-chip of OCR-scan. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
     \item \textbf{Backend samenwerking (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
     Hiervoor zal een script worden ontwikkeld om de check met de KBO te automatiseren, waarbij de app automatisch de naam van de bestuurder en het ondernemingsnummer zal uitlezen en vergelijken met de KBO-data. De taal en tools voor deze integratie
-    moeten nog worden bepaald, maar er zal waarschijnlijk gebruik worden gemaakt van een combinatie van Flutter-plugins voor NFC en een REST API-call naar de KBO-database. 
+    moeten nog worden bepaald, maar er zal waarschijnlijk gebruik worden gemaakt van een combinatie van Flutter-plugins voor NFC en een backend API-call naar de KBO Open Data webservice.
     Hier wordt de GDPR-logica toegepast, zoals de automatische encryptie en de ingestelde retentieperiode van zes maanden voor auditdoeleinden.
 \end{enumerate}
 
