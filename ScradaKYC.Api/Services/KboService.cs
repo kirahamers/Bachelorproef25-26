@@ -6,7 +6,7 @@ namespace ScradaKYC.Api.Services
         public string[] GetBestuurders(string ondernemingsnummer)
         {
             //mock data
-            return new[] { "Jane Doe", "John Doe" };
+            return new[] { "Shakira Hamers" };
         }
 
         public string GetStatus(string ondernemingsnummer)

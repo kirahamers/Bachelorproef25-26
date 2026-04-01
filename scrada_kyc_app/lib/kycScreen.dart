@@ -3,11 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:pdfx/pdfx.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'camera.dart'; 
+import 'id_scanner_service.dart';
 
 class KycScreen extends StatefulWidget {
   const KycScreen({super.key});
@@ -21,108 +18,92 @@ class _KycScreenState extends State<KycScreen> {
   final TextEditingController _idScanController = TextEditingController();
   final TextEditingController _datumController = TextEditingController();
   
-  final TextRecognizer _recognizer = TextRecognizer();
+  final IdScannerService _idService = IdScannerService();
+  final ImagePicker _picker = ImagePicker();
 
   Map<String, dynamic>? _bedrijfsData;
   String _matchResultaat = "";
   bool _isLoading = false;
+  String? _frontPath;
+  String? _backPath;
 
   @override
   void dispose() {
-    _recognizer.close();
+    _idService.dispose();
+    _kboController.dispose();
+    _idScanController.dispose();
+    _datumController.dispose();
     super.dispose();
   }
 
-  void _verwerkScanData(String ruweTekst) {
-    String schoneTekst = ruweTekst.toLowerCase();
-    
-    bool isBelgian = schoneTekst.contains("belgie") || 
-                     schoneTekst.contains("belgique") || 
-                     schoneTekst.contains("identiteitskaart");
-                     
-    if (!isBelgian) {
-      _showError("Geen geldige Belgische eID herkend. Probeer een scherpere foto.");
-      return;
-    }
-
-    String gevondenNaam = "NIET GEVONDEN";
-    String gevondenDatum = "NIET GEVONDEN";
-
-    List<String> lijnen = ruweTekst.split('\n');
-    RegExp datumRegEx = RegExp(r"(\d{2}[\s.-]\d{2}[\s.-]\d{4})");
-
-    for (int i = 0; i < lijnen.length; i++) {
-      String lijn = lijnen[i].toLowerCase();
-
-      if ((lijn.contains("naam") || lijn.contains("nom")) && i + 1 < lijnen.length) {
-        String naam = lijnen[i + 1].trim();
-        if (!naam.toLowerCase().contains("belgi")) {
-          gevondenNaam = naam.toUpperCase();
-        }
-      }
-
-      //TODO: niet gevonden
-      if (lijn.contains("tot") || lijn.contains("au") || lijn.contains("valide")) {
-        String tekstBlok = lijn + " " + (i + 1 < lijnen.length ? lijnen[i+1].toLowerCase() : "");
-        Match? match = datumRegEx.firstMatch(tekstBlok);
-        if (match != null) gevondenDatum = match.group(0)!;
-      }
-    }
-
+void _processScannedData(String text, String path, bool isFront) {
     setState(() {
-      _idScanController.text = gevondenNaam;
-      _datumController.text = gevondenDatum;
+      if (isFront) _frontPath = path; else _backPath = path;
     });
 
-    _checkVervaldatum(gevondenDatum);
-  }
-
-  void _checkVervaldatum(String datumStr) {
-    try {
-      List<String> parts = datumStr.split(RegExp(r'[.\s-]'));
-      DateTime verval = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
-      if (verval.isBefore(DateTime.now())) {
-        _showError("WAARSCHUWING: Deze kaart is vervallen op $datumStr!");
-      }
-    } catch (_) {}
-  }
-
-  Future<void> _pickAndScanFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'png', 'pdf', 'jpeg'],
-    );
-
-    if (result != null && result.files.single.path != null) {
-      String filePath = result.files.single.path!;
-      String rawText = "";
-
+    //voor checksum
+    String clean = text.replaceAll(' ', '').replaceAll('\n', '').toUpperCase();
+    
+    if (clean.contains("IDBEL")) {
       try {
-        if (filePath.toLowerCase().endsWith('.pdf')) {
-          final document = await PdfDocument.openFile(filePath);
-          final page = await document.getPage(1);
-          final pageImage = await page.render(width: page.width * 2, height: page.height * 2);
-          
-          final tempDir = await getTemporaryDirectory();
-          final tempFile = File('${tempDir.path}/pdf_temp_image.png');
-          await tempFile.writeAsBytes(pageImage!.bytes);
-          
-          final inputImage = InputImage.fromFilePath(tempFile.path);
-          final recognized = await _recognizer.processImage(inputImage);
-          rawText = recognized.text;
-          
-          await page.close();
-          await document.close();
-        } else {
-          //TODO dit wegdoen
-          final inputImage = InputImage.fromFilePath(filePath);
-          final recognized = await _recognizer.processImage(inputImage);
-          rawText = recognized.text;
+        debugPrint("GELEZEN MRZ TEKST: $clean");
+
+        int startIndex = clean.indexOf("IDBEL");
+        
+        //kaartnummer
+        String kaartNummer = clean.substring(startIndex + 5, startIndex + 14);
+        
+        //checkdigit
+        String rawCheckDigit = clean.substring(startIndex + 14, startIndex + 15);
+        if (rawCheckDigit == "<" && clean.length > startIndex + 15) {
+           rawCheckDigit = clean.substring(startIndex + 15, startIndex + 16);
         }
-        _verwerkScanData(rawText);
+
+        int? checkDigit = int.tryParse(rawCheckDigit);
+        int berekendeChecksum = _idService.calculateIdModulo(kaartNummer);
+
+        if (checkDigit != null && berekendeChecksum == checkDigit) {
+          _showError("✅ Checksum geverifieerd (OK).");
+        } else {
+          _showError("Checksum mismatch (Berekend: $berekendeChecksum, Gevonden: $rawCheckDigit)");
+        }
+
+        List<String> lijnen = text.split('\n');
+        for (var lijn in lijnen) {
+          if (lijn.contains('<<') && !lijn.contains('IDBEL') && !RegExp(r'\d{6}').hasMatch(lijn)) {
+            String naamRaw = lijn.replaceAll('<<', ' ').replaceAll('<', ' ').trim();
+            
+            if (naamRaw.isNotEmpty) {
+              setState(() {
+                _idScanController.text = naamRaw.toUpperCase();
+              });
+              debugPrint("NAAM GEVONDEN: $naamRaw");
+            }
+          }
+        }
       } catch (e) {
-        _showError("Fout bij verwerken bestand: $e");
+        debugPrint("Parsing error achterkant: $e");
+        _showError("Fout bij het lezen van de achterkant.");
       }
+    } else if (isFront) {
+      //OCR check voor vervaldatum op voorkant
+      RegExp datumRegEx = RegExp(r"(\d{2}[\s.-]\d{2}[\s.-]\d{4})");
+      Match? match = datumRegEx.firstMatch(text);
+      if (match != null) {
+        setState(() {
+           _datumController.text = match.group(0)!;
+        });
+        _idService.checkVervaldatum(_datumController.text, _showError);
+      }
+    }
+  }
+
+  Future<void> _uploadImage(bool isFront) async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      //Gebruik de service om tekst te herkennen van de upload
+      String recognizedText = await _idService.getRecognizedText(image.path);
+      _processScannedData(recognizedText, image.path, isFront);
     }
   }
 
@@ -139,30 +120,44 @@ class _KycScreenState extends State<KycScreen> {
         _showError("Onderneming niet gevonden.");
       }
     } catch (e) {
-      _showError("Backend onbereikbaar: $e");
+      _showError("Backend onbereikbaar.");
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
   void _verifieerEID() {
-    if (_bedrijfsData == null) return;
-    final gescandeNaam = _idScanController.text.trim().toUpperCase();
-    
-    if (gescandeNaam == "NIET GEVONDEN" || gescandeNaam.isEmpty) {
-      _showError("Scan of upload eerst een geldig identiteitsbewijs.");
-      return;
+  if (_bedrijfsData == null || _idScanController.text.isEmpty) {
+    _showError("Scan eerst de ID en raadpleeg de KBO.");
+    return;
+  }
+
+  final scannedName = _idScanController.text.trim().toUpperCase().split(' ');
+  
+  List<String> bestuurders = List<String>.from(_bedrijfsData!['directors']);
+  
+  bool isBestuurder = false;
+
+  for (var kboNaam in bestuurders) {
+    String kboSchoon = kboNaam.toUpperCase();
+    int matches = 0;
+    for (var deel in scannedName) {
+      if (deel.length > 2 && kboSchoon.contains(deel)) {
+        matches++;
+      }
     }
 
-    List<String> bestuurders = List<String>.from(_bedrijfsData!['directors']);
-    bool isBestuurder = bestuurders.any((b) => 
-      b.toUpperCase().contains(gescandeNaam) || gescandeNaam.contains(b.toUpperCase())
-    );
+    // Als er minstens 2 woorden matchen (meestal Voornaam + Achternaam), vinden we het goed
+    if (matches >= 2) {
+      isBestuurder = true;
+      break;
+    }
+  }
 
     setState(() {
       _matchResultaat = isBestuurder 
-          ? "IDENTITEIT BEVESTIGD \nBevoegde bestuurder gevonden." 
-          : "TOEGANG GEWEIGERD \nDeze persoon is geen bestuurder volgens de KBO.";
+          ? "IDENTITEIT BEVESTIGD\nBevoegde bestuurder gevonden." 
+          : "TOEGANG GEWEIGERD\nGeen match gevonden in KBO directors.";
     });
   }
 
@@ -170,57 +165,107 @@ class _KycScreenState extends State<KycScreen> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 4)));
   }
 
+  Widget _buildStepButton(String label, bool isFront, bool done) {
+    return Expanded(
+      child: Column(
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (c) => CameraScannerWidget(
+                  instructie: "Scan $label",
+                  onScanComplete: (txt, path) => _processScannedData(txt, path, isFront),
+                ),
+              ),
+            ),
+            icon: Icon(isFront ? Icons.face : Icons.vpn_key, color: done ? Colors.green : Colors.white),
+            label: Text(label),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: done ? Colors.green.shade700 : Colors.blueGrey,
+              foregroundColor: Colors.white,
+            ),
+          ),
+          TextButton.icon(
+            onPressed: () => _uploadImage(isFront),
+            icon: const Icon(Icons.upload_file, size: 16),
+            label: const Text("PNG/JPG UPLOAD", style: TextStyle(fontSize: 10)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Scrada KYC Portaal"), backgroundColor: const Color(0xFF8B0000), foregroundColor: Colors.white),
+      appBar: AppBar(
+        title: const Text("Scrada KYC Portaal"),
+        backgroundColor: const Color(0xFF8B0000),
+        foregroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             _buildCard("1. KBO Bedrijfscheck", Icons.business, [
-              TextField(controller: _kboController, decoration: const InputDecoration(labelText: "Ondernemingsnummer (bijv. 0400.378.485)")),
+              TextField(
+                controller: _kboController,
+                decoration: const InputDecoration(labelText: "Ondernemingsnummer"),
+              ),
               const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _isLoading ? null : _voerKycUit,
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B0000), foregroundColor: Colors.white),
-                child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text("RAADPLEEG KBO"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF8B0000),
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading 
+                    ? const CircularProgressIndicator(color: Colors.white) 
+                    : const Text("RAADPLEEG KBO"),
               ),
             ]),
+
             if (_bedrijfsData != null) ...[
               _buildBedrijfsInfo(),
               _buildCard("2. Identiteitscontrole", Icons.badge, [
-                TextField(controller: _idScanController, decoration: const InputDecoration(labelText: "Gescande Naam")),
-                TextField(controller: _datumController, decoration: const InputDecoration(labelText: "Vervaldatum eID")),
-                const SizedBox(height: 15),
+                TextField(
+                  controller: _idScanController,
+                  decoration: const InputDecoration(labelText: "Naam uit ID"),
+                ),
+                TextField(
+                  controller: _datumController,
+                  decoration: const InputDecoration(labelText: "Vervaldatum"),
+                ),
+                const SizedBox(height: 20),
+                
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (c) => CameraScannerWidget(onTextDetected: _verwerkScanData))),
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text("SCAN"),
-                    ),
-                    ElevatedButton.icon(
-                      onPressed: _pickAndScanFile,
-                      icon: const Icon(Icons.upload_file),
-                      label: const Text("PDF / FOTO"),
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey, foregroundColor: Colors.white),
-                    ),
+                    _buildStepButton("VOORKANT", true, _frontPath != null),
+                    const SizedBox(width: 10),
+                    _buildStepButton("ACHTERKANT", false, _backPath != null),
                   ],
                 ),
+                
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black87, foregroundColor: Colors.white),
-                    onPressed: _verifieerEID, 
-                    child: const Text("VERIFIEER BESTUURDER")
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black87,
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: _verifieerEID,
+                    child: const Text("VERIFIEER BESTUURDER"),
                   ),
                 ),
                 if (_matchResultaat.isNotEmpty) ...[
                   const SizedBox(height: 20),
-                  Text(_matchResultaat, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text(
+                    _matchResultaat,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ]
               ]),
             ]
@@ -231,10 +276,10 @@ class _KycScreenState extends State<KycScreen> {
   }
 
   Widget _buildCard(String title, IconData icon, List<Widget> children) {
-    return Card(child: Padding(padding: const EdgeInsets.all(15), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Row(children: [Icon(icon, color: const Color(0xFF8B0000)), const SizedBox(width: 10), Text(title, style: const TextStyle(fontWeight: FontWeight.bold))]), const Divider(), ...children])));
+    return Card(elevation: 4, margin: const EdgeInsets.only(bottom: 15), child: Padding(padding: const EdgeInsets.all(15), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Row(children: [Icon(icon, color: const Color(0xFF8B0000)), const SizedBox(width: 10), Text(title, style: const TextStyle(fontWeight: FontWeight.bold))]), const Divider(), ...children])));
   }
 
   Widget _buildBedrijfsInfo() {
-    return Card(color: Colors.green.shade50, child: ListTile(title: Text(_bedrijfsData!['name'], style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text("Gekende Bestuurders: ${_bedrijfsData!['directors'].join(', ')}")));
+    return Card(color: Colors.green.shade50, child: ListTile(title: Text(_bedrijfsData!['name'], style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text("Bestuurders: ${_bedrijfsData!['directors'].join(', ')}")));
   }
 }
