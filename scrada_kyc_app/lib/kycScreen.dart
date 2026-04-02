@@ -46,14 +46,12 @@ void _processScannedData(String text, String path, bool isFront) {
     
 if (clean.contains("IDBEL")) {
     try {
-      debugPrint("GELEZEN MRZ TEKST: $clean");
 
       int belIndex = clean.lastIndexOf("BEL"); 
       
       if (belIndex != -1 && clean.substring(belIndex).length >= 14) {
         
         String rrnReeks = fixOcrErrors(clean.substring(belIndex + 3, belIndex + 14));
-        debugPrint("GEVONDEN RRN REEKS VOOR CHECK: $rrnReeks");
 
         bool isGeldig = _idService.checkBelgianRrn(rrnReeks);
 
