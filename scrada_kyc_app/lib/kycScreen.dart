@@ -44,29 +44,27 @@ void _processScannedData(String text, String path, bool isFront) {
     //voor checksum
     String clean = text.replaceAll(' ', '').replaceAll('\n', '').toUpperCase();
     
-    if (clean.contains("IDBEL")) {
-      try {
-        debugPrint("GELEZEN MRZ TEKST: $clean");
+if (clean.contains("IDBEL")) {
+    try {
+      debugPrint("GELEZEN MRZ TEKST: $clean");
 
-        int startIndex = clean.indexOf("IDBEL");
+      int belIndex = clean.lastIndexOf("BEL"); 
+      
+      if (belIndex != -1 && clean.substring(belIndex).length >= 14) {
         
-        //kaartnummer
-        String kaartNummer = clean.substring(startIndex + 5, startIndex + 14);
-        
-        //checkdigit
-        String rawCheckDigit = clean.substring(startIndex + 14, startIndex + 15);
-        if (rawCheckDigit == "<" && clean.length > startIndex + 15) {
-           rawCheckDigit = clean.substring(startIndex + 15, startIndex + 16);
-        }
+        String rrnReeks = fixOcrErrors(clean.substring(belIndex + 3, belIndex + 14));
+        debugPrint("GEVONDEN RRN REEKS VOOR CHECK: $rrnReeks");
 
-        int? checkDigit = int.tryParse(rawCheckDigit);
-        int berekendeChecksum = _idService.calculateIdModulo(kaartNummer);
+        bool isGeldig = _idService.checkBelgianRrn(rrnReeks);
 
-        if (checkDigit != null && berekendeChecksum == checkDigit) {
-          _showError("✅ Checksum geverifieerd (OK).");
+        if (isGeldig) {
+          _showError("Rijksregister Checksum OK");
         } else {
-          _showError("Checksum mismatch (Berekend: $berekendeChecksum, Gevonden: $rawCheckDigit)");
+          _showError("Checksum mismatch (RRN: $rrnReeks). Scan opnieuw.");
         }
+      } else {
+        _showError("RRN niet volledig gelezen. Probeer opnieuw");
+      }
 
         List<String> lijnen = text.split('\n');
         for (var lijn in lijnen) {
@@ -98,18 +96,32 @@ void _processScannedData(String text, String path, bool isFront) {
     }
   }
 
+  //met behulp van https://communityhistoryarchives.com/100-common-ocr-letter-misinterpretations/
+  String fixOcrErrors(String input) {
+  return input
+      .replaceAll(RegExp(r'[oOQCDcC]'), '0')
+      .replaceAll(RegExp(r'[LI|liJt]'), '1')
+      .replaceAll(RegExp(r'[zZ]'), '2')
+      .replaceAll(RegExp(r'[sS]'), '5')
+      .replaceAll(RegExp(r'[b]'), '6')
+      .replaceAll(RegExp(r'[B]'), '8')
+      .replaceAll(RegExp(r'[gpq]'), '9');
+}
+
   Future<void> _uploadImage(bool isFront) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      //Gebruik de service om tekst te herkennen van de upload
+
       String recognizedText = await _idService.getRecognizedText(image.path);
       _processScannedData(recognizedText, image.path, isFront);
+
     }
   }
 
   Future<void> _voerKycUit() async {
     setState(() { _isLoading = true; _bedrijfsData = null; _matchResultaat = ""; });
     try {
+
       final nummer = _kboController.text.replaceAll('.', '').replaceAll(' ', '');
       final url = Uri.parse('http://10.0.2.2:5012/api/kyc/$nummer');
       final response = await http.get(url).timeout(const Duration(seconds: 5));
@@ -124,36 +136,34 @@ void _processScannedData(String text, String path, bool isFront) {
     } finally {
       setState(() => _isLoading = false);
     }
-  }
 
-  void _verifieerEID() {
+  }
+  
+
+void _verifieerEID() {
   if (_bedrijfsData == null || _idScanController.text.isEmpty) {
     _showError("Scan eerst de ID en raadpleeg de KBO.");
     return;
   }
 
-  final scannedName = _idScanController.text.trim().toUpperCase().split(' ');
+  final idNaam = _idScanController.text.toUpperCase();
   
   List<String> bestuurders = List<String>.from(_bedrijfsData!['directors']);
-  
   bool isBestuurder = false;
 
   for (var kboNaam in bestuurders) {
-    String kboSchoon = kboNaam.toUpperCase();
-    int matches = 0;
-    for (var deel in scannedName) {
-      if (deel.length > 2 && kboSchoon.contains(deel)) {
-        matches++;
-      }
-    }
+    List<String> kboWoorden = kboNaam.toUpperCase().split(' ')
+        .where((w) => w.length > 1)
+        .toList();
 
-    // Als er minstens 2 woorden matchen (meestal Voornaam + Achternaam), vinden we het goed
-    if (matches >= 2) {
+    //checken of alle woorden in KBO naam voorkomen in ID naam (indien dat de klant meerdere namen heeft en de kbo ze niet allemaal bevat)
+    bool alleKboWoordenOpId = kboWoorden.every((woord) => idNaam.contains(woord));
+
+    if (alleKboWoordenOpId && kboWoorden.isNotEmpty) {
       isBestuurder = true;
       break;
     }
   }
-
     setState(() {
       _matchResultaat = isBestuurder 
           ? "IDENTITEIT BEVESTIGD\nBevoegde bestuurder gevonden." 

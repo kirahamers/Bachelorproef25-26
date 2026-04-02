@@ -3,17 +3,28 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 class IdScannerService {
   final TextRecognizer _recognizer = TextRecognizer();
 
-  //Belgische RSZV checkdigit
-  int calculateIdModulo(String data) {
-    List<int> weights = [7, 3, 1];
-    int sum = 0;
-    for (int i = 0; i < data.length; i++) {
-      int code = data.codeUnitAt(i);
-      int val = (code >= 48 && code <= 57) ? code - 48 : (code >= 65 && code <= 90 ? code - 55 : 0);
-      sum += val * weights[i % 3];
+//overgenomen van https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/
+bool checkBelgianRrn(String rrn) {
+  try {
+    int kaartChecksum = int.parse(rrn.substring(9, 11));
+
+    String partToCalculate = rrn.substring(0, 9);
+    int rrnInt = int.parse(partToCalculate);
+
+    int berekendeChecksum = 97 - (rrnInt % 97);
+
+    if (kaartChecksum == berekendeChecksum) {
+      return true;
     }
-    return sum % 10;
+
+    int rrnInt2000 = int.parse("2$partToCalculate");
+    int berekendeChecksum2000 = 97 - (rrnInt2000 % 97);
+
+    return kaartChecksum == berekendeChecksum2000;
+  } catch (e) {
+    return false;
   }
+}
 
   Future<String> getRecognizedText(String path) async {
     final inputImage = InputImage.fromFilePath(path);
