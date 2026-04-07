@@ -26,6 +26,10 @@ class _KycScreenState extends State<KycScreen> {
   bool _isLoading = false;
   String? _frontPath;
   String? _backPath;
+  File? _croppedFaceFile;
+  File? _liveSelfieFile;
+  double? _faceMatchScore;
+  File? _face;
 
   @override
   void dispose() {
@@ -136,7 +140,54 @@ if (clean.contains("IDBEL")) {
     }
 
   }
-  
+
+  Future<void> _BiometricCheck() async {
+if (_frontPath == null) {
+      _showError("Scan eerst de voorkant van uw identiteitskaart.");
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+      _faceMatchScore = null;
+    
+    });
+
+    try {
+      final File? face = await _idService.extractFace(_frontPath!);
+if (face == null) {
+      _showError("Geen gezicht gedetecteerd op de ID-kaart.");
+      setState(() => _isLoading = false);
+      return;
+    }
+
+      final XFile? liveImage = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+
+      if(liveImage != null) {
+        File liveFace = File(liveImage.path);
+
+        double matchScore = await _idService.getSimilarityScore(face, liveFace);
+
+          setState(() {
+            _face = face;
+            _liveSelfieFile = liveFace;
+            _faceMatchScore = matchScore;
+          
+          if (matchScore < 1.0) {
+            _matchResultaat = "GEZICHTSVERGELIJKING OK\nMatch score: ${matchScore.toStringAsFixed(2)}";
+          } else {
+            _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nMatch score: ${matchScore.toStringAsFixed(2)}";
+          }
+      });
+    }
+  } catch (e) {
+    _showError("Er is een fout opgetreden bij de biometrie: $e");
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
+  }
+}
 
 void _verifieerEID() {
   if (_bedrijfsData == null || _idScanController.text.isEmpty) {
