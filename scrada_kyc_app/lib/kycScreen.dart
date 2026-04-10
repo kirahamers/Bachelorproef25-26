@@ -31,6 +31,16 @@ class _KycScreenState extends State<KycScreen> {
   double? _faceMatchScore;
   File? _face;
 
+@override
+  void initState() {
+    super.initState();
+    _idService.loadModel().then((_) {
+      debugPrint("AI Model succesvol geladen.");
+    }).catchError((e) {
+      debugPrint("Fout bij laden AI model: $e");
+    });
+  }
+
   @override
   void dispose() {
     _idService.dispose();
@@ -141,51 +151,58 @@ if (clean.contains("IDBEL")) {
 
   }
 
-  Future<void> _BiometricCheck() async {
-if (_frontPath == null) {
-      _showError("Scan eerst de voorkant van uw identiteitskaart.");
-      return;
-    }
+ Future<void> _BiometricCheck() async {
+  if (_frontPath == null || _frontPath!.isEmpty) {
+    _showError("Pad naar ID-voorkant is leeg. Scan de kaart opnieuw.");
+    return;
+  }
 
-    setState(() {
-      _isLoading = true;
-      _faceMatchScore = null;
+  setState(() {
+    _isLoading = true;
+    _faceMatchScore = null;
+  });
+
+  try {
+    final File? face = await _idService.extractFace(_frontPath!);
     
-    });
-
-    try {
-      final File? face = await _idService.extractFace(_frontPath!);
-if (face == null) {
-      _showError("Geen gezicht gedetecteerd op de ID-kaart.");
+    if (face == null) {
+      _showError("Geen gezicht gedetecteerd op de ID-kaart. Zorg voor een duidelijke foto.");
       setState(() => _isLoading = false);
       return;
     }
 
-      final XFile? liveImage = await _picker.pickImage(source: ImageSource.camera, preferredCameraDevice: CameraDevice.front);
+    final XFile? liveImage = await _picker.pickImage(
+      source: ImageSource.camera, 
+      preferredCameraDevice: CameraDevice.front
+    );
 
-      if(liveImage != null) {
-        File liveFace = File(liveImage.path);
-
-        double matchScore = await _idService.getSimilarityScore(face, liveFace);
-
-          setState(() {
-            _face = face;
-            _liveSelfieFile = liveFace;
-            _faceMatchScore = matchScore;
-          
-          if (matchScore < 1.0) {
-            _matchResultaat = "GEZICHTSVERGELIJKING OK\nMatch score: ${matchScore.toStringAsFixed(2)}";
-          } else {
-            _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nMatch score: ${matchScore.toStringAsFixed(2)}";
-          }
-      });
+    if (liveImage == null) {
+      _showError("Selfie geannuleerd.");
+      setState(() => _isLoading = false);
+      return;
     }
-  } catch (e) {
-    _showError("Er is een fout opgetreden bij de biometrie: $e");
-  } finally {
+
+    File liveFace = File(liveImage.path);
+    
+    double matchScore = await _idService.getSimilarityScore(face, liveFace);
+
     setState(() {
-      _isLoading = false;
+      _face = face;
+      _liveSelfieFile = liveFace;
+      _faceMatchScore = matchScore;
+      
+      if (matchScore < 1.0) {
+        _matchResultaat = "GEZICHTSVERGELIJKING OK\nMatch score: ${matchScore.toStringAsFixed(2)}";
+      } else {
+        _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nMatch score: ${matchScore.toStringAsFixed(2)}";
+      }
     });
+
+  } catch (e) {
+    _showError("Fout bij biometrie: $e");
+    debugPrint("BIOMETRIE ERROR DETAIL: $e");
+  } finally {
+    setState(() => _isLoading = false);
   }
 }
 
@@ -327,6 +344,51 @@ void _verifieerEID() {
                   ),
                 ]
               ]),
+             if (_frontPath != null) 
+  _buildCard("3. Biometrische Verificatie", Icons.face_retouching_natural, [
+    if (_faceMatchScore != null) ...[
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          if (_face != null) 
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(_face!, width: 100, height: 100, fit: BoxFit.cover),
+            ),
+          if (_liveSelfieFile != null) 
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(_liveSelfieFile!, width: 100, height: 100, fit: BoxFit.cover),
+            ),
+        ],
+      ),
+      const SizedBox(height: 15),
+      Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: (_faceMatchScore! < 1.5) ? Colors.green.shade100 : Colors.red.shade100,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Text(
+          _matchResultaat,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      const SizedBox(height: 15),
+    ],
+
+    ElevatedButton.icon(
+      onPressed: _isLoading ? null : _BiometricCheck,
+      icon: const Icon(Icons.camera_front),
+      label: const Text("VERGELIJK GEZICHTEN"),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF8B0000), // Rood van je thema
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+    ),
+  ]),
             ]
           ],
         ),

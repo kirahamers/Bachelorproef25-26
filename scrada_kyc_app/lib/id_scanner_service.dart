@@ -1,10 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:image/image.dart' as img;
-import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite_flutter_plus/tflite_flutter_plus.dart';
 
 class IdScannerService {
   final TextRecognizer _recognizer = TextRecognizer();
@@ -18,7 +19,11 @@ class IdScannerService {
   Interpreter? _interpreter;
 
   Future<void> loadModel() async {
-    _interpreter = await Interpreter.fromAsset('assets/mobile_facenet.tflite');
+    try {
+      _interpreter = await Interpreter.fromAsset('mobilefacenet.tflite');
+    } catch (e) {
+      debugPrint("Fout bij laden model: $e");
+    }
   }
 
 //overgenomen van https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/
@@ -75,6 +80,14 @@ Future<File?> extractFace(String imagePath) async {
 
   //embedding van de foto berekenen adhv tflite model
   Future<List<double>> _preprocessImage(File imageFile) async {
+    if (_interpreter == null) {
+      await loadModel();
+    }
+
+    if (_interpreter == null) {
+      throw Exception("AI model kon niet geladen worden.");
+    }
+
     final bytes = await imageFile.readAsBytes();
     final image = img.decodeImage(bytes);
 

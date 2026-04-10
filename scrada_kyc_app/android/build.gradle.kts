@@ -1,3 +1,5 @@
+import com.android.build.gradle.LibraryExtension
+
 allprojects {
     repositories {
         google()
@@ -21,4 +23,14 @@ subprojects {
 
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
+}
+subprojects {
+    if (project.name.contains("tflite_flutter")) {
+        plugins.withId("com.android.library") {
+            configure<com.android.build.gradle.LibraryExtension> {
+                namespace = "com.tflite.flutter.fixed"
+                compileSdk = 34 
+            }
+        }
+    }
 }
