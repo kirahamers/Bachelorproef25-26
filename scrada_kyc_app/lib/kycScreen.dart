@@ -26,7 +26,6 @@ class _KycScreenState extends State<KycScreen> {
   bool _isLoading = false;
   String? _frontPath;
   String? _backPath;
-  File? _croppedFaceFile;
   File? _liveSelfieFile;
   double? _faceMatchScore;
   File? _face;
@@ -151,56 +150,54 @@ if (clean.contains("IDBEL")) {
 
   }
 
- Future<void> _BiometricCheck() async {
+Future<void> _biometricCheck() async {
   if (_frontPath == null || _frontPath!.isEmpty) {
-    _showError("Pad naar ID-voorkant is leeg. Scan de kaart opnieuw.");
+    _showError("Scan eerst de ID-kaart.");
     return;
   }
 
-  setState(() {
-    _isLoading = true;
-    _faceMatchScore = null;
-  });
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (c) => CameraScannerWidget(
+        instructie: "Scan gezicht", 
+        onScanComplete: (txt, path) async {
+          await _checkBiometrics(path);
+        },
+      ),
+    ),
+  );
+}
+
+Future<void> _checkBiometrics(String selfiePath) async {
+  setState(() => _isLoading = true);
 
   try {
-    final File? face = await _idService.extractFace(_frontPath!);
+    final File? faceIdCrop = await _idService.extractFace(_frontPath!);
     
-    if (face == null) {
-      _showError("Geen gezicht gedetecteerd op de ID-kaart. Zorg voor een duidelijke foto.");
-      setState(() => _isLoading = false);
+    final File? selfieCrop = await _idService.extractFace(selfiePath);
+
+    if (faceIdCrop == null || selfieCrop == null) {
+      _showError("Gezicht niet herkend. Zorg voor goede verlichting.");
       return;
     }
 
-    final XFile? liveImage = await _picker.pickImage(
-      source: ImageSource.camera, 
-      preferredCameraDevice: CameraDevice.front
-    );
-
-    if (liveImage == null) {
-      _showError("Selfie geannuleerd.");
-      setState(() => _isLoading = false);
-      return;
-    }
-
-    File liveFace = File(liveImage.path);
-    
-    double matchScore = await _idService.getSimilarityScore(face, liveFace);
+//vectoren vergelijken in embeddings
+    double matchScore = await _idService.getSimilarityScore(faceIdCrop, selfieCrop);
 
     setState(() {
-      _face = face;
-      _liveSelfieFile = liveFace;
+      _face = faceIdCrop;
+      _liveSelfieFile = selfieCrop;
       _faceMatchScore = matchScore;
       
-      if (matchScore < 1.0) {
-        _matchResultaat = "GEZICHTSVERGELIJKING OK\nMatch score: ${matchScore.toStringAsFixed(2)}";
+      if (matchScore > 0.70) {
+        _matchResultaat = "GEZICHTSVERGELIJKING OK\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
       } else {
-        _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nMatch score: ${matchScore.toStringAsFixed(2)}";
+        _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
       }
     });
-
   } catch (e) {
-    _showError("Fout bij biometrie: $e");
-    debugPrint("BIOMETRIE ERROR DETAIL: $e");
+    _showError("Biometrie fout: $e");
   } finally {
     setState(() => _isLoading = false);
   }
@@ -379,11 +376,11 @@ void _verifieerEID() {
     ],
 
     ElevatedButton.icon(
-      onPressed: _isLoading ? null : _BiometricCheck,
+      onPressed: _isLoading ? null : _biometricCheck,
       icon: const Icon(Icons.camera_front),
       label: const Text("VERGELIJK GEZICHTEN"),
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8B0000), // Rood van je thema
+        backgroundColor: const Color(0xFF8B0000),
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),

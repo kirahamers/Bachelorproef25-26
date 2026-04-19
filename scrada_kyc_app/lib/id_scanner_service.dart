@@ -16,6 +16,7 @@ class IdScannerService {
     ),
   );
 
+//TFLite model voor gezichtsvergelijking met gebruik van MobileFaceNet
   Interpreter? _interpreter;
 
   Future<void> loadModel() async {
@@ -49,36 +50,65 @@ bool checkBelgianRrn(String rrn) {
   }
 }
 
-Future<File?> extractFace(String imagePath) async {
-    final inputImage = InputImage.fromFilePath(imagePath);
-    final List<Face> faces = await _faceDetector.processImage(inputImage);
-
-    if (faces.isEmpty) return null;
-
-    final face = faces.first;
-    final rect = face.boundingBox;
-
-    final bytes = await File(imagePath).readAsBytes();
-    final originalImage = img.decodeImage(bytes);
-
-    if (originalImage == null) return null;
-
-    //croppen adhv coordinaten van face detection
-    final croppedFace = img.copyCrop(
-      originalImage,
-      x: rect.left.toInt(),
-      y: rect.top.toInt(),
-      width: rect.width.toInt(),
-      height: rect.height.toInt(),
-    );
-
-
-    final tempDir = Directory.systemTemp;
-    final faceFile = File('${tempDir.path}/face_id_crop.jpg');
-    return await faceFile.writeAsBytes(img.encodeJpg(croppedFace));
+//cosine similarity
+double _calculateCosineSimilarity(List<double> e1, List<double> e2) {
+  double dotProduct = 0.0;
+  double normA = 0.0;
+  double normB = 0.0;
+  for (int i = 0; i < e1.length; i++) {
+    dotProduct += e1[i] * e2[i];
+    normA += e1[i] * e1[i];
+    normB += e2[i] * e2[i];
   }
+  return dotProduct / (sqrt(normA) * sqrt(normB));
+}
 
-  //embedding van de foto berekenen adhv tflite model
+Future<File?> extractFace(String imagePath) async {
+  final inputImage = InputImage.fromFilePath(imagePath);
+  //ML Kit om gezicht te detecteren + croppen
+  final List<Face> faces = await _faceDetector.processImage(inputImage);
+
+  if (faces.isEmpty) return null;
+
+  final face = faces.first;
+  final rect = face.boundingBox;
+
+//pixels lezen
+  final bytes = await File(imagePath).readAsBytes();
+  img.Image? originalImage = img.decodeImage(bytes);
+
+  if (originalImage == null) return null;
+
+  int padding = (rect.width * 0.05).toInt();
+  
+  //voor crop
+  int x = (rect.left - padding).clamp(0, originalImage.width).toInt();
+  int y = (rect.top - padding).clamp(0, originalImage.height).toInt();
+  int w = (rect.width + padding * 2).clamp(0, originalImage.width - x).toInt();
+  int h = (rect.height + padding * 2).clamp(0, originalImage.height - y).toInt();
+
+final croppedFace = img.copyCrop(originalImage, x: x, y: y, width: w, height: h);
+
+//voor belichting en contrast gelijk te maken met id foto
+  final normalizedFace = img.adjustColor(
+    croppedFace, 
+    contrast: 1.2,
+    brightness: 1.0, 
+  );
+
+  final tempDir = Directory.systemTemp;
+  final faceFile = File('${tempDir.path}/face_id_crop_${DateTime.now().millisecondsSinceEpoch}.jpg');
+  
+  return await faceFile.writeAsBytes(img.encodeJpg(normalizedFace));
+}
+
+Future<double> getSimilarityScore(File faceId, File selfie) async {
+  final embedding1 = await _preprocessImage(faceId);
+  final embedding2 = await _preprocessImage(selfie);
+
+  return _calculateCosineSimilarity(embedding1, embedding2);
+}
+
   Future<List<double>> _preprocessImage(File imageFile) async {
     if (_interpreter == null) {
       await loadModel();
@@ -93,40 +123,38 @@ Future<File?> extractFace(String imagePath) async {
 
     if (image == null) return [];
 
+//rescaling voor het model, MobileFaceNet is 112x112 input
     final resizedImage = img.copyResize(image, width: 112, height: 112);
 
-    //pixels normaliseren naar waarden tussen -1 en 1 (verwijzing naar ml classification)
+    double sum = 0;
+    //mean substraction
+    for (var pixel in resizedImage) {
+      sum += pixel.r + pixel.g + pixel.b;
+    }
+    double mean = sum / (112 * 112 * 3);
+
+  //omzetten naar FLoat32 voor TFLite
     var input = Float32List(1 * 112 * 112 * 3);
     var buffer = Float32List.view(input.buffer);
     int pixelIndex = 0;
-    for (var y = 0; y < 112; y++) {
-      for (var x = 0; x < 112; x++) {
-        var pixel = resizedImage.getPixel(x, y);
-        buffer[pixelIndex++] = (pixel.r - 128) / 128.0;
-        buffer[pixelIndex++] = (pixel.g - 128) / 128.0;
-        buffer[pixelIndex++] = (pixel.b - 128) / 128.0;
-      }
+
+  for (var y = 0; y < 112; y++) {
+    for (var x = 0; x < 112; x++) {
+      var pixel = resizedImage.getPixel(x, y);
+      //(pixelwaarde - gemiddelde) / 128
+      buffer[pixelIndex++] = (pixel.r - mean) / 128.0;
+      buffer[pixelIndex++] = (pixel.g - mean) / 128.0;
+      buffer[pixelIndex++] = (pixel.b - mean) / 128.0;
     }
-
-    //model uitvoeren
-    var output = List.filled(1 * 192, 0.0).reshape([1, 192]);
-    _interpreter!.run(input.reshape([1, 112, 112, 3]), output);
-
-    return List<double>.from(output[0]);
   }
 
-  Future<double> getSimilarityScore(File faceId, File selfie) async {
-    final embedding1 = await _preprocessImage(faceId);
-    final embedding2 = await _preprocessImage(selfie);
+  var output = List.filled(1 * 192, 0.0).reshape([1, 192]);
+  _interpreter!.run(input.reshape([1, 112, 112, 3]), output);
 
-    //euclidian distance
-    double distance = 0;
-    for (int i = 0; i < embedding1.length; i++) {
-      distance += pow((embedding1[i] - embedding2[i]), 2);
-    }
-    return sqrt(distance);
+  return List<double>.from(output[0]);
   }
 
+//OCR met ML Kit
   Future<String> getRecognizedText(String path) async {
     final inputImage = InputImage.fromFilePath(path);
     final RecognizedText recognizedText = await _recognizer.processImage(inputImage);

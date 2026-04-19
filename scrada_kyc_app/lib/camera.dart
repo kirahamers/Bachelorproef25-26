@@ -22,7 +22,6 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
   final _recognizer = TextRecognizer();
   bool _isInitializing = true;
   int _selectedCameraIndex = 0;
-
   FlashMode _currentFlashMode = FlashMode.off;
 
   @override
@@ -35,8 +34,14 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
     final cameras = await availableCameras();
     if (cameras.isEmpty) return;
 
+    int cameraIndex = 0; 
+    if (widget.instructie.toLowerCase().contains("gezicht") || widget.instructie.toLowerCase().contains("selfie")) {
+      cameraIndex = cameras.indexWhere((c) => c.lensDirection == CameraLensDirection.front);
+      if (cameraIndex == -1) cameraIndex = 0;
+    }
+
     _controller = CameraController(
-      cameras[_selectedCameraIndex],
+      cameras[cameraIndex],
       ResolutionPreset.high,
       enableAudio: false,
     );
@@ -70,7 +75,6 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
     _controller?.setFlashMode(FlashMode.off);
     _controller?.dispose();
     _recognizer.close();
-
     super.dispose();
   }
 
@@ -80,30 +84,83 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
       return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator()));
     }
 
+    bool isGezicht = widget.instructie.toLowerCase().contains("gezicht") || widget.instructie.toLowerCase().contains("selfie");
+
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(title: Text(widget.instructie), 
-      backgroundColor: Colors.transparent,
-      actions: [
-        IconButton(
-          icon: Icon(_currentFlashMode == FlashMode.off ? Icons.flash_off : Icons.flash_on, color: Colors.white),
-          onPressed: _toggleFlash,
-        ),
-      ],
+      appBar: AppBar(
+        title: Text(widget.instructie), 
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: Icon(_currentFlashMode == FlashMode.off ? Icons.flash_off : Icons.flash_on, color: Colors.white),
+            onPressed: _toggleFlash,
+          ),
+        ],
       ),
       body: Stack(
         children: [
           Center(child: CameraPreview(_controller!)),
-          Center(
+
+          ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.7),
+              BlendMode.srcOut,
+            ),
+            child: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    backgroundBlendMode: BlendMode.dstOut,
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: isGezicht ? 300 : 220,
+                    width: isGezicht ? 220 : 340,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: isGezicht 
+                        ? BorderRadius.all(Radius.elliptical(220, 300))
+                        : BorderRadius.circular(15),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          //rand in camera
+          Align(
+            alignment: Alignment.center,
             child: Container(
-              width: 320,
-              height: 200,
+              height: isGezicht ? 300 : 220,
+              width: isGezicht ? 220 : 340,
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.red, width: 3),
-                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: Colors.white, width: 2),
+                borderRadius: isGezicht 
+                        ? BorderRadius.all(Radius.elliptical(220, 300))
+                        : BorderRadius.circular(15),
               ),
             ),
           ),
+
+          //instructie
+          Positioned(
+            top: 40,
+            left: 0,
+            right: 0,
+            child: Text(
+              isGezicht ? "Plaats uw gezicht in het ovaal" : "Plaats de ID-kaart in het kader",
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+          ),
+
+          //knop
           Positioned(
             bottom: 40, left: 0, right: 0,
             child: Center(
