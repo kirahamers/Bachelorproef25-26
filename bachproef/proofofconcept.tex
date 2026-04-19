@@ -142,21 +142,19 @@ Tijdens de ontwikkeling ontstond een versieconflict tussen de plugins \texttt{ca
 Dit zorgt ervoor dat de \textit{pixel buffers} van de camera correct kunnen worden omgezet naar de \textit{tensors} die het AI-model verwacht.
 
 \subsection{Biometrische Analyse en Resultaten}
-De essentie van de identiteitsverificatie binnen de applicatie leunt op de vergelijking tussen de gescande pasfoto en de live-opname. 
-In plaats van een foutgevoelige pixel-vergelijking, maakt het systeem gebruik van \textit{Face Embeddings}. 
-Het gebruikte MobileFaceNet-model werkt hierbij als een \textit{feature extractor} die gelaatstrekken converteert naar een vector in een 192-dimensionale ruimte. 
-Deze vector, ook wel de \textit{embedding} genoemd, vormt een unieke wiskundige representatie van het gezicht.
+De essentie van de identiteitsverificatie binnen de applicatie is de vergelijking tussen de gescande pasfoto en de live-opname. 
+De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity. 
 
-De gelijkenis tussen de ID-foto en de selfie wordt bepaald door de ruimtelijke afstand tussen hun vectoren dat berekent wordt via de \textit{Euclidean Distance}. De formule voor de afstand $d$ tussen vectoren $p$ and $q$ wordt als volgt gedefinieerd:
-
+De formule voor de Cosine Similarity is als volgt:
 \begin{equation}
-    d(p, q) = \sqrt{\sum_{i=1}^{n} (q_i - p_i)^2}
+    d = 1 - \frac{A \cdot B}{\|A\| \|B\|}
 \end{equation}
+Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen 0 en 1, waarbij 1 een perfecte match is en 0 een volledige mismatch.
 
-Hoe kleiner de resulterende waarde ($d$), hoe groter de wiskundige gelijkenis. 
-Tijdens de testfase van de Proof-of-Concept werd bij een eerste poging een match tussen een gescande ID-kaart en een digitale selfie een score van \textbf{1.43} behaald. 
-Hoewel theoretische modellen in gecontroleerde omgevingen vaak een \textit{threshold} ($T$) van minder dan 1.0 hanteren, is voor deze PoC de grens proefondervindelijk vastgesteld op \textbf{1.5}.
-Dit aangezien het vergelijken van een pasfoto met een live-opname in een setting met andere belichting, achtergrond en nog meer andere factoren kan zorgen voor een hogere afstand.
+Voor deze uiteindelijke keuze werd gemaakt werd eerst geexrimenteerd met de Euclidean Distance,
+maar na een aantal testen bleek dat deze methode niet zo bestand is tegen belichting en achtergronden door de gevoeligheid van de absolute magnitude van de pixelwaarden.
+De Cosine Similarity daarentegen, focust op de oriëntatie van de vectoren in de embeddings en is daardoor ook veel toepasselijker bij deze real-world setting. De gebruiker zal namelijk niet altijd in de beste setting zitten met een witte achtergrond,
+de Cosine Similarity kan zich hier beter tegen aanpassen.
 
 \subsection{Alternatieven en Marktvergelijking}
 Tijdens de analysefase werden alternatieven zoals \textit{itsme®} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 
@@ -164,6 +162,8 @@ zijn de bijhorende API-kosten en de noodzaak voor externe applicaties een drempe
 \section{GDPR-Conformiteit in de PoC}
 De PoC past het principe van \textit{privacy-by-design} toe door:
 \begin{enumerate}
-    \item \textbf{Lokale Verwerking:} AI-inferentie (het genereren van de embedding) vindt volledig lokaal op het toestel plaats via de geïntegreerde TFLite-runtime.
+    \item \textbf{Lokale Verwerking:} AI-inferentie (het genereren van de embedding) vindt volledig lokaal op het toestel plaats via de geïntegreerde TFLite-runtime. Daarnaast wordt
+    door het gebruik van de Euclidean Distance of Cosine Similarity voor de vergelijking, worden er geen ruwe biometrische gegevens (zoals foto's of video-opnames) naar de backend verzonden, aangezien de gegenereeerde vectoren alleen waar wiskundige waarden bevatten.
+    Hierdoor kunnen de wiskundige representaties niet zomaar terug omgezet worden naar de originele beelden, wat een extra laag van privacybescherming biedt.
     \item \textbf{Dataminimalisatie:} Er worden geen ruwe biometrische gegevens naar de backend verzonden; enkel de finale validatiestatus wordt opgeslagen. Hierdoor worden gevoelige gegevens nooit opgeslagen of buiten het toestel van de gebruiker gebruikt.
 \end{enumerate}
