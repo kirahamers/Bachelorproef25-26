@@ -1,7 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'; // Nodig voor de bytes
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'dart:io';
+import 'camera_ui.dart';
 
 class CameraScannerWidget extends StatefulWidget {
   final Function(String, String) onScanComplete; 
@@ -20,9 +23,16 @@ class CameraScannerWidget extends StatefulWidget {
 class _CameraScannerWidgetState extends State<CameraScannerWidget> {
   CameraController? _controller;
   final _recognizer = TextRecognizer();
+  final _faceDetector = FaceDetector(options: FaceDetectorOptions(enableClassification: true));
+  
   bool _isInitializing = true;
   int _selectedCameraIndex = 0;
   FlashMode _currentFlashMode = FlashMode.off;
+
+  //liveness
+  bool _isLive = false;
+  bool _hasBlinked = false;
+  bool _isProcessingFrame = false;
 
   @override
   void initState() {
@@ -34,8 +44,10 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
     final cameras = await availableCameras();
     if (cameras.isEmpty) return;
 
+    bool isGezicht = widget.instructie.toLowerCase().contains("gezicht") || widget.instructie.toLowerCase().contains("selfie");
+
     int cameraIndex = 0; 
-    if (widget.instructie.toLowerCase().contains("gezicht") || widget.instructie.toLowerCase().contains("selfie")) {
+    if (isGezicht) {
       cameraIndex = cameras.indexWhere((c) => c.lensDirection == CameraLensDirection.front);
       if (cameraIndex == -1) cameraIndex = 0;
     }
@@ -44,14 +56,78 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
       cameras[cameraIndex],
       ResolutionPreset.high,
       enableAudio: false,
+      //ML Kit stream
+      imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.nv21 : ImageFormatGroup.bgra8888,
     );
 
     try {
       await _controller!.initialize();
+      
+      if (isGezicht) {
+        _controller!.startImageStream((image) => _checkLiveness(image));
+      } else {
+        _isLive = true;
+      }
     } catch (e) {
       debugPrint("Camera error: $e");
     }
     if (mounted) setState(() => _isInitializing = false);
+  }
+
+  Future<void> _checkLiveness(CameraImage image) async {
+    if (_isLive || _isProcessingFrame) return;
+    _isProcessingFrame = true;
+
+    try {
+      final inputImage = _inputImageFromCameraImage(image);
+      if (inputImage == null) return;
+
+      final faces = await _faceDetector.processImage(inputImage);
+
+      if (faces.isNotEmpty) {
+        final face = faces.first;
+        double eyeOpenProb = face.leftEyeOpenProbability ?? 1.0;
+
+        if (eyeOpenProb < 0.2) {
+          _hasBlinked = true;
+        }
+        
+        if (_hasBlinked && eyeOpenProb > 0.7) {
+          if (mounted) {
+            setState(() {
+              _isLive = true;
+            });
+          }
+          await _controller?.stopImageStream();
+        }
+      }
+    } catch (e) {
+      debugPrint("Liveness check error: $e");
+    } finally {
+      _isProcessingFrame = false;
+    }
+  }
+
+//verwerken van live camera naar ML Kit input
+  InputImage? _inputImageFromCameraImage(CameraImage image) {
+    final sensorOrientation = _controller!.description.sensorOrientation;
+    final rotation = InputImageRotationValue.fromRawValue(sensorOrientation);
+    if (rotation == null) return null;
+
+    final format = InputImageFormatValue.fromRawValue(image.format.raw);
+    if (format == null) return null;
+
+    final plane = image.planes.first;
+
+    return InputImage.fromBytes(
+      bytes: plane.bytes,
+      metadata: InputImageMetadata(
+        size: Size(image.width.toDouble(), image.height.toDouble()),
+        rotation: rotation,
+        format: format,
+        bytesPerRow: plane.bytesPerRow,
+      ),
+    );
   }
 
   Future<void> _toggleFlash() async {
@@ -75,6 +151,7 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
     _controller?.setFlashMode(FlashMode.off);
     _controller?.dispose();
     _recognizer.close();
+    _faceDetector.close();
     super.dispose();
   }
 
@@ -102,85 +179,39 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
       body: Stack(
         children: [
           Center(child: CameraPreview(_controller!)),
+          CameraMaskOverlay(isGezicht: isGezicht),
+          CameraFocusFrame(isGezicht: isGezicht),
 
-          ColorFiltered(
-            colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.7),
-              BlendMode.srcOut,
-            ),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                    backgroundBlendMode: BlendMode.dstOut,
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: isGezicht ? 300 : 220,
-                    width: isGezicht ? 220 : 340,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: isGezicht 
-                        ? BorderRadius.all(Radius.elliptical(220, 300))
-                        : BorderRadius.circular(15),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          //rand in camera
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              height: isGezicht ? 300 : 220,
-              width: isGezicht ? 220 : 340,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
-                borderRadius: isGezicht 
-                        ? BorderRadius.all(Radius.elliptical(220, 300))
-                        : BorderRadius.circular(15),
-              ),
-            ),
-          ),
-
-          //instructie
           Positioned(
-            top: 40,
-            left: 0,
-            right: 0,
+            top: 40, left: 0, right: 0,
             child: Text(
-              isGezicht ? "Plaats uw gezicht in het ovaal" : "Plaats de ID-kaart in het kader",
+              isGezicht 
+                ? (_isLive ? "Neem nu de foto." : (_hasBlinked ? "Kijk in de camera..." : "Knipper met je ogen")) 
+                : "Plaats de ID-kaart in het kader",
               textAlign: TextAlign.center,
               style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
 
-          //knop
+//als live true is
           Positioned(
             bottom: 40, left: 0, right: 0,
             child: Center(
               child: FloatingActionButton.large(
-                backgroundColor: const Color(0xFF8B0000),
-                onPressed: () async {
+                backgroundColor: _isLive ? const Color(0xFF8B0000) : Colors.grey,
+                onPressed: _isLive ? () async {
                   if (_controller!.value.isTakingPicture) return;
                   try {
                     final img = await _controller!.takePicture();
-                    
                     final inputImage = InputImage.fromFilePath(img.path);
                     final recognized = await _recognizer.processImage(inputImage);
-                    
                     widget.onScanComplete(recognized.text, img.path);
                     if (mounted) Navigator.pop(context);
                   } catch (e) {
                     debugPrint("Error: $e");
                   }
-                },
-                child: const Icon(Icons.camera_alt, color: Colors.white, size: 40),
+                } : null,
+                child: Icon(_isLive ? Icons.camera_alt : Icons.lock, color: Colors.white, size: 40),
               ),
             ),
           ),

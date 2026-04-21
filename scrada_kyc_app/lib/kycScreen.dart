@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'camera.dart'; 
 import 'id_scanner_service.dart';
+import 'kycScreen_ui.dart';
 
 class KycScreen extends StatefulWidget {
   const KycScreen({super.key});
@@ -190,7 +191,7 @@ Future<void> _checkBiometrics(String selfiePath) async {
       _liveSelfieFile = selfieCrop;
       _faceMatchScore = matchScore;
       
-      if (matchScore > 0.70) {
+      if (matchScore > 0.60) {
         _matchResultaat = "GEZICHTSVERGELIJKING OK\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
       } else {
         _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
@@ -269,135 +270,78 @@ void _verifieerEID() {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Scrada KYC Portaal"),
-        backgroundColor: const Color(0xFF8B0000),
-        foregroundColor: Colors.white,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            _buildCard("1. KBO Bedrijfscheck", Icons.business, [
-              TextField(
-                controller: _kboController,
-                decoration: const InputDecoration(labelText: "Ondernemingsnummer"),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _isLoading ? null : _voerKycUit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF8B0000),
-                  foregroundColor: Colors.white,
-                ),
-                child: _isLoading 
-                    ? const CircularProgressIndicator(color: Colors.white) 
-                    : const Text("RAADPLEEG KBO"),
-              ),
-            ]),
-
-            if (_bedrijfsData != null) ...[
-              _buildBedrijfsInfo(),
-              _buildCard("2. Identiteitscontrole", Icons.badge, [
-                TextField(
-                  controller: _idScanController,
-                  decoration: const InputDecoration(labelText: "Naam uit ID"),
-                ),
-                TextField(
-                  controller: _datumController,
-                  decoration: const InputDecoration(labelText: "Vervaldatum"),
-                ),
-                const SizedBox(height: 20),
-                
-                Row(
-                  children: [
-                    _buildStepButton("VOORKANT", true, _frontPath != null),
-                    const SizedBox(width: 10),
-                    _buildStepButton("ACHTERKANT", false, _backPath != null),
-                  ],
-                ),
-                
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black87,
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: _verifieerEID,
-                    child: const Text("VERIFIEER BESTUURDER"),
-                  ),
-                ),
-                if (_matchResultaat.isNotEmpty) ...[
-                  const SizedBox(height: 20),
-                  Text(
-                    _matchResultaat,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                ]
-              ]),
-             if (_frontPath != null) 
-  _buildCard("3. Biometrische Verificatie", Icons.face_retouching_natural, [
-    if (_faceMatchScore != null) ...[
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text("Scrada KYC Portaal"),
+      backgroundColor: const Color(0xFF8B0000),
+      foregroundColor: Colors.white,
+    ),
+    body: KycPaginaLayout(
+      // Stap 1: KBO
+      kboSectie: KycSectionCard(
+        title: "1. KBO Bedrijfscheck",
+        icon: Icons.business,
         children: [
-          if (_face != null) 
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(_face!, width: 100, height: 100, fit: BoxFit.cover),
-            ),
-          if (_liveSelfieFile != null) 
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.file(_liveSelfieFile!, width: 100, height: 100, fit: BoxFit.cover),
-            ),
+          TextField(controller: _kboController, decoration: const InputDecoration(labelText: "Ondernemingsnummer")),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: _isLoading ? null : _voerKycUit,
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B0000), foregroundColor: Colors.white),
+            child: _isLoading ? const CircularProgressIndicator(color: Colors.white) : const Text("RAADPLEEG KBO"),
+          ),
         ],
       ),
-      const SizedBox(height: 15),
-      Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: (_faceMatchScore! < 1.5) ? Colors.green.shade100 : Colors.red.shade100,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Text(
-          _matchResultaat,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      const SizedBox(height: 15),
-    ],
+      
+      // Stap 2: Bedrijfsinfo (alleen als er data is)
+      bedrijfsInfo: _bedrijfsData != null 
+        ? BedrijfsInfoCard(name: _bedrijfsData!['name'], directors: List<String>.from(_bedrijfsData!['directors'])) 
+        : null,
 
-    ElevatedButton.icon(
-      onPressed: _isLoading ? null : _biometricCheck,
-      icon: const Icon(Icons.camera_front),
-      label: const Text("VERGELIJK GEZICHTEN"),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF8B0000),
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-      ),
+      // Stap 3: Identiteit
+      identiteitSectie: _bedrijfsData != null ? KycSectionCard(
+        title: "2. Identiteitscontrole",
+        icon: Icons.badge,
+        children: [
+          TextField(controller: _idScanController, decoration: const InputDecoration(labelText: "Naam uit ID")),
+          TextField(controller: _datumController, decoration: const InputDecoration(labelText: "Vervaldatum")),
+          const SizedBox(height: 20),
+          Row(children: [
+            _buildStepButton("VOORKANT", true, _frontPath != null),
+            const SizedBox(width: 10),
+            _buildStepButton("ACHTERKANT", false, _backPath != null),
+          ]),
+          const SizedBox(height: 20),
+          SizedBox(width: double.infinity, child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.black87, foregroundColor: Colors.white),
+            onPressed: _verifieerEID,
+            child: const Text("VERIFIEER BESTUURDER"),
+          )),
+          if (_matchResultaat.isNotEmpty && _faceMatchScore == null) 
+             Padding(
+               padding: const EdgeInsets.only(top: 20),
+               child: Text(_matchResultaat, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+             ),
+        ],
+      ) : null,
+
+      // Stap 4: Biometrie
+      biometrieSectie: (_bedrijfsData != null && _frontPath != null) ? KycSectionCard(
+        title: "3. Biometrische Verificatie",
+        icon: Icons.face_retouching_natural,
+        children: [
+          if (_faceMatchScore != null) 
+            BiometricResultWidget(face: _face, selfie: _liveSelfieFile, score: _faceMatchScore, matchResultaat: _matchResultaat),
+          ElevatedButton.icon(
+            onPressed: _isLoading ? null : _biometricCheck,
+            icon: const Icon(Icons.camera_front),
+            label: const Text("VERGELIJK GEZICHTEN"),
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B0000), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+          ),
+        ],
+      ) : null,
     ),
-  ]),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCard(String title, IconData icon, List<Widget> children) {
-    return Card(elevation: 4, margin: const EdgeInsets.only(bottom: 15), child: Padding(padding: const EdgeInsets.all(15), child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Row(children: [Icon(icon, color: const Color(0xFF8B0000)), const SizedBox(width: 10), Text(title, style: const TextStyle(fontWeight: FontWeight.bold))]), const Divider(), ...children])));
-  }
-
-  Widget _buildBedrijfsInfo() {
-    return Card(color: Colors.green.shade50, child: ListTile(title: Text(_bedrijfsData!['name'], style: const TextStyle(fontWeight: FontWeight.bold)), subtitle: Text("Bestuurders: ${_bedrijfsData!['directors'].join(', ')}")));
-  }
+  );
+}
 }
