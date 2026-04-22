@@ -1,28 +1,33 @@
+\usepackage{listings}
+\usepackage{xcolor}
+
 \chapter{Realisatie van de Proof-of-Concept}
 \label{ch:poc_realisatie}
 In dit hoofdstuk wordt de technische ontwikkeling van de Proof-of-Concept (PoC) gedetailleerd beschreven. 
-De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten integreert:
+De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten bevat:
 
 \section{Systeemarchitectuur}
-De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een \textit{client-server} model waarbij de mobiele applicatie fungeert als de primaire interface voor
+De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een client-server model waarbij de mobiele applicatie wordt gebruikt als de primaire interface voor
 gebruikersinteractie en gebruik van hardwarefuncties en AI-modellen, terwijl de .NET-backend verantwoordleijk is voor het
 oproepen van de externe API's (KBO en VIES) en het beheren van de bedrijfslogica.
 
-\subsection{Netwerkconnectiviteit en gebruik van emulators}
+\subsection{Netwerk en gebruik van emulators}
 Aangezien er persoonlijk geen toegang is tot een een fysieke android smartphone,
 werd de PoC ontwikkeld en getest op een Android-emulator (Android Studio). Om netwerkverzoeken te kunnen doen vanuit de emulator, werd gebruik gemaakt van het speciale IP-adres \texttt{10.0.2.2}.
 Dit adres wordt door de Android-emulator gerouteerd (loopback adres) naar de localhost van de host zodat de applicatie in de emulator verbinding kan maken met de backend die lokaal draait (\texttt{127.0.0.1}).
-Met een fysieke android smartphone zou de backend simpelweg bereikbaar zijn via het lokale IP-adres vand e machine, waar ook de backend op draait.
+Met een fysieke android smartphone zou de backend simpelweg bereikbaar zijn via het lokale IP-adres van de machine, waar ook de backend op draait.
 
 \section{Backend Implementatie (.NET)}
 Als eerste stap werd onderzocht hoe via de backend een verbinding kon worden gemaakt met de KBO- en VIES-API's.
-Hiermee zou dan via het invoeren van een ondernemingsnummer de bedrijfsnaam en de statutaire bestuurders kunnen worden opgehaald. Bij nader onderzoek
-en met de focus op een zo kostenefficient mogelijk oplossing, werd besloten om voor de PoC enkel de vrij toegankleijk VIES-API te gebruiken,
-aangezien de KBO-webservices alleen beschikbaar zijn via een betalend abonnement. 
+Hiermee zou dan via het invoeren van een ondernemingsnummer de bedrijfsnaam en de statutaire bestuurders kunnen worden opgehaald. Bij verder onderzoek
+en met de focus op een zo kostenefficiënt mogelijke oplossing, werd besloten om voor de PoC enkel de vrij toegankelijke VIES-API te gebruiken,
+aangezien de KBO-webservices alleen beschikbaar zijn via een betalend abonnement.
 
-Andere mogelijkheden om toch de databank te kunnen raadplegen zijn bijvoorbeeld web scraping, wat natuurlijk niet ethisch is en ook niet stabiel is, of het downloaden van de KBO Open Data CSV-bestanden, wat een optie is voor batch-verwerking maar niet geschikt is voor real-time validatie binnen de app.
+Andere mogelijkheden om toch de databank te kunnen raadplegen zijn bijvoorbeeld web scraping, wat niet ethisch en stabiel is. Een andere overwogen optie is het downloaden van de KBO Open Data CSV-bestanden, wat gebrukt kan worden
+ voor batch-verwerking maar niet geschikt is voor real-time validatie binnen de app.
 Deze oplossing zou bovendien ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
-Als een alternatief werd ook de LSEG OPen Data API onderzocht, maar deze is in vergelijking met de KBO-webservices nog beperkter en duurder in gebruik, en biedt bovendien geen extra informatie die relevant is voor de PoC, en dus eerder buiten de scope is.
+Als een alternatief werd ook de LSEG OPen Data API onderzocht, maar deze is in vergelijking met de KBO-webservices nog beperkter en duurder in gebruik, en biedt bovendien geen extra informatie die relevant is voor de PoC, en dus eerder buiten de scope is (indien 
+dit bij real-time gebruik nog toegevoegd wenst te worden).
 Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo_full_html} terugegeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden.
 
 Een limitatie hiervan is dat KBO-entiteiten zonder BTW-plicht (zoals bepaalde vzw's) 
@@ -34,45 +39,40 @@ Indien Scrada in de toekomst deze functionaliteit wil implementeren, kan de beta
 De service laag van de backend is verantwoordelijk voor het verwerken van de bedrijfslogica en het aanroepen van de externe API's.
 
 \begin{itemize}
-    \item \textbf{KboService:} In de huidige PoC-fase fungeert deze als een \textit{Mock Service} die de interface van de \textit{WSConsultAgentEnterprise} simuleert. Deze service geeft de statutaire bestuurders terug van de opgegeven onderneming via ondernemingsnummer. In de huidige implementatie wordt een hardcoded naam teruggeven, puut om de flow te kunnen demonstreren.
-    \item \textbf{LsegService:} Een simulatie van de \textit{World-Check} screening. Een bedrijf kan mogelijks uit 3 termen bestaan: maffia, fraud en scam. Bij een match van een van deze termen, wordt het bedrijf als 'hoog risico' gemarkeerd. In de huidige PoC-fase is deze service nog niet geïmplementeerd, maar kan deze in de toekomst gemakkelijk worden toegevoegd als een extra laag in de backend
+    \item \textbf{KboService:} In de huidige PoC-fase fungeert deze als een Mock Service die de interface van de \textit{WSConsultAgentEnterprise} simuleert. Deze service geeft de statutaire bestuurders terug van de opgegeven onderneming via ondernemingsnummer. In de huidige implementatie wordt een hardcoded naam teruggeven, puur om de flow te kunnen demonstreren.
+    \item \textbf{LsegService:} Een simulatie van de World-Check screening. Een bedrijf kan mogelijks uit 3 termen bestaan: maffia, fraud en scam. Bij een match van een van deze termen, wordt het bedrijf als 'hoog risico' gemarkeerd. In de huidige PoC-fase is deze service nog niet geïmplementeerd, maar kan deze in de toekomst gemakkelijk worden toegevoegd als een extra laag in de backend
     om extra veiligheid te garanderen bij het registreren van bedrijven.
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
-    de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risisco van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoof risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
+    de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risico van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoog risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
-    \item \textbf {ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie vai de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
+    \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
 \end{itemize}  
 
+
+TODO DIT FIXEN
 \begin{lstlisting}[
     language=HTML, 
-    caption={Volledige HTML-broncode van de KBO Open Data portal die de noodzaak voor authenticatie en de scheiding tussen gratis en betalende diensten aantoont.}, 
-    label=lst:kbo_full_html,
-    basicstyle=\tiny\ttfamily, % Kleiner lettertype om alles op de pagina te laten passen
+    caption={Volledige HTML-broncode van de KBO Open Data portal.}, 
+    label={lst:kbo-full-html},
+    basicstyle=\tiny\ttfamily, 
     frame=single,
     breaklines=true,
     numbers=left,
-    numberstyle=\tiny\color{gray}
+    numberstyle=\tiny\color{gray},
+    columns=fullflexible, % Voorkomt rare spaties
+    literate={_}{\_}{1}   % DIT IS DE KEY: dit vertelt LaTeX dat _ gewone tekst is
 ]
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE HTML SYSTEM "about:legacy-compat">
 <html>
 <head>
     <meta charset="UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=8"/>
     <title>Welcome to CBE-open-data</title>
-    <link href="/kbo-open-data/resources/styles/standard.css" rel="stylesheet"/>
 </head>
 <body>
 <div id="main">
-    <div id="header">
-        </div>
-    
     <h1>Login</h1>
-    <p>
-        This application gives access to the Open Data file and to the Public Search Web Services.
-        The Open Data files contain information about all the active entities registered in the CBE.
-        Access to these files is free. The Public Search Web Services are paid.
-    </p>
+    <p>Access to these files is free.</p>
 
     <form name="f" method="POST" action="/kbo-open-data/static/j_spring_security_check">
         <div class="form-row">
@@ -83,35 +83,11 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
             <label for="j_password">Password</label>
             <input type="password" name="j_password" id="j_password"/>
         </div>
-        <div class="form-actions">
-            <input type="submit" value="Submit"/>
-        </div>
+        <input type="submit" value="Submit"/>
     </form>
-
-    <div id="footer-links">
-        <p>Forgot username, password? Not a user yet? Sign up</p>
-    </div>
 </div>
 </body>
 </html>
-\end{lstlisting}
-
-\begin{lstlisting}[
-    language=json, 
-    caption={JSON-structuur van de VIES-API respons zoals verwerkt door de ViesService.}, 
-    label=lst:vies_json,
-    basicstyle=\small\ttfamily,
-    frame=single,
-    breaklines=true
-]
-{
-  "isValid": true,
-  "requestDate": "2024-05-22T10:00:00.000Z",
-  "name": "BEDRIJFSNAAM VOORBEELD",
-  "address": "STRAATNAAM 1, 1000 BRUSSEL",
-  "vatNumber": "0123456789",
-  "viesError": "NONE"
-}
 \end{lstlisting}
 
 \section{Frontend Ontwikkeling (Flutter)}
@@ -119,8 +95,8 @@ De mobiele interface van de Proof is ontwikkeld met het Flutter-framework.
 Flutter biedt een cross-platform ontwikkelingsomgeving die het mogelijk maakt om één codebase te gebruiken voor zowel Android als iOS, wat de ontwikkeling en de onderhoud van de applicatie vergemakkelijkt.
 
 \subsection{Optische Tekstherkenning en Scan-logica}
-Voor de extractie van gegevens uit de identiteitskaart wordt gebruikgemaakt van de \texttt{google\_ml\_kit}. Tijdens de implementatie werd vastgesteld dat de tekstherkenning van boven naar beneden geschiedt, dus was dit
-een proces van trial-and-error om de juste tekstvelden te kunnen identificeren. 
+Voor de verwerking van visuele data, in dit geval de extractie van gegevens uit de identiteitskaart, wordt gebruikgemaakt van de \texttt{google\_ml\_kit}. Tijdens de implementatie werd vastgesteld dat de tekstherkenning van boven naar beneden gelezen wordt, 
+dus was dit een proces van trial-and-error om de juste tekstvelden te kunnen identificeren. 
 \begin{itemize}
     \item \textbf{Heuristiek:} De parser zoekt eerst naar de landcode (bijv. "BELGIË") om het type document te identificeren.
     \item \textbf{Foutcorrectie:} Vanwege variabele lichtinval bij analoge scans is een aangepaste functie (\texttt{fixOcrErrors}) geïmplementeerd die veelvoorkomende OCR-fouten (zoals het verwarren van de letter 'O' met het cijfer '0') corrigeert op basis van de verwachte structuur van het Rijksregisternummer.
@@ -131,18 +107,20 @@ wordt ook de vervaldatum uitgelezen en vergeleken met de huidige datum. Indien d
 Als extra check wordt ook een checksum berekent op basis van de cijfers in het rijksregisternummer, om de geldidheid van het nummer te verfieren en fraude te voorkomen. Deze checksum werd online gevonden via de link https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/.
 
 \subsection{Technische Implementatie en Uitdagingen van de Biometrische Vergelijking}
-De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitfaging in verband met de \textit{runtime}-omgeving.
-Er ontstond namelijk een conflict tussen de verschillende processor-architecturen: terwijl mobiele apparaten uitsluitend op de \texttt{ARM}-architectuur (\texttt{arm64-v8a}) draaien, maakt de ontwikkelomgeving (de emulator) gebruik van de \texttt{x86_64}-architectuur van de \textit{host}-PC.
-De standaard TFLite-plugins leveren vaak niet de benodigde binaire bestanden voor beide omgevingen mee, waardoor na integratuie van het AI-model problemen onstonden bij het opstarten van de applcatie. 
-Om dit op te lossen, is handmatig \textit{Asset Management} toegepast in de Android \textit{Native Development Kit} structuur. Voor de emulator is de \texttt{libtensorflowlite\_c.so} bibliotheek geplaatst in de map \texttt{jniLibs/x86\_64/}. 
-Voor een uiteindelijke productie-release op fysieke hardware is een gelijkaardige map \texttt{jniLibs/arm64-v8a/} noodzakelijk, waarin dan de corresponderende ARM-versie van de bibliotheek wordt geplaatst.
+De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitdaging in verband met de runtime-omgeving.
+Er ontstond namelijk een conflict tussen de verschillende processor-architecturen: terwijl mobiele apparaten uitsluitend op de ARM-architectuur (\texttt{arm64-v8a}) draaien, maakt de ontwikkelomgeving (de emulator) gebruik van de \texttt{x86\_64}-architectuur van de host-PC.
+De standaard TFLite-plugins leveren vaak niet de benodigde binaire bestanden voor beide omgevingen mee, waardoor na integratie van het AI-model problemen ontstonden bij het opstarten van de applicatie. 
 
-\subsection{Dependency Management en Conflictresolutie}
-Tijdens de ontwikkeling ontstond een versieconflict tussen de plugins \texttt{camera} en \texttt{image}. Veel moderne AI-plugins zijn afhankelijk van specifieke versies van beeldverwerkingsbibliotheken. Dit werd opgelost door een \texttt{dependency\_override} in de \texttt{pubspec.yaml} te definiëren, waarbij de bibliotheek werd gefixeerd op versie \texttt{\textasciitilde4.1.3}. 
-Dit zorgt ervoor dat de \textit{pixel buffers} van de camera correct kunnen worden omgezet naar de \textit{tensors} die het AI-model verwacht.
+Om dit op te lossen, is handmatig Asset Management toegepast in de Android \textit{Native Development Kit} structuur. Voor de emulator is de \texttt{libtensorflowlite\_c.so} bibliotheek geplaatst in de map \texttt{jniLibs/x86\_64/}. 
+Voor een uiteindelijke productie-release op fysieke hardware is een gelijkaardige map \texttt{jniLibs/arm64-v8a/} noodzakelijk, waarin dan de corresponderende ARM-versie van de bibliotheek wordt geplaatst.
 
 \subsection{Biometrische Analyse en Resultaten}
 De essentie van de identiteitsverificatie binnen de applicatie is de vergelijking tussen de gescande pasfoto en de live-opname. 
+
+Om ervoor te zorgen dat beide afbeeldingen optimaal zijn voor de vergelijking, worden ze eerst bewerkt.
+Dit houdt in dat de foto gecropped wordt tot alleen het gezicht (om zoveel mogelijk ruis te vermijden) en dat de belichting wordt aangepast (om de invloed van variabele lichtinval te verminderen).
+Het lokaliseren en croppen van het gezicht gebeurt aan de hand van de \texttt{google\_ml\_kit\_face\_detection}, waarbij een bounding box wordt getekend rond het gedetecteerde gezicht en deze wordt gecropped voor verdere verwerking.
+Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
 De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity. 
 
 De formule voor de Cosine Similarity is als volgt:
@@ -151,19 +129,34 @@ De formule voor de Cosine Similarity is als volgt:
 \end{equation}
 Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen 0 en 1, waarbij 1 een perfecte match is en 0 een volledige mismatch.
 
-Voor deze uiteindelijke keuze werd gemaakt werd eerst geexrimenteerd met de Euclidean Distance,
+Voor deze uiteindelijke keuze werd gemaakt werd eerst geëxperimenteerd met de Euclidean Distance,
 maar na een aantal testen bleek dat deze methode niet zo bestand is tegen belichting en achtergronden door de gevoeligheid van de absolute magnitude van de pixelwaarden.
-De Cosine Similarity daarentegen, focust op de oriëntatie van de vectoren in de embeddings en is daardoor ook veel toepasselijker bij deze real-world setting. De gebruiker zal namelijk niet altijd in de beste setting zitten met een witte achtergrond,
-de Cosine Similarity kan zich hier beter tegen aanpassen.
+De Cosine Similarity daarentegen, focust op de oriëntatie van de vectoren in de embeddings en is daardoor ook veel toepasselijker bij deze real-world setting. 
+De gebruiker zal namelijk niet altijd in de beste setting zitten met een witte achtergrond, de Cosine Similarity kan zich hier beter tegen aanpassen.
 
-\subsection{Alternatieven en Marktvergelijking}
+Om te verzekeren dat de live-foto werkelijk live is en geen foto van een bestaande afbeelding, werd liveness-detectie geïmplementeerd om de fraudeveiligheid te verhogen.
+maar dit zorgde voor een technische trade-off: door de constante verwerking van camera-frames voor de liveness-check daalt de gemiddelde match-score met ongeveer 10\%.
+Dit doordat de continue liveness-detectie mogelijk minder scherpte door beweging in de live-opname kan veroorzaken, wat de kwaliteit van de embedding beïnvloedt.
+
+\begin{lstlisting}[language=bash, caption={Console output bij ontbrekende x86\_64 binaries}]
+E/CameraValidator: Camera LensFacing verification failed
+W/CameraX: androidx.camera.core.impl.CameraValidator$CameraIdListIncorrectException: 
+           Expected camera missing from device.
+Caused by: java.lang.IllegalArgumentException: No available camera can be found.
+\end{lstlisting}
+
+\section{Alternatieven en Marktvergelijking}
 Tijdens de analysefase werden alternatieven zoals \textit{itsme®} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 
 zijn de bijhorende API-kosten en de noodzaak voor externe applicaties een drempel voor kleine ondernemingen. De ontwikkelde PoC biedt een kostenefficiënt alternatief door gebruik te maken van \textit{open-source} modellen en lokale verwerking.
+
 \section{GDPR-Conformiteit in de PoC}
 De PoC past het principe van \textit{privacy-by-design} toe door:
 \begin{enumerate}
     \item \textbf{Lokale Verwerking:} AI-inferentie (het genereren van de embedding) vindt volledig lokaal op het toestel plaats via de geïntegreerde TFLite-runtime. Daarnaast wordt
-    door het gebruik van de Euclidean Distance of Cosine Similarity voor de vergelijking, worden er geen ruwe biometrische gegevens (zoals foto's of video-opnames) naar de backend verzonden, aangezien de gegenereeerde vectoren alleen waar wiskundige waarden bevatten.
-    Hierdoor kunnen de wiskundige representaties niet zomaar terug omgezet worden naar de originele beelden, wat een extra laag van privacybescherming biedt.
-    \item \textbf{Dataminimalisatie:} Er worden geen ruwe biometrische gegevens naar de backend verzonden; enkel de finale validatiestatus wordt opgeslagen. Hierdoor worden gevoelige gegevens nooit opgeslagen of buiten het toestel van de gebruiker gebruikt.
+    door het gebruik van de Euclidean Distance of Cosine Similarity voor de vergelijking, geen ruwe biometrische gegevens (zoals foto's of video-opnames) naar de backend verzonden, aangezien de gegenereeerde vectoren alleen maar wiskundige waarden bevatten.
+    Hierdoor kunnen de wiskundige representaties niet zomaar terug omgezet worden naar de originele beelden zonder de specifieke modelparameters, wat een extra laag van privacybescherming biedt.
+    \item \textbf{Dataminimalisatie en Doelbinding:} Conform aan het principe van dataminimalisatie worden enkel de strikt noodzakelijke gegevens verwerkt. De applicatie verzendt enkel de finale validatiestatus en de noodzakelijke KBO-identificatoren naar de backend. 
+    Ruwe biometrische pixels of video-opnames verlaten het toestel nooit, waardoor de verwerking beperkt blijft tot het specifieke doel: het verifiëren van de identiteit van de bestuurder in een lokale omgeving.
+    \item \textbf{Opslagbeperking en Liveness-integratie:} Om te voldoen aan de eis van opslagbeperking worden tijdelijke bestanden, zoals de cropped foto's, enkel opgeslagen in de cache-directory van het besturingssysteem. Deze gegevens worden na de sessie gewist. 
+    Daarnaast is de liveness detection een technische waarborg voor de integriteit van de biometrische gegevens, waarbij wordt gegarandeerd dat enkel de data van een fysiek aanwezige betrokkene wordt verwerkt.
 \end{enumerate}
