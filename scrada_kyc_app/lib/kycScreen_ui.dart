@@ -6,6 +6,7 @@ class KycPaginaLayout extends StatelessWidget {
   final Widget? bedrijfsInfo;
   final Widget? identiteitSectie;
   final Widget? biometrieSectie;
+  final Widget? verificatieSectie;
 
   const KycPaginaLayout({
     super.key,
@@ -13,6 +14,7 @@ class KycPaginaLayout extends StatelessWidget {
     this.bedrijfsInfo,
     this.identiteitSectie,
     this.biometrieSectie,
+    this.verificatieSectie,
   });
 
   @override
@@ -25,6 +27,7 @@ class KycPaginaLayout extends StatelessWidget {
           if (bedrijfsInfo != null) bedrijfsInfo!,
           if (identiteitSectie != null) identiteitSectie!,
           if (biometrieSectie != null) biometrieSectie!,
+          if (verificatieSectie != null) verificatieSectie!,
         ],
       ),
     );
@@ -132,6 +135,53 @@ class BiometricResultWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 15),
+      ],
+    );
+  }
+}
+
+class VerificatieWidget extends StatelessWidget {
+  final VoidCallback? onPressed;
+  final String matchResultaat;
+  final double? faceMatchScore;
+
+  const VerificatieWidget({
+    super.key,
+    required this.onPressed,
+    required this.matchResultaat,
+    this.faceMatchScore,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black87,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            onPressed: onPressed,
+            child: const Text(
+              "VERIFIEER BESTUURDER",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        
+        if (matchResultaat.isNotEmpty && faceMatchScore == null)
+          Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Text(
+              matchResultaat,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
       ],
     );
   }

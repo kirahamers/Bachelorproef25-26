@@ -4,6 +4,7 @@
 \PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}status\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Active\PYGZdq{}}\PYG{p}{,}
 \PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}sanction\PYGZus{}check\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Cleared\PYGZdq{}}\PYG{p}{,}
 \PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}ubo\PYGZus{}identified\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{k+kc}{true}\PYG{p}{,}
-\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}risk\PYGZus{}score\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Low\PYGZdq{}}
+\PYG{+w}{  }\PYG{n+nt}{\PYGZdq{}risk\PYGZus{}score\PYGZdq{}}\PYG{p}{:}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Low\PYGZdq{}}\PYG{p}{,}
+\PYG{+w}{  }\PYG{err}{direc}\PYG{k+kc}{t}\PYG{err}{ors}\PYG{+w}{ }\PYG{err}{=}\PYG{+w}{ }\PYG{k+kc}{ne}\PYG{err}{w}\PYG{p}{[]}\PYG{+w}{ }\PYG{p}{\PYGZob{}}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}John Doe\PYGZdq{}}\PYG{p}{,}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Jane Doe\PYGZdq{}}\PYG{+w}{ }\PYG{p}{\PYGZcb{}}
 \PYG{p}{\PYGZcb{}}
 \end{MintedVerbatim}

@@ -279,7 +279,7 @@ Widget build(BuildContext context) {
       foregroundColor: Colors.white,
     ),
     body: KycPaginaLayout(
-      // Stap 1: KBO
+      //KBO
       kboSectie: KycSectionCard(
         title: "1. KBO Bedrijfscheck",
         icon: Icons.business,
@@ -294,12 +294,12 @@ Widget build(BuildContext context) {
         ],
       ),
       
-      // Stap 2: Bedrijfsinfo (alleen als er data is)
+      //bedrijfsinfo 
       bedrijfsInfo: _bedrijfsData != null 
         ? BedrijfsInfoCard(name: _bedrijfsData!['name'], directors: List<String>.from(_bedrijfsData!['directors'])) 
         : null,
 
-      // Stap 3: Identiteit
+      //identiteit
       identiteitSectie: _bedrijfsData != null ? KycSectionCard(
         title: "2. Identiteitscontrole",
         icon: Icons.badge,
@@ -312,33 +312,58 @@ Widget build(BuildContext context) {
             const SizedBox(width: 10),
             _buildStepButton("ACHTERKANT", false, _backPath != null),
           ]),
-          const SizedBox(height: 20),
-          SizedBox(width: double.infinity, child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.black87, foregroundColor: Colors.white),
-            onPressed: _verifieerEID,
-            child: const Text("VERIFIEER BESTUURDER"),
-          )),
-          if (_matchResultaat.isNotEmpty && _faceMatchScore == null) 
-             Padding(
-               padding: const EdgeInsets.only(top: 20),
-               child: Text(_matchResultaat, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
-             ),
         ],
       ) : null,
 
-      // Stap 4: Biometrie
+      // Stap 3: Biometrie & Verificatie
       biometrieSectie: (_bedrijfsData != null && _frontPath != null) ? KycSectionCard(
         title: "3. Biometrische Verificatie",
         icon: Icons.face_retouching_natural,
         children: [
-          if (_faceMatchScore != null) 
-            BiometricResultWidget(face: _face, selfie: _liveSelfieFile, score: _faceMatchScore, matchResultaat: _matchResultaat),
-          ElevatedButton.icon(
-            onPressed: _isLoading ? null : _biometricCheck,
-            icon: const Icon(Icons.camera_front),
-            label: const Text("VERGELIJK GEZICHTEN"),
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF8B0000), foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(vertical: 12)),
+          // GDPR Disclaimer
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12.0),
+            child: Text(
+              "Privacy-waarschuwing: Door op de onderstaande knop te klikken, geeft u toestemming voor een eenmalige biometrische controle. De verwerking gebeurt volledig lokaal op dit toestel; er worden geen foto's opgeslagen of verzonden.",
+              style: TextStyle(fontSize: 12, color: Colors.grey, fontStyle: FontStyle.italic),
+              textAlign: TextAlign.center,
+            ),
           ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton.icon(
+              onPressed: _isLoading ? null : _biometricCheck,
+              icon: const Icon(Icons.camera_front),
+              label: const Text("VERIFIEER IDENTITEIT (CAMERA VEREIST)"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF8B0000), 
+                foregroundColor: Colors.white, 
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+          ),
+          //dropdown met details, kan evt weg??
+          if (_faceMatchScore != null) 
+            Theme(
+              data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                title: const Text(
+                  "Technische details weergeven", 
+                  style: TextStyle(fontSize: 14, color: Colors.grey),
+                ),
+                leading: const Icon(Icons.analytics_outlined, size: 20, color: Colors.grey),
+                children: [
+                  BiometricResultWidget(
+                    face: _face, 
+                    selfie: _liveSelfieFile, 
+                    score: _faceMatchScore, 
+                    matchResultaat: _matchResultaat
+                  ),
+                ],
+              ),
+            ),
         ],
       ) : null,
     ),

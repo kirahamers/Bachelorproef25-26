@@ -40,7 +40,7 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
     de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risisco van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoof risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
-    \item \textbf {ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie vai de URL \texttt{https://ec.europa.eu/taxation_customs/vies/rest-api/ms/BE/vat/{vatNumber}}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
+    \item \textbf {ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie vai de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
 \end{itemize}  
 
 \begin{lstlisting}[
