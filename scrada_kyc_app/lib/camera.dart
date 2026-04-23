@@ -23,6 +23,7 @@ class CameraScannerWidget extends StatefulWidget {
 class _CameraScannerWidgetState extends State<CameraScannerWidget> {
   CameraController? _controller;
   final _recognizer = TextRecognizer();
+  //voor liveness
   final _faceDetector = FaceDetector(options: FaceDetectorOptions(enableClassification: true));
   
   bool _isInitializing = true;
