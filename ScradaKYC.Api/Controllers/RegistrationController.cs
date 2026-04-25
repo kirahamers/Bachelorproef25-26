@@ -34,12 +34,11 @@ namespace ScradaKYC.Api.Controllers {
 
     public class RegistrationRequest
     {
-        public string BtwNummer { get; set; }
-        public string Bedrijfsnaam { get; set; }
-        public string BestuurderNaam { get; set; }
-        
-        public string Email { get; set; }
-        public string Telefoon { get; set; }
+        public string BtwNummer { get; set; } = string.Empty;
+        public string Bedrijfsnaam { get; set; } = string.Empty;
+        public string BestuurderNaam { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string? Telefoon { get; set; } 
         public double MatchScore { get; set; }
     }
 }

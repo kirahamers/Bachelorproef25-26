@@ -36,7 +36,7 @@ namespace ScradaKYC.Api.Controllers
 
                 //KBO (hardcoded)
                 string kboStatus = _kboService.GetStatus(schoonNummer);
-                string[] bestuurders = _kboService.GetBestuurders(schoonNummer);
+                string[] bestuurders = await _kboService.GetBestuurders(schoonNummer);
 
                 //LSEG (hardcoded)
                 string sanctionStatus = _lsegService.CheckSanctions(viesResult.Name);
