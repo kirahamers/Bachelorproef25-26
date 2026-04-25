@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "8U9FLvar94w=",
+  "dgSpecHash": "31SqIzFD6Uo=",
   "success": true,
   "projectFilePath": "C:\\Users\\shaki\\Documents\\HOGENT\\bachelor\\Bachelorproef\\latex-hogent-bachproef-main\\Bachelorproef-25-26-KH\\ScradaKYC.Api\\ScradaKYC.Api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\shaki\\.nuget\\packages\\htmlagilitypack\\1.12.4\\htmlagilitypack.1.12.4.nupkg.sha512",
     "C:\\Users\\shaki\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.1\\microsoft.aspnetcore.openapi.9.0.1.nupkg.sha512",
     "C:\\Users\\shaki\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
   ],

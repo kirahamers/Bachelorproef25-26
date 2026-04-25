@@ -32,3 +32,4 @@ C:\Users\shaki\Documents\HOGENT\bachelor\Bachelorproef\latex-hogent-bachproef-ma
 C:\Users\shaki\Documents\HOGENT\bachelor\Bachelorproef\latex-hogent-bachproef-main\Bachelorproef-25-26-KH\ScradaKYC.Api\obj\Debug\net9.0\ScradaKYC.Api.pdb
 C:\Users\shaki\Documents\HOGENT\bachelor\Bachelorproef\latex-hogent-bachproef-main\Bachelorproef-25-26-KH\ScradaKYC.Api\obj\Debug\net9.0\ScradaKYC.Api.genruntimeconfig.cache
 C:\Users\shaki\Documents\HOGENT\bachelor\Bachelorproef\latex-hogent-bachproef-main\Bachelorproef-25-26-KH\ScradaKYC.Api\obj\Debug\net9.0\ref\ScradaKYC.Api.dll
+C:\Users\shaki\Documents\HOGENT\bachelor\Bachelorproef\latex-hogent-bachproef-main\Bachelorproef-25-26-KH\ScradaKYC.Api\bin\Debug\net9.0\HtmlAgilityPack.dll

@@ -93,9 +93,6 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
         \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
         \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
         
-        \node (vies) [task, fill=orange!10, below=1.5cm of upload] {Systeem: API Check VIES};
-        \node (notif) [task] [right=0.7cm of vies] {Systeem: Verstuur Notificatie};
-        
         \node (kbo_manual) [task] [right=0.7cm of notif] {Medewerker: Opzoeking KBO};
         \node (compare) [task] [right=0.7cm of kbo_manual] {Handmatige Match ID vs. Bestuurders};
         
@@ -127,7 +124,7 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
 
     \end{tikzpicture}
     }
-    \caption[BPMN Huidig Proces met VIES-check]{BPMN-visualisatie van het huidige proces inclusief VIES-check en manuele KBO-verificatie (AS-IS).}
+    \caption[BPMN Huidig Proces]{BPMN-visualisatie van het huidige proces inclusief manuele KBO-verificatie (AS-IS).}
     \label{fig:bpmn-huidig-vies}
 \end{figure}
 
@@ -169,19 +166,29 @@ Daarom wordt deze integratie in de Proof-of-Concept beperkt tot basisverificatie
 Hoewel de controle op sanctielijsten via LSEG World-Check een cruciaal onderdeel is van het theoretische KYC-proces, 
 is de daadwerkelijke technische integratie hiervan buiten de scope (Out of Scope) van deze Proof-of-Concept gehouden. 
 LSEG is een gesloten, commercieel en duur B2B (Business-to-Business) systeem dat zware licenties en specifieke authenticatie vereist, 
-wat niet haalbaar is binnen de kaders van dit academisch onderzoek doordat een betaald en zakelijk contract hiervoor vereist is. 
-De focus van de PoC ligt primair op de automatische KBO-verificatie en de identiteitsmatching
+wat niet haalbaar is binnen dit academisch onderzoek doordat een betaald en zakelijk contract hiervoor vereist is. 
+De focus van de PoC ligt primair op de automatische KBO-verificatie en de overeenkomst tussen de identiteitskaart en de gebruiker.
 
-TODO: ontwikkeling van de POC iets meer uitwerken 
 \begin{enumerate}
-    \item \textbf{Mobiele Hardware-integratie (Flutter):} Aangezien de applicatie gebouwd is in Flutter, zal de PoC gebruik maken van Flutter-plugins om te kunnen samenwerken met de smartphone-hardware.
-    Hierbij wordt in de plaats van het handmatig scannen van identiteitskaarten gebruikt gemaakt van het uitlezen van NFC-chips in identiteitskaarten.
-    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie zal een AI-model geconfigureerd en geïntegreerd worden op een dataset van gezichtsafbeeldingen om liveness-detectie mogelijk te maken.
-    Dit model zal worden geïntegreerd in de mobiele app, zodat er een realtime validatie plaatsvindt tijdens het onboardingproces, waarbij een selfie of video van de gebruiker vergeleken wordt met de geverifieerde foto uit de NFC-chip of OCR-scan. De keuze van het AI-framework zal afhangen van de samenwerking met Flutter en de prestaties op mobiele apparaten.
-    \item \textbf{Backend samenwerking (.NET Core):} De backend fungeert als de centrale hub die de mobiele data koppelt aan externe verificatiebronnen zoals VIES (BTW-validatie) en de KBO. 
-    Hiervoor zal een script worden ontwikkeld om de check met de KBO te automatiseren, waarbij de app automatisch de naam van de bestuurder en het ondernemingsnummer zal uitlezen en vergelijken met de KBO-data. De taal en tools voor deze integratie
-    moeten nog worden bepaald, maar er zal waarschijnlijk gebruik worden gemaakt van een combinatie van Flutter-plugins voor NFC en een backend API-call naar de KBO Open Data webservice.
-    Hier wordt de GDPR-logica toegepast, zoals de automatische encryptie en de ingestelde retentieperiode van zes maanden voor auditdoeleinden.
+    \item \textbf{Mobiele Hardware-integratie (Flutter):} Aangezien de applicatie gebouwd is in Flutter, maakt de POC gebruik van Flutter-plugins om gebruik te kunnen maken van de smartphone-hardware.
+    Hierbij wordt het handmatig inscannen van de identeitskaart toegepast. Deze keuze werd gemaakt omdat nog niet alle huidige mobiele apparaten en identiteitskaarten beschikken tot de NFC-read mogelijkheid beschikken.
+    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie werd een hybride AI-architectuur geconfigureerd en geïntegreerd om de vergelijking tussen de gescande identeitskaart en een live-foto van de gebruiker te vergelijken. Het nemen van de live-foto
+    maakt ook gebruik van liveness-detectie, om zo fraude te voorkomen en te bevestigen dat er een echte persoon achter de camera staat. Er werd onder andere Google ML Kit gebruikt voor de algemene taken die deze Software Development Kit (SDK) bevat, zoals Text Recognition/Optical Character Recognition (OCR)
+    voor het aflezen van de identeitskaart, Face Detection voor het localiseren van het gezicht en Face Classification voor  de liveness gezichtdetectie, waarbij de laatste twee gebruikt worden voor de biometrische verificatie van de identiteitskaart. Daarnaast werd ook TFLite en MobileFaceNet gebruikt om de
+    biometrische vergelijking uit te kunnen voeren via hun AI-model. Tot slot werd voor de verificatiescore Cosine Similarity gebruikt.
+    \item \textbf{Backend-integratie en Data-validatie (.NET):}
+    De .NET-backend werkt als de centrale hub die de mobiele applicatie verbindt met externe verificatiebronnen. Deze bestaat uit verschillende services:
+        \begin{itemize}
+        \item \textbf{Kruispuntbank van Ondernemingen (KBO):} via de KBO-service kunnen de officiele bestuurders van het opgegeven bedrijf opgehaald worden. Dit is een API dat betalend is, waarbij een pakket kan aangekocht worden voor vijftig euro per tweeduizend requests. Aangezien dit buiten de scope valt om 
+        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geimplementeerd worden.
+        \item \textbf{BTW-validatie (VIES):} Via het gratis en openbare Vat Information Exchange System kan officeel gecontroleerd worden of een BTW- of ondernemingsnummer geldig en kan zo ook de naam van de onderneming opgehaald worden.
+        \item \textbf{London Stock Exchange Group (LSEG):} de LSEG service wordt gebruikt als internationale veiligheidsscreening. Hierbij wordt geverifieerd of entiteiten voorkomen op sanctielijsten of betrokken zijn bij witwaspraktijken, conform aan de AML richtlijnen.
+        Om toegang te krijgen tot deze API, is een streng screeningproces nodig en zijn de licentiekosten ook erg hoog. Hierdoor valt de implentatie van deze API buiten de scope van deze applicatie, maar is het nog steeds van belang dit te vermelden om in de toekomst dit zo fraudeveilig mogelijk te maken
+        \item \textbf{Risiconiveau:} Deze service berekent het risiconiveau gebaseerd op alle andere services, zoals de bedrijfsstatus en sanctielijsten.
+\end{itemize}
+
+De communicatie tussen de Flutter-frontend en de .NET-backend verloopt via een REST-interface, waarbij gegevens in JSON-formaat worden uitgewisseld voor een modulaire en schaalbare architectuur.
+
 \end{enumerate}
 
 \begin{itemize}

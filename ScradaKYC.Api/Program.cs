@@ -6,6 +6,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<ViesService>();
 builder.Services.AddScoped<KboService>();
+//builder.Services.AddHttpClient<KboService>();
 builder.Services.AddScoped<LsegService>();
 builder.Services.AddScoped<RiskService>();
 

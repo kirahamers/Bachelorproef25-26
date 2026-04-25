@@ -2,7 +2,7 @@
 \usepackage{xcolor}
 
 \chapter{Realisatie van de Proof-of-Concept}
-\label{ch:poc_realisatie}
+\label{ch:proof-of-concept}
 In dit hoofdstuk wordt de technische ontwikkeling van de Proof-of-Concept (PoC) gedetailleerd beschreven. 
 De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten bevat:
 
@@ -10,6 +10,45 @@ De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten
 De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een client-server model waarbij de mobiele applicatie wordt gebruikt als de primaire interface voor
 gebruikersinteractie en gebruik van hardwarefuncties en AI-modellen, terwijl de .NET-backend verantwoordleijk is voor het
 oproepen van de externe API's (KBO en VIES) en het beheren van de bedrijfslogica.
+
+In Figuur \ref{fig:sequence-diagram-kyc} wordt de interactie tussen deze componenten gevisualiseerd middels een \textit{sequence diagram}. Hierin is te zien hoe de gegevensstroom verloopt van de initiële scan door de gebruiker tot de uiteindelijke biometrische verificatie.
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[node distance=2cm, auto]
+
+        \node (user) [rectangle, draw, minimum width=2cm, fill=blue!10] {Gebruiker};
+        \node (app) [rectangle, draw, minimum width=2cm, fill=green!10, right=1.5cm of user] {Flutter App};
+        \node (backend) [rectangle, draw, minimum width=2cm, fill=red!10, right=1.5cm of app] {.NET Backend};
+        \node (external) [rectangle, draw, minimum width=2cm, fill=orange!10, right=1.5cm of backend] {Externe API's};
+
+        \draw [dashed] (user) -- (user |- 0,-8.5);
+        \draw [dashed] (app) -- (app |- 0,-8.5);
+        \draw [dashed] (backend) -- (backend |- 0,-8.5);
+        \draw [dashed] (external) -- (external |- 0,-8.5);
+
+        \draw [arrow] ($(user.south)+(0,-0.5)$) -- node[font=\scriptsize] {Scant eID \& Selfie} ($(app.south)+(0,-0.5)$);
+        
+        \draw [arrow] ($(app.south)+(0,-1.5)$) -- node[font=\scriptsize, align=center] {GET /api/kyc/\{btw\} \\ (JSON Request)} ($(backend.south)+(0,-1.5)$);
+        
+        \draw [arrow] ($(backend.south)+(0,-2.5)$) -- node[font=\scriptsize] {Valideer BTW (VIES)} ($(external.south)+(0,-2.5)$);
+        \draw [arrow, dashed] ($(external.south)+(0,-3.2)$) -- node[font=\scriptsize] {Status: Active} ($(backend.south)+(0,-3.2)$);
+        
+        \draw [arrow] ($(backend.south)+(0,-4)$) -- node[font=\scriptsize] {Screening (LSEG/KBO)} ($(external.south)+(0,-4)$);
+        \draw [arrow, dashed] ($(external.south)+(0,-4.7)$) -- node[font=\scriptsize] {Bestuurders \& Risico} ($(backend.south)+(0,-4.7)$);
+        
+        \draw [arrow, dashed] ($(backend.south)+(0,-5.5)$) -- node[font=\scriptsize, align=center] {Consolidated Data \\ (JSON Response)} ($(app.south)+(0,-5.5)$);
+        
+        \draw [fill=white] ($(app.south)+(-0.1,-6)$ binary) rectangle ($(app.south)+(0.1,-7.5)$);
+        \node [font=\scriptsize, right] at ($(app.south)+(0.1,-6.7)$) {On-device Biometrie};
+        \node [font=\scriptsize, right] at ($(app.south)+(0.1,-7.2)$) {(Cosine Similarity)};
+        
+        \draw [arrow, dashed] ($(app.south)+(0,-8)$) -- node[font=\scriptsize] {Toon Resultaat (Match/No Match)} ($(user.south)+(0,-8)$);
+
+    \end{tikzpicture}
+    \caption{Sequence Diagram van het geautomatiseerde KYC-proces.}
+    \label{fig:sequence-diagram-kyc}
+\end{figure}
 
 \subsection{Netwerk en gebruik van emulators}
 Aangezien er persoonlijk geen toegang is tot een een fysieke android smartphone,
@@ -21,20 +60,23 @@ Met een fysieke android smartphone zou de backend simpelweg bereikbaar zijn via 
 Als eerste stap werd onderzocht hoe via de backend een verbinding kon worden gemaakt met de KBO- en VIES-API's.
 Hiermee zou dan via het invoeren van een ondernemingsnummer de bedrijfsnaam en de statutaire bestuurders kunnen worden opgehaald. Bij verder onderzoek
 en met de focus op een zo kostenefficiënt mogelijke oplossing, werd besloten om voor de PoC enkel de vrij toegankelijke VIES-API te gebruiken,
-aangezien de KBO-webservices alleen beschikbaar zijn via een betalend abonnement.
+aangezien de KBO-webservice van FOD Economie alleen beschikbaar is via een betalend abonnement.
 
-Andere mogelijkheden om toch de databank te kunnen raadplegen zijn bijvoorbeeld web scraping, wat niet ethisch en stabiel is. Een andere overwogen optie is het downloaden van de KBO Open Data CSV-bestanden, wat gebrukt kan worden
- voor batch-verwerking maar niet geschikt is voor real-time validatie binnen de app.
-Deze oplossing zou bovendien ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
-Als een alternatief werd ook de LSEG OPen Data API onderzocht, maar deze is in vergelijking met de KBO-webservices nog beperkter en duurder in gebruik, en biedt bovendien geen extra informatie die relevant is voor de PoC, en dus eerder buiten de scope is (indien 
-dit bij real-time gebruik nog toegevoegd wenst te worden).
-Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo_full_html} terugegeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden.
+Andere overwogen opties voor het ophalen van de statutaire bestuurders zijn
+\begin{itemize}
+    \item \textbf{Publieke API's:} Naast de officiele API van FOD economie zijn er nog mogelijke APIs zoals OpenCorporates. Hoewel technisch functioneel, bleek deze ook beperkt tot een betalende licentie, wat leidde tot Unauthorized-fouten tijdens de implementatie.
+    \item \textbf{Web Scraping en de HtmlAgilityPack:} Er is geëxperimenteerd met het direct uitlezen van de publieke KBO-website (kbopub). Pogingen tot eenvoudige web scraping zorgden echter voor HTTP 405 (Method Not Allowed) foutmeldingen door de bot-beveiliging van de overheid. 
+    Hoewel simulatie van browsersessies via specifieke User-Agent headers werd onderzocht, werd het besluit genomen dat deze methode onvoldoende stabiliteit biedt voor een professionele KYC-omgeving. daarnaast was het nog steeds onmogelijk om de bestuurders via de scipts op te halen dus werd volgende optie nog overwogen.
+    \item \textbf{KBO Open Data (CSV):} De officiële Open Data dataset van de federale overheid is geanalyseerd op bruikbaarheid. Hoewel bestanden zoals \texttt{enterprise.csv} (86 MB) bedrijfsnamen bevatten, bleken de persoonsgegevens van bestuurders omwille van GDPR-restricties niet aanwezig in de publiek toegankelijke downloads. 
+    Daarnaast is batch-verwerking via CSV minder geschikt voor de vereiste \textit{real-time} validatie. Deze oplossing zou bovendien ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
+    \item \textbf{Finale Keuze:} Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo_full_html} terugegeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden. 
+    Vanwege de bovengenoemde beperkingen en het feit dat de officiële KBO-webservices betalend zijn (50 euro per 2000 requests), is voor deze PoC gekozen voor een hybride oplossing: de volledig functionele en gratis VIES-API voor bedrijfsvalidatie, samen met een Mock Service voor de bestuurdersgegevens.
+    Een limitatie hiervan is dat KBO-entiteiten zonder BTW-plicht (zoals bepaalde vzw's) 
+    door VIES als 'ongeldig' worden gemarkeerd. Voor een uiteindelijke productie-omgeving bij Scrada blijft een integratie met de KBO Webservices daarom noodzakelijk.
+    Daarnaast kan de VIES-API alleen het BTW-nummer en de naam van de onderneming achterhalen maar niet wie de bestuurders van een bedrijf zijn, wat een belangrijke vereiste is om de identiteit te kunnen verifiëren. 
+    Indien Scrada in de toekomst deze functionaliteit wil implementeren, kan de betalende KBO-webservice gemakkelijk worden toegepast en toegevoegd aan de backend, aangezien hier nu een hardcoded placeholder werd gebruikt om toch een flow te kunnen demonstreren.
 
-Een limitatie hiervan is dat KBO-entiteiten zonder BTW-plicht (zoals bepaalde vzw's) 
-door VIES als 'ongeldig' worden gemarkeerd. Voor een uiteindelijke productie-omgeving bij Scrada blijft een integratie met de KBO Webservices daarom noodzakelijk.
-Daarnaast kan de VIES-API alleen het BTW-nummer en de naam van de onderneming achterhalen maar niet wie de bestuurders van een bedrijf zijn, wat een belangrijke vereiste is om de identiteit te kunnen verifiëren. 
-Indien Scrada in de toekomst deze functionaliteit wil implementeren, kan de betalende KBO-webservice gemakkelijk worden toegepast en toegevoegd aan de backend, aangezien hier nu een hardcoded placeholder werd gebruikt om toch een flow te kunnen demonstreren.
-
+\end{itemize}
 \section{Service laag}
 De service laag van de backend is verantwoordelijk voor het verwerken van de bedrijfslogica en het aanroepen van de externe API's.
 
@@ -47,7 +89,6 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
     \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
 \end{itemize}  
-
 
 TODO DIT FIXEN
 \begin{lstlisting}[
@@ -121,11 +162,11 @@ Om ervoor te zorgen dat beide afbeeldingen optimaal zijn voor de vergelijking, w
 Dit houdt in dat de foto gecropped wordt tot alleen het gezicht (om zoveel mogelijk ruis te vermijden) en dat de belichting wordt aangepast (om de invloed van variabele lichtinval te verminderen).
 Het lokaliseren en croppen van het gezicht gebeurt aan de hand van de \texttt{google\_ml\_kit\_face\_detection}, waarbij een bounding box wordt getekend rond het gedetecteerde gezicht en deze wordt gecropped voor verdere verwerking.
 Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
-De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity. 
+De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity, die in de code omgezet werd naar percentage. 
 
 De formule voor de Cosine Similarity is als volgt:
 \begin{equation}
-    d = 1 - \frac{A \cdot B}{\|A\| \|B\|}
+    d = \frac{A \cdot B}{\|A\| \|B\|}
 \end{equation}
 Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen 0 en 1, waarbij 1 een perfecte match is en 0 een volledige mismatch.
 
@@ -144,6 +185,22 @@ W/CameraX: androidx.camera.core.impl.CameraValidator$CameraIdListIncorrectExcept
            Expected camera missing from device.
 Caused by: java.lang.IllegalArgumentException: No available camera can be found.
 \end{lstlisting}
+
+\section{Data-opslag en Afronding van de Registratie}
+Zodra de identiteit van de bestuurder succesvol is geverifieerd via de biometrische match, wordt het registratieproces verder uitgevoerd. 
+Hierbij is het essentieel dat de gevalideerde bedrijfsgegevens worden gekoppeld aan de contactgegevens van de nieuwe gebruiker.
+
+\subsection{Persistentie van Gegevens}
+Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend (buiten deze scope). De volgende datavelden worden opgeslagen om het account van de klant te vervolledigen:
+\begin{itemize}
+    \item \textbf{Ondernemingsnummer:} De unieke sleutel die de koppeling legt met de KBO-databank.
+    \item \textbf{Naam van de bestuurder:} De statutaire naam zoals gevalideerd tijdens de eID-scan en de KBO-check.
+    \item \textbf{E-mailadres:} De primaire identificator voor het Scrada-platform.
+    \item \textbf{Telefoonnummer (Optioneel):} Verwerkt als extra contactpunt of voor toekomstige implementatie van Multi-Factor Authentication (MFA).
+\end{itemize}
+
+\subsection{Notificatie en Validatiebevestiging}
+Na de succesvolle opslag in de database genereert de backend automatisch een bevestigingsmail naar het opgegeven e-mailadres.
 
 \section{Alternatieven en Marktvergelijking}
 Tijdens de analysefase werden alternatieven zoals \textit{itsme®} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 

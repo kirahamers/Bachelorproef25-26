@@ -18,6 +18,8 @@ class _KycScreenState extends State<KycScreen> {
   final TextEditingController _kboController = TextEditingController();
   final TextEditingController _idScanController = TextEditingController();
   final TextEditingController _datumController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
   
   final IdScannerService _idService = IdScannerService();
   final ImagePicker _picker = ImagePicker();
@@ -183,7 +185,7 @@ Future<void> _checkBiometrics(String selfiePath) async {
       return;
     }
 
-//vectoren vergelijken in embeddings
+    //vectoren vergelijken in embeddings
     double matchScore = await _idService.getSimilarityScore(faceIdCrop, selfieCrop);
 
     setState(() {
@@ -193,9 +195,12 @@ Future<void> _checkBiometrics(String selfiePath) async {
       
       if (matchScore > 0.60) {
         _matchResultaat = "GEZICHTSVERGELIJKING OK\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
+        _verifieerEID();
       } else {
         _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
       }
+
+
     });
   } catch (e) {
     _showError("Biometrie fout: $e");
@@ -234,6 +239,54 @@ void _verifieerEID() {
           : "TOEGANG GEWEIGERD\nGeen match gevonden in KBO directors.";
     });
   }
+
+Future<void> _registreerNu() async {
+  final email = _emailController.text.trim();
+  final tel = _phoneController.text.trim();
+
+  final emailRegExp = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+  
+  if (!emailRegExp.hasMatch(email)) {
+    _showError("Voer een geldig e-mailadres in.");
+    return;
+  }
+
+  if (tel.isNotEmpty && tel.length < 8) {
+    _showError("Voer een geldig telefoonnummer in.");
+    return;
+  }
+
+  final JSON = {
+    "btw": _kboController.text,
+    "naamID": _idScanController.text,
+    "email": email,
+    "telefoon": tel,
+    "score": _faceMatchScore,
+  };
+
+    await http.post(
+      Uri.parse('http://10.0.2.2:5012/api/registration/complete'),
+      headers: {"Content-Type": "application/json"},
+      body: json.encode(JSON),
+    );
+    
+    alert("Bedankt! Bekijk uw mail om uw registratie te voltooien.");
+
+    
+  }
+
+  void alert(String boodschap) {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text("Registratie"),
+      content: Text(boodschap),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("OK"))
+      ],
+    ),
+  );
+}
 
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 4)));
@@ -364,6 +417,34 @@ Widget build(BuildContext context) {
                 ],
               ),
             ),
+        ],
+      ) : null,
+
+      verificatieSectie: (_faceMatchScore != null && _faceMatchScore! >= 0.60) ? KycSectionCard(
+        title: "4. Voltooi Registratie",
+        icon: Icons.check_circle,
+        children: [
+          const Text("Identiteit bevestigd. Vul uw contactgegevens in om af te ronden."),
+          const SizedBox(height: 15),
+          TextField(
+            controller: _emailController, 
+            decoration: const InputDecoration(labelText: "E-mailadres", border: OutlineInputBorder())
+          ),
+          const SizedBox(height: 10),
+          TextField(
+            controller: _phoneController, 
+            decoration: const InputDecoration(labelText: "Telefoonnummer (Optioneel)", border: OutlineInputBorder())
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: _isLoading ? null : _registreerNu,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+              minimumSize: const Size(double.infinity, 50),
+            ),
+            child: const Text("REGISTRATIE VOLTOOIEN"),
+          ),
         ],
       ) : null,
     ),
