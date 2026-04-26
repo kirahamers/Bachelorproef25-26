@@ -8,7 +8,7 @@ De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten
 
 \section{Systeemarchitectuur}
 De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een client-server model waarbij de mobiele applicatie wordt gebruikt als de primaire interface voor
-gebruikersinteractie en gebruik van hardwarefuncties en AI-modellen, terwijl de .NET-backend verantwoordleijk is voor het
+gebruikersinteractie en gebruik van hardwarefuncties en AI-modellen, terwijl de .NET-backend verantwoordelijk is voor het
 oproepen van de externe API's (KBO en VIES) en het beheren van de bedrijfslogica.
 
 In Figuur \ref{fig:sequence-diagram-kyc} wordt de interactie tussen deze componenten gevisualiseerd middels een \textit{sequence diagram}. Hierin is te zien hoe de gegevensstroom verloopt van de initiële scan door de gebruiker tot de uiteindelijke biometrische verificatie.
@@ -65,23 +65,28 @@ aangezien de KBO-webservice van FOD Economie alleen beschikbaar is via een betal
 Andere overwogen opties voor het ophalen van de statutaire bestuurders zijn
 \begin{itemize}
     \item \textbf{Publieke API's:} Naast de officiele API van FOD economie zijn er nog mogelijke APIs zoals OpenCorporates. Hoewel technisch functioneel, bleek deze ook beperkt tot een betalende licentie, wat leidde tot Unauthorized-fouten tijdens de implementatie.
-    \item \textbf{Web Scraping en de HtmlAgilityPack:} Er is geëxperimenteerd met het direct uitlezen van de publieke KBO-website (kbopub). Pogingen tot eenvoudige web scraping zorgden echter voor HTTP 405 (Method Not Allowed) foutmeldingen door de bot-beveiliging van de overheid. 
-    Hoewel simulatie van browsersessies via specifieke User-Agent headers werd onderzocht, werd het besluit genomen dat deze methode onvoldoende stabiliteit biedt voor een professionele KYC-omgeving. daarnaast was het nog steeds onmogelijk om de bestuurders via de scipts op te halen dus werd volgende optie nog overwogen.
     \item \textbf{KBO Open Data (CSV):} De officiële Open Data dataset van de federale overheid is geanalyseerd op bruikbaarheid. Hoewel bestanden zoals \texttt{enterprise.csv} (86 MB) bedrijfsnamen bevatten, bleken de persoonsgegevens van bestuurders omwille van GDPR-restricties niet aanwezig in de publiek toegankelijke downloads. 
-    Daarnaast is batch-verwerking via CSV minder geschikt voor de vereiste \textit{real-time} validatie. Deze oplossing zou bovendien ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
+    Daarnaast is batch-verwerking via CSV minder geschikt voor de vereiste real-time validatie. Deze oplossing zou bovendien ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
     \item \textbf{Finale Keuze:} Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo_full_html} terugegeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden. 
-    Vanwege de bovengenoemde beperkingen en het feit dat de officiële KBO-webservices betalend zijn (50 euro per 2000 requests), is voor deze PoC gekozen voor een hybride oplossing: de volledig functionele en gratis VIES-API voor bedrijfsvalidatie, samen met een Mock Service voor de bestuurdersgegevens.
-    Een limitatie hiervan is dat KBO-entiteiten zonder BTW-plicht (zoals bepaalde vzw's) 
-    door VIES als 'ongeldig' worden gemarkeerd. Voor een uiteindelijke productie-omgeving bij Scrada blijft een integratie met de KBO Webservices daarom noodzakelijk.
-    Daarnaast kan de VIES-API alleen het BTW-nummer en de naam van de onderneming achterhalen maar niet wie de bestuurders van een bedrijf zijn, wat een belangrijke vereiste is om de identiteit te kunnen verifiëren. 
-    Indien Scrada in de toekomst deze functionaliteit wil implementeren, kan de betalende KBO-webservice gemakkelijk worden toegepast en toegevoegd aan de backend, aangezien hier nu een hardcoded placeholder werd gebruikt om toch een flow te kunnen demonstreren.
+    Vanwege de bovengenoemde beperkingen en het feit dat de officiële KBO-webservices betalend zijn (50 euro per 2000 requests), is voor deze PoC gekozen voor een hybride oplossing: de volledig functionele en gratis VIES-API voor bedrijfsvalidatie, samen met een 
+    web scraping-implementatie. Door de publieke KBO Public Search-omgeving te parsen aan de hand van de HtmlAgilityPack-bibliotheek in de .NET-backend, kan de applicatie live de namen van actieve bestuurders en vaste vertegenwoordigers opahlen. 
 
 \end{itemize}
+
+    Een limitatie van de implementatie is dat KBO-entiteiten zonder BTW-plicht (zoals bepaalde vzw's) 
+    door VIES als 'ongeldig' worden gemarkeerd. Voor een uiteindelijke productie-omgeving bij Scrada blijft een integratie met de KBO Webservices daarom noodzakelijk.
+    Indien Scrada in de toekomst deze functionaliteit wil implementeren, kan de betalende KBO-webservice gemakkelijk worden toegepast en toegevoegd aan de backend, aangezien in de KBO service al een gebruiksklare architectuur bevat waardoor enkel de API-sleutel en de specifieke endpoint-URL geconfigureerd moeten worden..
+
+\end{itemize}
+
 \section{Service laag}
 De service laag van de backend is verantwoordelijk voor het verwerken van de bedrijfslogica en het aanroepen van de externe API's.
 
 \begin{itemize}
-    \item \textbf{KboService:} In de huidige PoC-fase fungeert deze als een Mock Service die de interface van de \textit{WSConsultAgentEnterprise} simuleert. Deze service geeft de statutaire bestuurders terug van de opgegeven onderneming via ondernemingsnummer. In de huidige implementatie wordt een hardcoded naam teruggeven, puur om de flow te kunnen demonstreren.
+    \item \textbf{KboService:} Deze service is verantwoordelijk voor het valideren van de statutaire bestuurders van een onderneming. In de huidige PoC-fase is deze geïmplementeerd als een web scraper die door middel van de HtmlAgilityPack-bibliotheek de publieke KBO Public Search-website raadpleegt. 
+    De service haalt live de namen van de statutaire bestuurder van het opgegeven bedrijf (via BTW- of ondernemingsnummer) op.
+    De opgehaalde data wordt vervolgens omgezet door een algoritme dat leestekens en onnodige spaties verwijdert en de tekst omzet naar hoofdletters. Dit proces is belangrijk om een betrouwbare match met de gescande eID-gegevens te garanderen.
+    Hoewel de service momenteel functioneert via scraping, is de architectuur reeds voorbereid met een gecommentarieerde integratielaag voor de officiële (betalende) WSConsultAgentEnterprise-webservice.
     \item \textbf{LsegService:} Een simulatie van de World-Check screening. Een bedrijf kan mogelijks uit 3 termen bestaan: maffia, fraud en scam. Bij een match van een van deze termen, wordt het bedrijf als 'hoog risico' gemarkeerd. In de huidige PoC-fase is deze service nog niet geïmplementeerd, maar kan deze in de toekomst gemakkelijk worden toegevoegd als een extra laag in de backend
     om extra veiligheid te garanderen bij het registreren van bedrijven.
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met

@@ -156,12 +156,9 @@ wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkt
 De kern van de bachelorproef is de ontwikkeling van de Proof-of-Concept (PoC). Hierbij is gekozen voor een agile ontwikkelingsmethode (iteratief ontwerpen), 
 waarbij functionele onderdelen afgestemd konden worden aan de technische infrastructuur van Scrada. De architectuur van de PoC bestaat uit drie hoofdcomponenten die samenwerken:
 
-In deze Proof-of-Concept wordt gebruikgemaakt van de KBO Open Data webservice om bedrijfsgegevens in real-time op te halen. 
+In deze Proof-of-Concept wordt gebruikgemaakt van de KBO Public Search \url{https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html} om bedrijfsgegevens in real-time op te halen via web scraping, aangezien de KBO API niet publiek en gratis toegankelijk is. 
 Dit gebeurt via een .NET backend die fungeert als tussenlaag tussen de mobiele applicatie en de externe databron. 
 Deze architectuur voorkomt directe blootstelling van externe endpoints en laat toe om bijkomende validatielogica (zoals risicoscores) centraal te beheren.
-
-De KBO-webservice bevat geen volledige informatie over bestuurders of uiteindelijke begunstigden (UBO). 
-Daarom wordt deze integratie in de Proof-of-Concept beperkt tot basisverificatie van ondernemingsstatus en identificatiegegevens.
 
 Hoewel de controle op sanctielijsten via LSEG World-Check een cruciaal onderdeel is van het theoretische KYC-proces, 
 is de daadwerkelijke technische integratie hiervan buiten de scope (Out of Scope) van deze Proof-of-Concept gehouden. 
