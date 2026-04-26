@@ -86,7 +86,10 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     \item \textbf{KboService:} Deze service is verantwoordelijk voor het valideren van de statutaire bestuurders van een onderneming. In de huidige PoC-fase is deze geïmplementeerd als een web scraper die door middel van de HtmlAgilityPack-bibliotheek de publieke KBO Public Search-website raadpleegt. 
     De service haalt live de namen van de statutaire bestuurder van het opgegeven bedrijf (via BTW- of ondernemingsnummer) op.
     De opgehaalde data wordt vervolgens omgezet door een algoritme dat leestekens en onnodige spaties verwijdert en de tekst omzet naar hoofdletters. Dit proces is belangrijk om een betrouwbare match met de gescande eID-gegevens te garanderen.
-    Hoewel de service momenteel functioneert via scraping, is de architectuur reeds voorbereid met een gecommentarieerde integratielaag voor de officiële (betalende) WSConsultAgentEnterprise-webservice.
+    Dit proces is essentieel om de foutmarge bij inconsistenties te verkleinen, eem punt dat in paragraaf 3.2.1 werd vermeld (zoals het ontbreken van tweede voornamen in de KBO databank).
+    Het algoritme splitst de opgehaalde KBO-naam op in afzondelijke woorden en verifieert of elk essentieel deel aanwezig is  in de OCR-output van de indentitetiskaart.
+    Hoewel de service momenteel functioneert via scraping, is de architectuur reeds voorbereid met een gecommentarieerde integratielaag voor de officiële (betalende) WSConsultAgentEnterprise-webservice. Voor een PoC volstaat web scraping om flow te kunnen demonstreren,
+    maar is productie zou dit best niet gebruikt worden. Er wordt daarom aangeraden om de KBO-API aan te schaffen.
     \item \textbf{LsegService:} Een simulatie van de World-Check screening. Een bedrijf kan mogelijks uit 3 termen bestaan: maffia, fraud en scam. Bij een match van een van deze termen, wordt het bedrijf als 'hoog risico' gemarkeerd. In de huidige PoC-fase is deze service nog niet geïmplementeerd, maar kan deze in de toekomst gemakkelijk worden toegevoegd als een extra laag in de backend
     om extra veiligheid te garanderen bij het registreren van bedrijven.
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
@@ -95,39 +98,37 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
 \end{itemize}  
 
-TODO DIT FIXEN
 \begin{lstlisting}[
     language=HTML, 
-    caption={Volledige HTML-broncode van de KBO Open Data portal.}, 
+    caption={Volledige HTML-broncode van de KBO Public Search login pagina.}, 
     label={lst:kbo-full-html},
     basicstyle=\tiny\ttfamily, 
     frame=single,
     breaklines=true,
     numbers=left,
     numberstyle=\tiny\color{gray},
-    columns=fullflexible, % Voorkomt rare spaties
-    literate={_}{\_}{1}   % DIT IS DE KEY: dit vertelt LaTeX dat _ gewone tekst is
+    columns=fullflexible,
+    literate={_}{\_}{1} {<}{{$<$}}{1} {>}{{$>$}}{1}
 ]
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE HTML SYSTEM "about:legacy-compat">
-<html>
+<!DOCTYPE html>
+<html lang="nl">
 <head>
     <meta charset="UTF-8"/>
-    <title>Welcome to CBE-open-data</title>
+    <title>CBE-opendata Login</title>
 </head>
 <body>
 <div id="main">
     <h1>Login</h1>
     <p>Access to these files is free.</p>
 
-    <form name="f" method="POST" action="/kbo-open-data/static/j_spring_security_check">
+    <form name="f" method="POST" action="/kbo-open-data/login">
         <div class="form-row">
-            <label for="j_username">Username</label>
-            <input type="text" name="j_username" id="j_username"/>
+            <label for="username">Username</label>
+            <input type="text" name="username" id="username"/>
         </div>
         <div class="form-row">
-            <label for="j_password">Password</label>
-            <input type="password" name="j_password" id="j_password"/>
+            <label for="password">Password</label>
+            <input type="password" name="password" id="password"/>
         </div>
         <input type="submit" value="Submit"/>
     </form>
@@ -150,7 +151,11 @@ dus was dit een proces van trial-and-error om de juste tekstvelden te kunnen ide
 Aangezien het gerbuik van een ID-scanner plugin of library kostloos niet mogelijk is, werd deze aanpak gekozen. Om deze zo robuust mogelijk te maken werd de naam niet uitgelezen van de voorkant
 van de ID-kaart maar van de achterkant, waar de naam in een vaste structuur staat en beter te herkennen is. Daarnaast, om de geldigheid van de identiteitskaart te verifieren, 
 wordt ook de vervaldatum uitgelezen en vergeleken met de huidige datum. Indien de kaart verlopen is, zal er een foutmelding worden weergegeven en zal de gebruiker worden gevraagd om een geldige kaart te scannen.
-Als extra check wordt ook een checksum berekent op basis van de cijfers in het rijksregisternummer, om de geldidheid van het nummer te verfieren en fraude te voorkomen. Deze checksum werd online gevonden via de link https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/.
+Als extra check wordt ook een checksum berekent op basis van de cijfers in het rijksregisternummer. Het rijksrigsternummer begint met de geboortedatum van de houder (YY.MM.DD). Indien de houder voor het jaar 2000 geboren is, worden de eerste 9 cijfers genomen en wordt een modulo 97 berekening op uitgevoerd, 
+waarbij de laatste 2 cijfers het resultaat zijn.
+Bij personen die na 2000 zijn geboren is dit echter anders, want er wordt geen onderscheid gemaakt of een persoon in 19xx of 20xx geboren is. Indien de checksum niet zou kloppen, wordt er een '2' voor de 9 cijfers geplaatst en wordt de berekening herhaald.
+Deze methode is noodzakelijk omdat de checksum-logica voor personen geboren vanaf het jaar 2000 een extra prefix vereist om wiskundig correct te blijven.
+om de geldigheid van het nummer te verfieren en fraude te voorkomen. Deze checksum werd online gevonden via de link https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/.
 
 \subsection{Technische Implementatie en Uitdagingen van de Biometrische Vergelijking}
 De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitdaging in verband met de runtime-omgeving.
@@ -180,11 +185,24 @@ maar na een aantal testen bleek dat deze methode niet zo bestand is tegen belich
 De Cosine Similarity daarentegen, focust op de oriëntatie van de vectoren in de embeddings en is daardoor ook veel toepasselijker bij deze real-world setting. 
 De gebruiker zal namelijk niet altijd in de beste setting zitten met een witte achtergrond, de Cosine Similarity kan zich hier beter tegen aanpassen.
 
-Om te verzekeren dat de live-foto werkelijk live is en geen foto van een bestaande afbeelding, werd liveness-detectie geïmplementeerd om de fraudeveiligheid te verhogen.
-maar dit zorgde voor een technische trade-off: door de constante verwerking van camera-frames voor de liveness-check daalt de gemiddelde match-score met ongeveer 10\%.
-Dit doordat de continue liveness-detectie mogelijk minder scherpte door beweging in de live-opname kan veroorzaken, wat de kwaliteit van de embedding beïnvloedt.
+Om zeker te zijn dat de live-foto werkelijk live is en geen foto van een bestaande afbeelding, werd liveness-detectie geïmplementeerd om de fraudeveiligheid te verhogen.
+Tijdens de actieve liveness-check moet de processor simultaan de camera-stream verwerken voor knipperdetectie via ML Kit en ook
+frames bufferen voor de uiteindelijke gezichtsvergelijking. Deze constante berekening zorgt voor een lichte vertraging in de 'exposure time', 
+wat zorgt voor een toename van 'motion blur' (bewegingsonscherpte) in de live-opname. 
+Omdat het MobileFaceNet-model zeer gevoelig is voor scherpe gezichtsuitdrukkingen om nauwkeurige embeddings te genereren, 
+zorgde dit voor een technische trade-off: door de constante verwerking van camera-frames voor de liveness-check daalt de gemiddelde match-score met ongeveer 10\%.
 
-\begin{lstlisting}[language=bash, caption={Console output bij ontbrekende x86\_64 binaries}]
+Desondanks is deze daling acceptabel, aangezien de drempelwaarde (threshold) voor een positieve match in de PoC is afgesteld op 0.60, wat voldoende marge biedt om zowel fraude te voorkomen als legitieme gebruikers vlot te onboarden.
+
+\begin{lstlisting}[
+    language=bash, 
+    caption={Console output bij ontbrekende x86\_64 binaries in de Android emulator.}, 
+    label={lst:emulator-error},
+    basicstyle=\tiny\ttfamily, 
+    frame=single,
+    breaklines=true,
+    literate={_}{\_}{1} {$}{{\$}}1
+]
 E/CameraValidator: Camera LensFacing verification failed
 W/CameraX: androidx.camera.core.impl.CameraValidator$CameraIdListIncorrectException: 
            Expected camera missing from device.

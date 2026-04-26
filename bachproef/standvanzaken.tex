@@ -168,9 +168,6 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     wordt het wantrouwen tussen de data provider (klant) en data consumer (Scrada) geminimaliseerd en ontstaat een veilig ecosysteem voor data-uitwisseling \autocite{vonScherenberg2024}.
 \end{enumerate}
 
-Natuurlijk zijn geautomatiseerde KYC-processen niet altijd foutloos. Wanneer er twijfel is over de authenticiteit van de documenten of wanneer er een risicoprofiel wordt gedetecteerd, 
-dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet een medewerker inspringen om een beslissing te nemen, zoals het goedkeuren of afwijzen van de klant, of het vragen van aanvullende informatie.
-
 \begin{listing}[ht]
 \begin{minted}{json}
 {
@@ -186,6 +183,9 @@ dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet 
 \label{lst:api-response}
 \end{listing}
 
+Natuurlijk zijn geautomatiseerde KYC-processen niet altijd foutloos. Wanneer er twijfel is over de authenticiteit van de documenten of wanneer er een risicoprofiel wordt gedetecteerd, 
+dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet een medewerker inspringen om een beslissing te nemen, zoals het goedkeuren of afwijzen van de klant, of het vragen van aanvullende informatie.
+
 \subsection{Biometrische Identiteitsverificatie en liveness-detectie}
 Om de authenticiteit van een identeitskaart te garanderen, kan er ook gebruik worden gemaakt van biometrische verificatie.
 Dit kan aan de hand van gezichtsherkenning via een foto of video van de klant die vergeleken wordt met de foto op het identiteitsbewijs, die via
@@ -194,7 +194,7 @@ de preprocessing is hierbij van groot belang, aangezien de kwaliteit van de inpu
 OCR kan samen gebruikt worden met AI om ook ICR (Intelligent Character Recognition) toe te passen, waarbij de software niet alleen de tekst herkent, maar ook de context begrijpt, 
 zoals het onderscheiden van een naam, adres of geboortedatum (\autocite{IBM_OCR_2024}).
 
-Volgens een recente literatuurstudie van \autocite(FaceLivenessMDPI2023) is gezichtsherkenning een cruciaal onderdeel van biometrische authenticatie
+Volgens een recente literatuurstudie van \autocite{FaceLivenessMDPI2023} is gezichtsherkenning een cruciaal onderdeel van biometrische authenticatie
 om bepaalde spoofing-aanvallen te voorkomen, zoals print- en replay-attacks. Hierbij worden er foto's op papier of video's op schermen gebruikt in de plaats van een echt gezicht.
 Het gebruik van Deep Learning-modellen zorgt ervoor dat verschillen in textuur, beweging en 3D-structuur kunnen worden geanalyseerd om te bepalen of het gezicht echt is of een afbeelding, 
 war ervoor zorgt dat de nauwkeurigheid van het KYC-proces verbetert en de kans op identiteitsfraude vermindert.
