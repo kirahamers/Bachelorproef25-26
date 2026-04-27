@@ -13,74 +13,75 @@
 \institution{Hogeschool Gent, Valentin Vaerwyckweg 1, 9000 Gent}
 
 % Info over de bachelorproef
-\title{Titel van uw bachelorproef}
-\subtitle{Ondertitel (eventueel)}
-\author{Voornaam Naam}
-\email{voornaam.familienaam@student.hogent.be}
-\supervisor{Voornaam Naam}
-\cosupervisor{Voornaam Naam (Bedrijf)}
+\title{Automatisering van de KYC-onboarding bij Scrada}
+\subtitle{Een onderzoek naar een GDPR-conforme, fraudeveilige en kostenefficiënte aanpak.}
+\author{Hamers Kira}
+\email{kira.hamers@student.hogent.be}
+\supervisor{Tom Antjon}
+\cosupervisor{Jeffrey Baeke (Scrada)}
 
 % Indien ingevuld, wordt deze informatie toegevoegd aan het einde van de
 % abstract. Zet in commentaar als je dit niet wilt.
-\specialisation{Systeem- en Netwerkbeheer}
-\keywords{Lambda-calculus, Scheme}
-\projectrepo{https://github.com/user/repo}
+\specialisation{Mobile \& Enterprise Development}
+\keywords{KYC, GDPR-conformiteit, automatisering}
+\projectrepo{https://github.com/kirahamers/Bachelorproef25-26.git}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-It's only a model.
-You don't vote for kings. Who's that then? We found them. Ni! Ni! Ni! Ni!
-The nose? On second thoughts, let's not go there. It is a silly place. Bloody Peasant! And the hat. She's a witch! Where'd you get the coconuts?
+Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
+Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
+Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
+Het resultaat is een sneller, veiliger en self-service onboarding proces.
 \end{abstract}
 
-\begin{multicols}{2} % This is how many columns your poster will be broken into, a portrait poster is generally split into 2 columns
+\begin{multicols}{2}
 
 \section{Introductie}
+Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiëren (AML-wetgeving). 
+De huidige methode bij Scrada vereist vaak manuele invoer van KBO-gegevens, wat de efficiëntie vertraagt. 
+De centrale onderzoeksvraag luidt: \textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een GDPR-conforme, fraudeveilige en kostenefficiënte manier?”}
 
-Be quiet! Found them? In Mercia?! The coconut's tropical! But you are dressed as one… Well, what do you want? Knights of Ni, we are but simple travelers who seek the enchanter who lives beyond these woods.
+\section{De Oplossing}
+Vanwege de hoge abonnementskosten van de officiële KBO-API (€50 per 2000 requests), is gekozen voor een kostenloze PoC:
+\begin{itemize}
+    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API van de Europese Commissie.
+    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper die de publieke KBO-database raadpleegt door middel van HtmlAgilityPack.
+    \item \textbf{Identiteitsmatch:} Vergelijking van gescrapte namen met OCR-data van de eID, samen met biometrische verificatie.
+\end{itemize}
 
-Well, what do you want? It's only a model. Camelot! We found them. We shall say `Ni' again to you, if you do not appease us.
-
-The nose? Shut up! Burn her! I am your king. You don't vote for kings.
-
-You can't expect to wield supreme power just `cause some watery tart threw a sword at you! Well, we did do the nose. I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave before I am forced to taunt you a second time!
-
-Why do you think that she is a witch? We want a shrubbery!! I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave before I am forced to taunt you a second time!
-
-\section{Experimenten}
-
-A newt? Camelot! Why? No, no, no! Yes, yes. A bit. But she's got a wart.
-
-Shut up! I dunno. Must be a king. Who's that then? Look, my liege! On second thoughts, let's not go there. It is a silly place.
-
-Shut up! Will you shut up?! No, no, no! Yes, yes. A bit. But she's got a wart. He hasn't got shit all over him. It's only a model. It's only a model.
-
-Bring her forward! I don't want to talk to you no more, you empty-headed animal food trough water! I fart in your general direction! Your mother was a hamster and your father smelt of elderberries! Now leave 
-
-\section{Sectie met figuur}
-
-De {\LaTeX} figure-omgeving bepaalt zelf waar een afbeelding komt en dat is meestal niet op de plek in de tekst waar de figure-omgeving gedefinieerd wordt. Als je wilt forceren dat afbeeldingen toch in de flow van de tekst blijven, dan kan je dat zoals hieronder:
-
+\section{Systeemarchitectuur}
+De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend.
 \begin{center}
   \captionsetup{type=figure}
-  \includegraphics[width=1.0\linewidth]{grail}
-  \captionof{figure}{He hasn't got shit all over him. The nose? Where'd you get the coconuts? What do you mean? We shall say `Ni' again to you, if you do not appease us}
+  %TODO FOTO
+  \includegraphics[width=0.8\linewidth]{architectuur_diagram}
+  \captionof{figure}{Flow van data-extractie: van KBO-scraper naar Flutter UI.}
 \end{center}
 
-Let er wel op dat dit tot problemen met bladschikking kan leiden.
+\section{Biometrische Verificatie}
+Om identiteitsfraude tegen te gaan, is het gebruik van biometrie essentieel om de indentiteit van de gebruiker te verifiëren:
+\begin{itemize}
+    \item \textbf{Gezichtsherkenning:} Een biometrische vergelijking tussen een live-selfie en de foto op de gescande eID zorgt voor de authenticatie van de persoon.
+    \item \textbf{Liveness Detection:} Voorkomt fraude door te bevestigen dat een fysiek persoon aanwezig is (geen foto- of videoreproductie).
+    \item \textbf{Bevoegdheidscheck:} De geverifieerde persoon wordt in de backend gematcht met de lijst van statutaire bestuurders die live uit de KBO is gescrapt.
+\end{itemize}
 
-\section{Conclusies}
+\section{Resultaten \& Verificatie}
+De PoC bewijst dat een volledige identiteitscheck van een bedrijf en bestuurder slechts enkele seconden kan duren:
+\begin{itemize}
+    \item \textbf{Naadloze Match:} Succesvolle koppeling tussen de live KBO-data en de biometrische face-match uit de app.
+    \item \textbf{Data-cleaning:} De backend vertaalt ruwe HTML-namen naar tekst, wat essentieel is voor een betrouwbare vergelijking met de eID.
+    \item \textbf{Full-Stack Flow:} Een sluitende keten van bedrijfsstatus (VIES & KBO), documentcontrole (OCR) en biometrie (live-selfie).
+\end{itemize}
 
-Don't underestimate the Force. Oh God, my uncle. How am I ever gonna explain this? I suggest you try it again, Luke. This time, let go your conscious self and act on instinct. Don't be too proud of this technological terror you've constructed. The ability to destroy a planet is insignificant next to the power of the Force.
-
-\section{Toekomstig onderzoek}
-
-I care. So, what do you think of her, Han? No! Alderaan is peaceful. We have no weapons. You can't possibly… I have traced the Rebel spies to her. Now she is my only link to finding their secret base.
-
-Kid, I've flown from one side of this galaxy to the other. I've seen a lot of strange stuff, but I've never seen anything to make me believe there's one all-powerful Force controlling everything. There's no mystical energy field that controls my destiny. It's all a lot of simple tricks and nonsense. You are a part of the Rebel Alliance and a traitor! Take her away! 
+\section{Conclusie}
+Deze PoC bewijst dat manuele KYC-processen bij Scrada verleden tijd zijn. Door een Flutter-app te koppelen aan een .NET-backend, 
+ontstaat een flow die zowel de snelheid voor de gebruiker verhoogt als de veiligheid van de data garandeert.
+Hoewel de web-scraper een ideale methode was om deze PoC kosteloos te ontwikkelen, is een overstap naar de officiële KBO-API de volgende stap voor een optimale productieomgeving. 
+De huidige architectuur is hier al op voorbereid: de scraper code kan simpelweg worden ingewisseld voor de officiële API-koppeling.
 
 \end{multicols}
 \end{document}
