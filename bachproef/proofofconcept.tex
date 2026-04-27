@@ -4,6 +4,13 @@
 \chapter{Realisatie van de Proof-of-Concept}
 \label{ch:proof-of-concept}
 In dit hoofdstuk wordt de technische ontwikkeling van de Proof-of-Concept (PoC) gedetailleerd beschreven. 
+
+Hoewel er in hoofdstuk 2 over NFC-technologie en Blockchain besproken werd als de standaard voor eKYC, is voor deze PoC gekozen voor
+een combinatie van OCR en web scraping. De reden hiervoor is de hardware-beperking, aangezien niet alle identiteitskaarten en mobiele apparaten momenteel
+beschikken over NFC-readers of NFC-chips. Anderzijds blijft de focus van deze bachelorproef ook op de kostenefficiëntie.
+Door gebruik te maken van publieke APIs in de backend en open-source AI-modellen in de front-end zoals MobileFacenet (wat later in dit hoofstuk verder uitgewerkt wordt), kan een manueel, tijdrovend proces omgezet worden
+naar een veiligere, geautomatiseerd proces zonder hoge instapkosten, zoals bijvoorbeeld van toepassing is bij itsme®.
+
 De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten bevat:
 
 \section{Systeemarchitectuur}
@@ -209,12 +216,16 @@ W/CameraX: androidx.camera.core.impl.CameraValidator$CameraIdListIncorrectExcept
 Caused by: java.lang.IllegalArgumentException: No available camera can be found.
 \end{lstlisting}
 
-\section{Data-opslag en Afronding van de Registratie}
+\section{Data-flow}
 Zodra de identiteit van de bestuurder succesvol is geverifieerd via de biometrische match, wordt het registratieproces verder uitgevoerd. 
 Hierbij is het essentieel dat de gevalideerde bedrijfsgegevens worden gekoppeld aan de contactgegevens van de nieuwe gebruiker.
 
-\subsection{Persistentie van Gegevens}
-Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend (buiten deze scope). De volgende datavelden worden opgeslagen om het account van de klant te vervolledigen:
+In de context van deze PoC is de gegevensstroom zo ontworpen dat deze aansluit bij de bestaande infrastructuur van Scrada, die reeds gebruikmaakt van blockchain-technologie voor data-integriteit conform de Circulaire 2020/C/20 van de FOD Financiën.
+
+\subsection{ontwerp van de data-architectuur}
+Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend. 
+Deze zijn echter buiten de scope van de Poc en enkel de noodzakelijke gevalideerde velden worden doorgegeven, terwijl de biometrische pixels na verwerking worden verwijderd (Privacy by Design).
+De volgende datavelden worden opgeslagen om het account van de klant te vervolledigen:
 \begin{itemize}
     \item \textbf{Ondernemingsnummer:} De unieke sleutel die de koppeling legt met de KBO-databank.
     \item \textbf{Naam van de bestuurder:} De statutaire naam zoals gevalideerd tijdens de eID-scan en de KBO-check.
@@ -224,6 +235,28 @@ Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-desig
 
 \subsection{Notificatie en Validatiebevestiging}
 Na de succesvolle opslag in de database genereert de backend automatisch een bevestigingsmail naar het opgegeven e-mailadres.
+
+\section{Evaluatie van de Testresultaten}
+Om de onderzoeksvraag met betrekking tot fraudeveiligheid te beantwoorden, 
+is de Proof-of-Concept werden verschillende functionele testen uitgevoerd waarbij bewuste pogingen tot misleiding werden ondernomen.
+
+\subsection{Validatie van de Liveness-detectie}
+Tijdens de biometrische testen werd geprobeerd een foto met hoge resolutie van een gezicht voor de camera te houden. De liveness-detectie in de CameraScannerWidget herkende  geen actieve oogknipper-beweging, 
+waardoor de opnameknop vergrendeld bleef. Pas bij een fysiek aanwezige gebruiker werd de isLive-status geactiveerd, wat aantoont dat het systeem beschermt tegen eenvoudige 'spoofing'-aanvallen met foto's.
+
+\subsection{Test van de Checksum en Heuristiek}
+De algoritmische validatie is getest door een geldig rijksregisternummer handmatig met één cijfer aan te passen. 
+Het systeem gaf  een "Checksum mismatch" foutmelding, aangezien de wiskundige modulo-berekening niet meer overeenkwam met het controlegetal. 
+Daarnaast is de naamvergelijking getest met een scenario waarbij de KBO-databank enkel de voornaam en achternaam bevatte (bijv. "JAN JANSSENS"), 
+terwijl de eID ook de tweede voornaam vermeldde ("JAN PIETER JANSSENS"). Dankzij de geïmplementeerde heuristiek, die de naam opsplitst in afzonderlijke tekstblokken, werd de match correct gevalideerd in plaats van afgewezen. 
+
+\subsection{Efficiëntie}
+In vergelijking met het huidige manuele proces bij Scrada, waarbij een medewerker handmatig de KBO moet raadplegen en gegevens moet overtypen, vermindert de geautomatiseerde flow de tijd om dezelfde acties uit te voeren. 
+De volledige flow, van de eID-scan tot de finale biometrische match, duurt gemiddeld twee minuten (indien alles succesvol is). Dit ondersteunt de hypothese dat een tijdsbesparing van minimaal 50 procent op de volledige onboarding haalbaar is.
+
+Daarnaast wordt de onboarding verschoven naar de klant zelf. In de plaats dat een medewerker van Scrada alle stappen uitvoert, moet de klant zelf bewijzen dat die de werkelijke bestuurder is van het ingegeven bedrijf.
+Door de directe validatie en feedback (bijvoorbeeld een foutieve ID-scan), kan de klant zelf te weten komen welke stap opnieuw moet gedaan worden, en bij eventuele constante foutmeldingen kan nog steeds een human-in-the-loop 
+aangevraagd worden door middel van een hulp knop.
 
 \section{Alternatieven en Marktvergelijking}
 Tijdens de analysefase werden alternatieven zoals \textit{itsme®} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 

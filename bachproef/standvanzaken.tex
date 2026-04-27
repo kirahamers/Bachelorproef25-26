@@ -151,7 +151,8 @@ De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
     aangezien de jaarlijkse licentiekosten van dergelijke platforms kunnen oplopen tot €50.000, wat niet kostenefficiënt is voor een bedrijf als Scrada dat een groot aantal klanten moet onboarden. 
     In plaats daarvan kan er gebruik worden gemaakt van de NFC-technologie die in moderne identiteitsbewijzen is geïntegreerd, waardoor een directe uitlezing van de chip mogelijk is via een mobiele app.
     De keuze voor een oplossing via NFC-technologie sluit aan bij de visie van \autocite{Kumar2020}, die stellen dat een modern eKYC-proces gebruik moet maken van digitale handtekeningen en asymmetrische cryptografie om een 'Single Source of Truth' te creëren.
-    Daarnaast kan ook gebruik worden gemaakt van biometrische verificatie, zoals gezichtsherkenning en liveness-detectie, om te garanderen dat de persoon die de verificatie uitvoert daadwerkelijk fysiek aanwezig is en geen gebruik maakt van een foto of masker.
+    het toepassen van NFC in de Proof-of-Concept heeft echter een hardware beperking, aangezien alleen de meest recente indentiteitskaarten en mobiele apparaten tot deze technologie beschikken. voor Scrada moet gebruik worden gemaakt van hardware
+    dat op elk toestel aanwezig is, wat in dit geval de camera is, om zo de identeitskaart af te lezen en te verifieren. Daarnaast kan ook gebruik worden gemaakt van biometrische verificatie, zoals gezichtsherkenning en liveness-detectie, om te garanderen dat de persoon die de verificatie uitvoert daadwerkelijk fysiek aanwezig is en geen gebruik maakt van een foto of masker.
     \item \textbf{Geautomatiseerde Data-extractie en Matching:} Het systeem voert in real-time een API-call uit naar externe bronnen zoals de KBO. 
     De software vergelijkt automatisch of de persoon in de onboarding voorkomt in de lijst van statutaire bestuurders van de onderneming.
     Een voorbeeld van gestructureerde JSON-data die na een dergelijke controle wordt ontvangen, is te zien in Listing \ref{lst:api-response}.
@@ -223,6 +224,12 @@ In plaats van documenten fysiek op de chain op te slaan, wat inefficiënt is en 
     Volgens \autocite{Yadav2020} zorgt dit model voor een bijna onkraakbare cryptografische beveiliging voor financiële transacties.
 \end{itemize}
 
+\subsection{Huidige toepassing binnen Scrada}
+Scrada onderscheidt zich in de markt door het gebruik van blockchaintechnologie voor de onveranderlijkheid van digitale wettelijke boeken, conform de Circulaire 2020/C/20 van de FOD Financiën (te vinden op https://www.scrada.be/). 
+Door middel van cryptografische verificatie garandeert het platform dat financiële data integer en onweerlegbaar blijft. 
+Deze bestaande functionaliteit is een belangrijk fundament voor dit onderzoek. Waar de huidige blockchain-implementatie de integriteit van de financiële data waarborgt, 
+legt de in dit onderzoek ontwikkelde Proof-of-Concept de basis voor het technisch borgen van de identiteit. De integratie van een geautomatiseerd KYC-proces is hiermee een volgende stap, waarbij de informatie na een registratie veilig opgeslagen wordt.
+
 \subsection{Economische en structurele impact}
 Het gebruik van een consortium blockchain-model, waarbij meerdere organisaties samenwerken volgens gedefinieerde protocollen, kan de efficiëntie van de sector aanzienlijk verhogen.
 \begin{itemize}
@@ -232,16 +239,15 @@ Het gebruik van een consortium blockchain-model, waarbij meerdere organisaties s
 
 \begin{table}[h!]
 \centering
-\caption{Vergelijking tussen manuele KYC en geautomatiseerde eKYC (gebaseerd op Deloitte en de Bolero case study)}
-\label{tab:kyc-vergelijking}
-\begin{tabular}{|l|p{5cm}|p{5cm}|}
+\caption{Vergelijking tussen de huidige manuele werkwijze, de marktstandaard (itsme®) en de voorgestelde PoC.}
+\label{tab:kyc-vergelijking-compleet}
+\begin{tabular}{|l|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
 \hline
-\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{Geautomatiseerd proces (eKYC / itsme®)} \\ \hline
-\textbf{Klantervaring} & Hoog-frictie: handmatige uploads en wachttijden. & \textit{Seamless}: onmiddellijke verificatie via app \autocite{ItsmeBolero2024}. \\ \hline
-\textbf{Data-input} & Foutgevoelig: handmatige overdracht van ID-gegevens. & Foutloos: directe overdracht van geverifieerde data \autocite{ItsmeKYC2024}. \\ \hline
-\textbf{Doorlooptijd} & Dagen: afhankelijk van beschikbaarheid medewerker. & Seconden: real-time besluitvorming \autocite{Deloitte2024}. \\ \hline
-\textbf{Bedrijfscheck} & Manuele opzoeking in KBO-webportaal door medewerker. & Automatische matching via KBO-API koppeling. \\ \hline
-\textbf{Schaalbaarheid} & Moeilijk: werkdruk stijgt lineair met aantal klanten. & Hoog: systeem kan grote volumes simultaan verwerken. \\ \hline
-\textbf{Data Sovereignty} & Versnipperd: data rust bij de provider in statische kopieën. & \textit{Data Sovereignty}: klant behoudt controle via technische handhaving \autocite{vonScherenberg2024}. \\ \hline
+\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{itsme® (SaaS-oplossing)} & \textbf{Eigen PoC (Automatisering)} \\ \hline
+\textbf{Kostenstructuur} & Loonevenredig: hoge kost door manuele uren van medewerkers. & Zeer hoog: jaarlijkse licentiekosten en transactiekosten. & Kostenefficiënt: eenmalige ontwikkeling en lage API-kosten. \\ \hline
+\textbf{Klantervaring} & Traag proces door handmatige uploads en wachten op validatie. & \textit{Seamless}: snelle verificatie via een externe, vertrouwde app. & \textit{Seamless self-service}: onmiddellijke verificatie direct in de Scrada-omgeving. \\ \hline
+\textbf{Verificatiemethode} & Visuele controle van kopieën door een medewerker (foutgevoelig). & Digitale identiteit via een gecertificeerde provider. & On-device biometrie, liveness-detectie en RRN-checksum. \\ \hline
+\textbf{Data-integriteit} & Risico op menselijke fouten bij het overtypen van gegevens. & Directe overdracht van geverifieerde brongegevens. & Automatische extractie via OCR met algoritmische controle. \\ \hline
+\textbf{Privacy (GDPR)} & Gecentraliseerd: gevoelige ID-kopieën blijven op de server staan. & Data-uitwisseling met een externe derde partij. & \textit{Privacy-by-design}: lokale verwerking op het eigen toestel. \\ \hline
 \end{tabular}
 \end{table}
