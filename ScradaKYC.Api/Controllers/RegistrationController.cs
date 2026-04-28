@@ -1,37 +1,41 @@
+using System.Xml.Serialization;
 using Microsoft.AspNetCore.Mvc;
+using ScradaKYC.Api.Services;
 
 namespace ScradaKYC.Api.Controllers {
 
     [ApiController]
     [Route("api/[controller]")]
-    public class registrationController : ControllerBase {
+    public class registrationController : ControllerBase 
+    {
+        private readonly EncryptionService _encryptionService;
+
+        public registrationController(EncryptionService encryptionService)
+        {
+            _encryptionService = encryptionService;
+        }
+
         [HttpPost("complete")]
         public IActionResult CompleteRegistration([FromBody] RegistrationRequest request)
         {
             if (request == null) return BadRequest("Geen data ontvangen.");
 
-            //log om aan te tonen dat gegevens opgeslagen kunnen worden
-            Console.WriteLine($"Bedrijf: {request.Bedrijfsnaam} (BTW: {request.BtwNummer})");
-            Console.WriteLine($"Bestuurder: {request.BestuurderNaam}");
-            Console.WriteLine($"Contact: {request.Email} | Tel: {request.Telefoon ?? "N/A"}");
-            Console.WriteLine($"Biometrische Score: {request.MatchScore}%");
+            string email = _encryptionService.Encrypt(request.Email);
+            string btw = _encryptionService.Encrypt(request.BtwNummer);
+            string naam = _encryptionService.Encrypt(request.BestuurderNaam);
 
-            //simulatie naar mailservice
-            SimuleerEmailVerzending(request.Email, request.BestuurderNaam);
+            Console.WriteLine("--- VEILIGE DATA VOOR OPSLAG ---");
+            Console.WriteLine($"Gecrypteerd Email: {email}");
+            Console.WriteLine($"Gecrypteerd BTW: {btw}");
+            Console.WriteLine($"Gecrypteerde Bestuurder: {naam}");
+            Console.WriteLine("--------------------------------");
 
             return Ok(new { 
                 success = true, 
-                message = "Registratie succesvol verwerkt!" 
+                message = "Data veilig versleuteld en klaar voor database!" 
             });
         }
-
-        private void SimuleerEmailVerzending(string email, string naam)
-        {
-            Console.WriteLine($"Verzend bevestiging naar: {email}");
-            Console.WriteLine($"'Beste {naam}, bekijk uw mail om uw Scrada-account te verfieren!.'");
-        }
     }
-
     public class RegistrationRequest
     {
         public string BtwNummer { get; set; } = string.Empty;

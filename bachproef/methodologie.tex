@@ -145,6 +145,13 @@ Zonder biometrische verificatie of liveness-detectie kan Scrada momenteel niet m
 Bovendien vormt de verwerking van onversleutelde identiteitsbewijzen een risico onder de GDPR. Hoewel itsme® als een veilige authenticatiemethode wordt beschouwd,
 wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkte flexibiliteit (het vereist een aparte app en is niet universeel toepasbaar, vooral voor buitenlandse klanten).
 
+Scrada onderscheidt zich in de markt door het gebruik van blockchaintechnologie voor de onveranderlijkheid van digitale wettelijke boeken, conform de Circulaire 2020/C/20 van de FOD Financiën (te vinden op https://www.scrada.be/). 
+Door middel van cryptografische verificatie garandeert het platform dat financiële data integer en onweerlegbaar blijft. 
+Deze bestaande functionaliteit is een belangrijk fundament voor dit onderzoek. Aangezien de huidige blockchain-implementatie de integriteit van de financiële data waarborgt, 
+is het belangrijk dat in het ontwikkelde Proof-of-Concept de data ook veilig wordt opgeslaan. Bij een verder interview werd meegegeven dat alleen de financiële data op de blockchain opgeslagen wordt, en 
+dit niet van toepassing is van de data na de registratie. Hier werd een voorstel gedaan om dit op te lossen door encryptie te gebruiken, wat later in de Proof-of-Concept verder toegelicht wordt.
+
+
 \begin{itemize}
     \item \textbf{Onderzoeksmethode:} Ondervraging na literatuurstudie en documentanalyse van de huidige processen.
     \item \textbf{Deliverable:} AS-IS procesmodel in BPMN en lijst van geïdentificeerde pijnpunten.
@@ -177,7 +184,8 @@ De focus van de PoC ligt primair op de automatische KBO-verificatie en de overee
     De .NET-backend werkt als de centrale hub die de mobiele applicatie verbindt met externe verificatiebronnen. Deze bestaat uit verschillende services:
         \begin{itemize}
         \item \textbf{Kruispuntbank van Ondernemingen (KBO):} via de KBO-service kunnen de officiele bestuurders van het opgegeven bedrijf opgehaald worden. Dit is een API dat betalend is, waarbij een pakket kan aangekocht worden voor vijftig euro per tweeduizend requests. Aangezien dit buiten de scope valt om 
-        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geimplementeerd worden.
+        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geimplementeerd worden. In een interview met de co-promotor werd meegedeeld dat er dagelijks aantal requests requests zijn, dus deze implementatie is haalbaar
+        voor Scrada (Wanneer bedrijven peppol verplicht moesten implementeren was dit aantal echter veel hoger).
         \item \textbf{BTW-validatie (VIES):} Via het gratis en openbare Vat Information Exchange System kan officeel gecontroleerd worden of een BTW- of ondernemingsnummer geldig en kan zo ook de naam van de onderneming opgehaald worden.
         \item \textbf{London Stock Exchange Group (LSEG):} de LSEG service wordt gebruikt als internationale veiligheidsscreening. Hierbij wordt geverifieerd of entiteiten voorkomen op sanctielijsten of betrokken zijn bij witwaspraktijken, conform aan de AML richtlijnen.
         Om toegang te krijgen tot deze API, is een streng screeningproces nodig en zijn de licentiekosten ook erg hoog. Hierdoor valt de implentatie van deze API buiten de scope van deze applicatie, maar is het nog steeds van belang dit te vermelden om in de toekomst dit zo fraudeveilig mogelijk te maken

@@ -30,58 +30,71 @@
 
 \maketitle
 
-\begin{abstract}
-Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
-Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
-Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
-Het resultaat is een sneller, veiliger en self-service onboarding proces.
-\end{abstract}
+\begin{tcolorbox}[
+    colback=hogent-blue!5, 
+    colframe=hogent-blue, 
+    arc=15pt, 
+    boxrule=3pt, 
+    left=30pt, right=30pt, top=20pt, bottom=20pt
+]
+    \begin{center}
+        {\Large\titlefont\color{hogent-blue} Abstract}
+    \end{center}
+    \itshape\Large
+    Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces[cite: 3]. 
+    Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert[cite: 4]. 
+    Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans[cite: 5]. 
+    Het resultaat is een sneller, veiliger en self-service onboarding proces.
+\end{tcolorbox}
+
+\vspace{1cm}
 
 \begin{multicols}{2}
 
 \section{Introductie}
 Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiëren (AML-wetgeving). 
-De huidige methode bij Scrada vereist vaak manuele invoer van KBO-gegevens, wat de efficiëntie vertraagt. 
-De centrale onderzoeksvraag luidt: \textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een GDPR-conforme, fraudeveilige en kostenefficiënte manier?”}
+De huidige methode bij Scrada vereist vaak manuele invoer van KBO-gegevens, wat de efficiëntie vertraagt.
+
+\begin{tcolorbox}[colback=white, colframe=hogent-blue, arc=8pt, title=Centrale Onderzoeksvraag]
+\textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een GDPR-conforme, fraudeveilige en kostenefficiënte manier?”} 
+\end{tcolorbox}
 
 \section{De Oplossing}
 Vanwege de hoge abonnementskosten van de officiële KBO-API (€50 per 2000 requests), is gekozen voor een kostenloze PoC:
 \begin{itemize}
-    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API van de Europese Commissie.
-    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper die de publieke KBO-database raadpleegt door middel van HtmlAgilityPack.
-    \item \textbf{Identiteitsmatch:} Vergelijking van gescrapte namen met OCR-data van de eID, samen met biometrische verificatie.
+    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API van de Europese Commissie[cite: 9].
+    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper die de publieke KBO-database raadpleegt door middel van HtmlAgilityPack[cite: 10].
+    \item \textbf{Identiteitsmatch:} Vergelijking van gescrapte namen met OCR-data van de eID, samen met biometrische verificatie[cite: 11].
 \end{itemize}
 
 \section{Systeemarchitectuur}
 De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend.
 \begin{center}
-  \captionsetup{type=figure}
-  %TODO FOTO
-  \includegraphics[width=0.8\linewidth]{architectuur_diagram}
-  \captionof{figure}{Flow van data-extractie: van KBO-scraper naar Flutter UI.}
+    \fbox{\includegraphics[width=0.6\linewidth]{poster-screenshot.png}}
+    \captionof{figure}{Flow van data-extractie: van KBO-scraper naar Flutter UI.}
 \end{center}
 
 \section{Biometrische Verificatie}
 Om identiteitsfraude tegen te gaan, is het gebruik van biometrie essentieel om de indentiteit van de gebruiker te verifiëren:
 \begin{itemize}
-    \item \textbf{Gezichtsherkenning:} Een biometrische vergelijking tussen een live-selfie en de foto op de gescande eID zorgt voor de authenticatie van de persoon.
-    \item \textbf{Liveness Detection:} Voorkomt fraude door te bevestigen dat een fysiek persoon aanwezig is (geen foto- of videoreproductie).
-    \item \textbf{Bevoegdheidscheck:} De geverifieerde persoon wordt in de backend gematcht met de lijst van statutaire bestuurders die live uit de KBO is gescrapt.
+    \item \textbf{Gezichtsherkenning:} Een biometrische vergelijking tussen een live-selfie en de foto op de gescande eID zorgt voor de authenticatie van de persoon[cite: 13].
+    \item \textbf{Liveness Detection:} Voorkomt fraude door te bevestigen dat een fysiek persoon aanwezig is[cite: 14].
+    \item \textbf{Bevoegdheidscheck:} De geverifieerde persoon wordt in de backend gematcht met de lijst van statutaire bestuurders die live uit de KBO is gescrapt[cite: 15].
 \end{itemize}
 
 \section{Resultaten \& Verificatie}
 De PoC bewijst dat een volledige identiteitscheck van een bedrijf en bestuurder slechts enkele seconden kan duren:
 \begin{itemize}
-    \item \textbf{Naadloze Match:} Succesvolle koppeling tussen de live KBO-data en de biometrische face-match uit de app.
-    \item \textbf{Data-cleaning:} De backend vertaalt ruwe HTML-namen naar tekst, wat essentieel is voor een betrouwbare vergelijking met de eID.
-    \item \textbf{Full-Stack Flow:} Een sluitende keten van bedrijfsstatus (VIES & KBO), documentcontrole (OCR) en biometrie (live-selfie).
+    \item \textbf{Naadloze Match:} Succesvolle koppeling tussen de live KBO-data en de biometrische face-match uit de app[cite: 16].
+    \item \textbf{Data-cleaning:} De backend vertaalt ruwe HTML-namen naar tekst, wat essentieel is voor een betrouwbare vergelijking met de eID[cite: 17].
+    \item \textbf{Full-Stack Flow:} Een sluitende keten van bedrijfsstatus (VIES \& KBO), documentcontrole (OCR) en biometrie[cite: 18].
 \end{itemize}
 
 \section{Conclusie}
-Deze PoC bewijst dat manuele KYC-processen bij Scrada verleden tijd zijn. Door een Flutter-app te koppelen aan een .NET-backend, 
-ontstaat een flow die zowel de snelheid voor de gebruiker verhoogt als de veiligheid van de data garandeert.
-Hoewel de web-scraper een ideale methode was om deze PoC kosteloos te ontwikkelen, is een overstap naar de officiële KBO-API de volgende stap voor een optimale productieomgeving. 
-De huidige architectuur is hier al op voorbereid: de scraper code kan simpelweg worden ingewisseld voor de officiële API-koppeling.
+Deze PoC bewijst dat manuele KYC-processen bij Scrada verleden tijd zijn[cite: 19]. 
+Door een Flutter-app te koppelen aan een .NET-backend, ontstaat een flow die zowel de snelheid voor de gebruiker verhoogt als de veiligheid van de data garandeert[cite: 20]. 
+Hoewel de web-scraper een ideale methode was om deze PoC kosteloos te ontwikkelen, is een overstap naar de officiële KBO-API de volgende stap voor een optimale productieomgeving[cite: 21]. 
+De huidige architectuur is hier al op voorbereid: de scraper code kan simpelweg worden ingewisseld voor de officiële API-koppeling[cite: 21].
 
 \end{multicols}
 \end{document}

@@ -86,7 +86,7 @@ Andere overwogen opties voor het ophalen van de statutaire bestuurders zijn
 
 \end{itemize}
 
-\section{Service laag}
+\subsection{Service laag}
 De service laag van de backend is verantwoordelijk voor het verwerken van de bedrijfslogica en het aanroepen van de externe API's.
 
 \begin{itemize}
@@ -103,6 +103,9 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risico van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoog risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
     \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
+    \item \textbf{EncryptionService:} Deze service zorgt voor het waarborgen van Privacy by Design. De applicatie maakt gebruik van AES-256 (Advanced Encryption Standard) om gevoelige persoonsgegevens, zoals e-mailadressen, te versleutelen voordat deze worden opgeslagen. 
+    Door gebruik te maken van een 32-byte sleutel en een unieke Initialization Vector (IV) per encryptie-ronde (volgens \url{https://learn.microsoft.com/en-us/dotnet/standard/security/encrypting-data}). Dit is een belangrijke stap voor de AVG-wetgeving binnen het Scrada-platform.
+
 \end{itemize}  
 
 \begin{lstlisting}[
@@ -143,6 +146,18 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
 </body>
 </html>
 \end{lstlisting}
+
+\subsection{Controller laag}
+De controller-laag zorgt voor de communicatie met de frontend en is verantwoordelijk voor het ontvangen van HTTP-verzoeken, aanroepen van bedrijfslogica in services en terugsturen van antwoorden.
+
+\begin{itemize}
+\item \textbf{KycController:} Deze controller vergemakkelijkt het Know Your Customer-proces door verschillende datastromen samen te brengen.
+Bij ontvangst van een ondernemingsnummer verwijdert de controller eerst punten en spaties om een uniform formaat te krijgen voor de onderliggende services.
+De controller coördineert de workflow tussen de ViesService, KboService, LsegService en RiskService.
+Het resultaat is een JSON-object dat de geldigheid van het BTW-nummer, de actuele KBO-status, een sanctie-check en een berekend risicoprofiel bevat. Dit stelt de applicatie in staat om in één enkel verzoek een volledig beeld van de entiteit te verkrijgen.
+\item \textbf{RegistrationController:} Deze controller beheert de afronding van het registratieproces via het complete-endpoint. 
+het ontvangt een RegistrationRequest-object dat bedrijfsgegevens en biometrische resultaten bevat. 
+Bij de productie kan hier een koppeling worden gemaakt met een mailservice, om zo de registratie te bevestigen.
 
 \section{Frontend Ontwikkeling (Flutter)}
 De mobiele interface van de Proof is ontwikkeld met het Flutter-framework. 
