@@ -288,6 +288,34 @@ Future<void> _registreerNu() async {
   );
 }
 
+void _showHelp() {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Row(
+        children: [
+          Icon(Icons.help_outline, color: Color(0xFF8B0000)),
+          SizedBox(width: 10),
+          Text("Hulp nodig?"),
+        ],
+      ),
+      content: const Text(
+        "Volg de stappen om uw registratie te voltooien:\n\n"
+        "1. Voer uw ondernemingsnummer in.\n"
+        "2. Scan de voor- en achterkant van uw identiteitskaart.\n"
+        "3. Maak een live selfie van uw gezicht.\n"
+        "4. Bevestig uw gegevens en voltooi de registratie.",
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text("BEGREPEN", style: TextStyle(color: Color(0xFF8B0000))),
+        ),
+      ],
+    ),
+  );
+}
+
   void _showError(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), duration: const Duration(seconds: 4)));
   }
@@ -323,6 +351,19 @@ Future<void> _registreerNu() async {
     );
   }
 
+  void _openExternalHelp() {
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text("Externe Ondersteuning"),
+      content: const Text("Heeft u technische problemen of zit u vast? Neem contact op met onze support via info@scrada.be of bel naar +32 9 496 57 16."),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: const Text("SLUITEN", style: TextStyle(color: Color(0xFF8B0000))))
+      ],
+    ),
+  );
+}
+
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -330,6 +371,18 @@ Widget build(BuildContext context) {
       title: const Text("Scrada KYC Portaal"),
       backgroundColor: const Color(0xFF8B0000),
       foregroundColor: Colors.white,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.help_outline),
+          tooltip: 'Hulp',
+          onPressed: _showHelp,
+        ),
+        IconButton(
+          icon: const Icon(Icons.support_agent),
+          tooltip: 'Externe Support',
+          onPressed: _openExternalHelp,
+        ),
+      ],
     ),
     body: KycPaginaLayout(
       //KBO
