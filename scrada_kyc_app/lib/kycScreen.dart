@@ -85,11 +85,14 @@ if (clean.contains("IDBEL")) {
           if (lijn.contains('<<') && !lijn.contains('IDBEL') && !RegExp(r'\d{6}').hasMatch(lijn)) {
             String naamRaw = lijn.replaceAll('<<', ' ').replaceAll('<', ' ').trim();
             
-            if (naamRaw.isNotEmpty) {
-              setState(() {
-                _idScanController.text = naamRaw.toUpperCase();
-              });
-              debugPrint("NAAM GEVONDEN: $naamRaw");
+              if (naamRaw.isNotEmpty) {
+                debugPrint("NAAM GEVONDEN: $naamRaw");
+                
+                setState(() {
+                  _idScanController.text = naamRaw.toUpperCase();
+                  _backPath = path;
+                });
+
             }
           }
         }
@@ -410,8 +413,8 @@ Widget build(BuildContext context) {
         title: "2. Identiteitscontrole",
         icon: Icons.badge,
         children: [
-          TextField(controller: _idScanController, decoration: const InputDecoration(labelText: "Naam uit ID")),
-          TextField(controller: _datumController, decoration: const InputDecoration(labelText: "Vervaldatum")),
+          TextField(controller: _idScanController, decoration: const InputDecoration(labelText: "Naam uit ID"), readOnly: true,),
+          TextField(controller: _datumController, decoration: const InputDecoration(labelText: "Vervaldatum"), readOnly: true),
           const SizedBox(height: 20),
           Row(children: [
             _buildStepButton("VOORKANT", true, _frontPath != null),
@@ -422,11 +425,11 @@ Widget build(BuildContext context) {
       ) : null,
 
       // Stap 3: Biometrie & Verificatie
-      biometrieSectie: (_bedrijfsData != null && _frontPath != null) ? KycSectionCard(
+      biometrieSectie: (_bedrijfsData != null && _frontPath != null && _backPath != null) ? KycSectionCard(
         title: "3. Biometrische Verificatie",
         icon: Icons.face_retouching_natural,
         children: [
-          // GDPR Disclaimer
+          //GDPR en privacy disclaimer
           const Padding(
             padding: EdgeInsets.only(bottom: 12.0),
             child: Text(
@@ -436,21 +439,52 @@ Widget build(BuildContext context) {
             ),
           ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: ElevatedButton.icon(
-              onPressed: _isLoading ? null : _biometricCheck,
-              icon: const Icon(Icons.camera_front),
-              label: const Text("VERIFIEER IDENTITEIT (CAMERA VEREIST)"),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B0000), 
-                foregroundColor: Colors.white, 
-                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-            ),
+          Builder(
+            builder: (context) {
+              final idNaam = _idScanController.text.toUpperCase();
+              final bestuurders = List<String>.from(_bedrijfsData?['directors'] ?? []);
+              
+              bool isMatch = bestuurders.any((b) => 
+                b.toUpperCase().split(' ').every((w) => idNaam.contains(w))
+              );
+
+              bool verify = isMatch && !_isLoading;
+
+              return Column(
+                children: [
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      // Knop is grijs (null) als er geen match is
+                      onPressed: verify ? _biometricCheck : null,
+                      icon: Icon(verify ? Icons.camera_front : Icons.lock_outline),
+                      label: Text(verify ? "START GEZICHTSSCAN" : "VERIFICATIE GEBLOKKEERD"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF8B0000), 
+                        foregroundColor: Colors.white, 
+                        disabledBackgroundColor: Colors.grey.shade300,
+                        disabledForegroundColor: Colors.grey.shade600,
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                    ),
+                  ),
+                  
+                  if (!isMatch)
+                    const Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Naam match mislukt: Deze persoon is volgens de KBO niet bevoegd om dit bedrijf te registreren.",
+                        style: TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
-          //dropdown met details, kan evt weg??
+
+          const SizedBox(height: 10),
           if (_faceMatchScore != null) 
             Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),

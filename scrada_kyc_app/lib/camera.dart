@@ -30,6 +30,8 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
   int _selectedCameraIndex = 0;
   FlashMode _currentFlashMode = FlashMode.off;
 
+  bool _showInstructions = true;
+
   //liveness
   bool _isLive = false;
   bool _hasBlinked = false;
@@ -183,39 +185,88 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
           CameraMaskOverlay(isGezicht: isGezicht),
           CameraFocusFrame(isGezicht: isGezicht),
 
-          Positioned(
-            top: 40, left: 0, right: 0,
-            child: Text(
-              isGezicht 
-                ? (_isLive ? "Neem nu de foto." : (_hasBlinked ? "Kijk in de camera..." : "Knipper met je ogen")) 
-                : "Plaats de ID-kaart in het kader",
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-          ),
-
-//als live true is
-          Positioned(
-            bottom: 40, left: 0, right: 0,
-            child: Center(
-              child: FloatingActionButton.large(
-                backgroundColor: _isLive ? const Color(0xFF8B0000) : Colors.grey,
-                onPressed: _isLive ? () async {
-                  if (_controller!.value.isTakingPicture) return;
-                  try {
-                    final img = await _controller!.takePicture();
-                    final inputImage = InputImage.fromFilePath(img.path);
-                    final recognized = await _recognizer.processImage(inputImage);
-                    widget.onScanComplete(recognized.text, img.path);
-                    if (mounted) Navigator.pop(context);
-                  } catch (e) {
-                    debugPrint("Error: $e");
-                  }
-                } : null,
-                child: Icon(_isLive ? Icons.camera_alt : Icons.lock, color: Colors.white, size: 40),
+          // 1. De instructies overlay (met spread operator voor de list)
+          if (isGezicht && _showInstructions)
+            Container(
+              color: Colors.black.withOpacity(0.8),
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 40),
+                  padding: const EdgeInsets.all(25),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.lightbulb, color: Color(0xFF8B0000), size: 40),
+                      const SizedBox(height: 15),
+                      const Text(
+                        "INSTRUCTIES",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text("1. Zorg voor goede belichting", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                      const Text("2. Haal haar uit uw gezicht", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                      const Text("3. Kijk neutraal (niet glimlachen)", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                      const SizedBox(height: 25),
+                      
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF8B0000),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          onPressed: () => setState(() => _showInstructions = false),
+                          child: const Text("BEGREPEN"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ),
+
+          // 2. De Camera UI (alleen tonen als instructies weg zijn OF het is geen gezichtsscan)
+          // Gebruik de spread operator '...' voor de list
+          if (!isGezicht || !_showInstructions) ...[
+            Positioned(
+              top: 40, left: 0, right: 0,
+              child: Text(
+                isGezicht 
+                  ? (_isLive ? "Neem nu de foto." : (_hasBlinked ? "Kijk in de camera..." : "Knipper met je ogen")) 
+                  : "Plaats de ID-kaart in het kader",
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+            ),
+
+            //als live true is
+            Positioned(
+              bottom: 40, left: 0, right: 0,
+              child: Center(
+                child: FloatingActionButton.large(
+                  backgroundColor: _isLive ? const Color(0xFF8B0000) : Colors.grey,
+                  onPressed: _isLive ? () async {
+                    if (_controller!.value.isTakingPicture) return;
+                    try {
+                      final img = await _controller!.takePicture();
+                      final inputImage = InputImage.fromFilePath(img.path);
+                      final recognized = await _recognizer.processImage(inputImage);
+                      widget.onScanComplete(recognized.text, img.path);
+                      if (mounted) Navigator.pop(context);
+                    } catch (e) {
+                      debugPrint("Error: $e");
+                    }
+                  } : null,
+                  child: Icon(_isLive ? Icons.camera_alt : Icons.lock, color: Colors.white, size: 40),
+                ),
+              ),
+            ),
+          ], 
         ],
       ),
     );
