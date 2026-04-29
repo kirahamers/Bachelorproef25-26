@@ -14,10 +14,14 @@ namespace ScradaKYC.Api.Services
         {
             var schoonNummer = new string(ondernemingsnummer.Where(char.IsDigit).ToArray());
             if (schoonNummer.Length == 9) schoonNummer = "0" + schoonNummer;
+            
+            //voor demo
+            if (schoonNummer == "0123456789") 
+            {
+                return new[] { "SHAKIRA HAMERS" };
+            }
 
             var url = $"https://kbopub.economie.fgov.be/kbopub/toonondernemingps.html?ondernemingsnummer={schoonNummer}";
-
-            Console.WriteLine($"\n[KBO SCRAPER] Start check voor: {schoonNummer}");
             
             try
             {

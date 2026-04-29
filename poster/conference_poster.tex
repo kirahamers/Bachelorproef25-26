@@ -31,71 +31,72 @@
 
 \maketitle
 
-\begin{tcolorbox}[
-    colback=hogent-blue!5, 
-    colframe=hogent-blue, 
-    arc=15pt, 
-    boxrule=3pt, 
-    left=30pt, right=30pt, top=20pt, bottom=20pt
-]
-    \begin{center}
-        {\Large\titlefont\color{hogent-blue} Abstract}
-    \end{center}
-    \itshape\Large
-    Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces[cite: 3]. 
-    Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert[cite: 4]. 
-    Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans[cite: 5]. 
-    Het resultaat is een sneller, veiliger en self-service onboarding proces.
-\end{tcolorbox}
-
-\vspace{1cm}
+\begin{center}
+    \rule{\linewidth}{2pt} \\
+    \vspace{0.5cm}
+    {\huge\titlefont\color{hogent-blue} Abstract} \\
+    \vspace{0.5cm}
+    \begin{minipage}{0.95\linewidth}
+        \itshape\Large
+        Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
+        Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
+        Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
+        Het resultaat is een sneller, veiliger en self-service onboarding proces.
+    \end{minipage}
+    \vspace{0.5cm}
+    \rule{\linewidth}{2pt}
+\end{center}
 
 \begin{multicols}{2}
+\LARGE % Goede balans tussen leesbaarheid en ruimtebesparing
 
 \section{\faInfoCircle \quad Introductie}
 Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiëren (AML-wetgeving). 
-De huidige methode bij Scrada vereist vaak manuele invoer van KBO-gegevens, wat de efficiëntie vertraagt.
+De huidige methode bij Scrada vereist manuele invoer van KBO-gegevens, wat de efficiëntie verlaagd.
 
-\begin{tcolorbox}[colback=white, colframe=hogent-blue, arc=8pt, title=Centrale Onderzoeksvraag]
-\textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden op een GDPR-conforme, fraudeveilige en kostenefficiënte manier?”} 
-\end{tcolorbox}
+\vspace{0.3cm}
+\fbox{
+    \begin{minipage}{0.9\linewidth}
+        \textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden?”} 
+    \end{minipage}
+}
 
 \section{\faLightbulb \quad De Oplossing}
-Vanwege de hoge abonnementskosten van de officiële KBO-API (€50 per 2000 requests), is gekozen voor een kostenloze PoC:
+Vanwege de hoge licentiekosten van de officiële KBO-API, is gekozen voor een kostenloze PoC:
 \begin{itemize}
-    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API van de Europese Commissie[cite: 9].
-    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper die de publieke KBO-database raadpleegt door middel van HtmlAgilityPack[cite: 10].
-    \item \textbf{Identiteitsmatch:} Vergelijking van gescrapte namen met OCR-data van de eID, samen met biometrische verificatie[cite: 11].
+    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API.
+    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper (HtmlAgilityPack), dat bij productie niet aangeraden is maar perfect toepasbaar is voor een PoC.
+    \item \textbf{Identiteitsmatch:} Vergelijking met OCR-data van de eID, samen met een biometriecheck aan de hand van een live-selfie.
 \end{itemize}
 
 \section{\faProjectDiagram \quad Systeemarchitectuur}
-De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend.
-\begin{center}
-    \fbox{\includegraphics[width=0.6\linewidth]{poster-screenshot.png}}
-    \captionof{figure}{Flow van data-extractie: van KBO-scraper naar Flutter UI.}
-\end{center}
+\begin{wrapfigure}{r}{0.45\linewidth}
+    \centering
+    \vspace{-20pt}
+    \fbox{\includegraphics[width=\linewidth]{poster-screenshot.png}}
+    \captionof{figure}{\small Data-flow.}
+    \vspace{-10pt}
+\end{wrapfigure}
+De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend. 
+De flow van data-extractie loopt van de KBO-scraper rechtstreeks naar de Flutter UI, 
+waardoor de gebruiker onmiddellijk feedback krijgt over de geldigheid van de bedrijfsgegevens.
 
 \section{\faFingerprint \quad Biometrische Verificatie}
-Om identiteitsfraude tegen te gaan, is het gebruik van biometrie essentieel om de indentiteit van de gebruiker te verifiëren:
+Om identiteitsfraude tegen te gaan, is biometrie essentieel:
 \begin{itemize}
-    \item \textbf{Gezichtsherkenning:} Een biometrische vergelijking tussen een live-selfie en de foto op de gescande eID zorgt voor de authenticatie van de persoon[cite: 13].
-    \item \textbf{Liveness Detection:} Voorkomt fraude door te bevestigen dat een fysiek persoon aanwezig is[cite: 14].
-    \item \textbf{Bevoegdheidscheck:} De geverifieerde persoon wordt in de backend gematcht met de lijst van statutaire bestuurders die live uit de KBO is gescrapt[cite: 15].
+    \item \textbf{Gezichtsherkenning:} Match tussen live-selfie met en eID-foto.
+    \item \textbf{Liveness Detection:} Voorkomt fraude door fysieke aanwezigheid te verifiëren voor de biometrie.
+    \item \textbf{Bevoegdheidscheck:} Match met de statutaire bestuurders uit de KBO en de naam op de gescande ID.
 \end{itemize}
 
 \section{\faCheckDouble \quad Resultaten \& Verificatie}
-De PoC bewijst dat een volledige identiteitscheck van een bedrijf en bestuurder slechts enkele seconden kan duren:
-\begin{itemize}
-    \item \textbf{Naadloze Match:} Succesvolle koppeling tussen de live KBO-data en de biometrische face-match uit de app[cite: 16].
-    \item \textbf{Data-cleaning:} De backend vertaalt ruwe HTML-namen naar tekst, wat essentieel is voor een betrouwbare vergelijking met de eID[cite: 17].
-    \item \textbf{Full-Stack Flow:} Een sluitende keten van bedrijfsstatus (VIES \& KBO), documentcontrole (OCR) en biometrie[cite: 18].
-\end{itemize}
+De PoC bewijst dat een volledige check niet meer dan 2 minuten duurt. 
+Er is een naadloze match tussen live data en biometrie. De backend vertaalt ruwe HTML naar tekst voor een betrouwbare vergelijking.
 
 \section{\faFlagCheckered \quad Conclusie}
-Deze PoC bewijst dat manuele KYC-processen bij Scrada verleden tijd zijn[cite: 19]. 
-Door een Flutter-app te koppelen aan een .NET-backend, ontstaat een flow die zowel de snelheid voor de gebruiker verhoogt als de veiligheid van de data garandeert[cite: 20]. 
-Hoewel de web-scraper een ideale methode was om deze PoC kosteloos te ontwikkelen, is een overstap naar de officiële KBO-API de volgende stap voor een optimale productieomgeving[cite: 21]. 
-De huidige architectuur is hier al op voorbereid: de scraper code kan simpelweg worden ingewisseld voor de officiële API-koppeling[cite: 21].
+Manuele KYC-processen bij Scrada zijn verleden tijd. 
+De Flutter-app zorgt voor een hogere snelheid en veiligheid. 
+De architectuur is al voorbereid op de essentiële implementatie van officiële KBO-API voor productie.
 
 \end{multicols}
 \end{document}

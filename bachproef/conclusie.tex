@@ -25,7 +25,7 @@ De drie kernpijlers van de onderzoeksvraag zijn als volgt vervuld:
     \item \textbf{Kostenefficiëntie:} Door gebruik te maken van open-source AI-modellen (MobileFaceNet) en on-device verwerking (TensorFlow Lite), is Scrada niet afhankelijk van dure externe SaaS-oplossingen zoals itsme®. Bovendien bewijst de PoC dat met technieken zoals (tijdelijk) webscraping en gratis API's (VIES) de instapkosten tot een minimum beperkt blijven. 
     De enige bijkomende kosten die deze applicatie zou hebben, zijn het gebruik van de KBO-API, wat op een schaal als Scrada haalbaar is.
     \item \textbf{Fraudeveiligheid:} De PoC bevat meerdere beveiligingslagen. De biometrische gezichtsvergelijking en actieve liveness-detectie voorkomen identiteitsfraude met foto's of video's. Daarnaast zorgt de wiskundige RRN-checksum-validatie en het heuristische match-algoritme met de KBO-databank voor een robuuste controle op de authenticiteit van de opgehaalde en ingegeven informatie.
-    \item \textbf{GDPR-conformiteit:} Conform de privacy-by-design-principes vindt de biometrische analyse volledig lokaal op het toestel plaats. Hierdoor verlaat gevoelige ruwe data (pixels) nooit het apparaat van de klant. Enkel de gevalideerde uitkomsten worden naar de backend verzonden, die al gebruikmaakt van blockchain. Hierdoor zijn de risico's bij gegevensverwerking miniem en conform de Europese privacywetgeving.
+    \item \textbf{GDPR-conformiteit:} Conform de privacy-by-design-principes vindt de biometrische analyse volledig lokaal op het toestel plaats. Hierdoor verlaat gevoelige ruwe data (pixels) nooit het apparaat van de klant. Enkel de gevalideerde uitkomsten worden naar de backend verzonden, die al gebruikmaakt van encryptie. Hierdoor zijn de risico's bij gegevensverwerking miniem en conform de Europese privacywetgeving.
 \end{itemize}
 
 \section{Reflectie}
@@ -33,10 +33,13 @@ De evaluatie van de testresultaten toont aan dat de doelstelling van minimaal 50
 Er is echter een technische trade-off vastgesteld: de rekenintensieve liveness-detectie veroorzaakt een lichte daling in de match-score van de biometrie. 
 Voor een productieomgeving zal een nauwkeurige meting van de drempelwaarden (thresholds) essentieel zijn om een balans te vinden tussen veiligheid en gebruiksgemak.
 
-Daarnaast is de huidige kosteloze webscraping-methode voor de KBO-gegevens kwetsbaar voor wijzigingen in de overheidsportalen. Voor een stabiel gebruik van de KBO-databank is de overstap naar de officiële KBO-webservice aanbevolen.
+Daarnaast is de huidige kosteloze webscraping-methode voor de KBO-gegevens niet aangeraden. Voor een stabiel gebruik van de KBO-databank is het gebruik de officiële KBO-webservice aanbevolen.
 
 \section{Toekomstvisie}
-Het grootste voordeel van dit project is de blockchaintechnologie die Scrada al toepast. Waar de blockchain nu al garandeert dat financiële gegevens niet aangepast kunnen worden, zorgt deze automatisering ervoor dat ook de identiteit van de gebruiker betrouwbaar is.
-In de toekomst kan dit leiden tot een systeem waarbij een klant zich slechts één keer hoeft te bewijzen ('One-Time Verification'). De bevestigde identiteit wordt dan als een veilige, digitale code op de blockchain opgeslagen. Hierdoor blijft de klant zelf de eigenaar van zijn gegevens, terwijl Scrada bewijs heeft dat de gebruiker bevoegd is. 
-
-Deze Proof-of-Concept vormt hiermee de ontbrekende schakel in een volledig geautomatiseerde en betrouwbare onboarding voor het Peppol-netwerk.
+Hoewel de huidige focus van deze Proof-of-Concept ligt op de directe automatisering via AI en API-integraties, 
+biedt de huidige omgeving van Scrada interessante mogelijkheden voor de verdere toekomst. Omdat Scrada al blockchain-technologie inzet voor de integriteit van facturen, 
+is het een logische denkoefening om te kijken of deze toepassing ook een meerwaarde kan zijn voor identiteitsbeheer.
+In een theoretisch scenario zou de ontwikkelde automatisering kunnen gebruikt worden als de eerste stap in een 'One-Time Verification'-model. 
+De gecontroleerde identiteit zou dan als een veilige code op de blockchain bewaard kunnen worden, waardoor een gebruiker zich niet telkens opnieuw hoeft te bewijzen. Hierbij blijft de eindgebruiker de eigenaar van zijn data, terwijl de betrouwbaarheid voor het platform gegarandeerd blijft.
+Het is echter belangrijk om te benadrukken dat deze blockchain-integratie voor KYC geen deel uitmaakt van de huidige technische realisatie. De focus van dit onderzoek blijft beperkt tot het leveren van een werkende, kostenefficiënte oplossing die vandaag de dag al ingezet kan worden. 
+Deze PoC vormt daarmee het fundament voor een snellere en veiligere onboarding binnen het Peppol-netwerk.

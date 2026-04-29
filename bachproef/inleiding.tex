@@ -10,11 +10,11 @@ Dit onder andere bij elektronische facturen, wat van economisch belang is.
 Een internationale standaard hiervoor is Peppol. Dit netwerk integreert business processen door de manier waarop informatie 
 gestructureerd en uitgewisseld wordt te standaardiseren \autocite{Peppol2022}.
 
-Scrada fungeert als een Certified Peppol Access Point. Om te integriteit van het netwerk te behouden 
+Scrada werkt als een Certified Peppol Access Point. Om de integriteit van het netwerk te behouden 
 en fraude te voorkomen is het essentieel voor Scrada om veilig en correct een Know Your Customer (KYC of client onboarding) uit te voeren. 
-Dit houdt in dat de identiteit van de klant strict gecontroleerd moet worden binnen een business relation en moet voldoen aan belangrijke regels. 
+Dit houdt in dat de identiteit van de klant strikt gecontroleerd moet worden binnen een business relation en moet voldoen aan belangrijke regels. 
 In dit onderzoek wordt gefocust hoe dit verificatieproces voor Scrada
-geautomatiseerd en geoptimaliseerd kan worden, zodat deze volledig voldoen aan de conformiteit van Peppol.
+geautomatiseerd en geoptimaliseerd kan worden, zodat dit proces volledig voldoet aan de conformiteit van Peppol.
 
 
 %\begin{itemize}
@@ -30,12 +30,13 @@ geautomatiseerd en geoptimaliseerd kan worden, zodat deze volledig voldoen aan d
 \section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
 \label{sec:probleemstelling}
 
-Hoewel Scrada als Certified Peppol Access Point een cruciale rol speelt in veilige e-facturatie, zijn er een aantal factoren die een gevaar kunnen vormen voor de veiligheid van het Peppol-netwerk van het bedrijf.
-Momenteel wordt de KYC identificatie manueel uitgevoerd aan de hand van een kopie van de identiteitskaart van de klant die gecontroleerd wordt op de openbare KBO-databank \footnote{Raadpleegbaar via: \url{https://kbopub.economie.fgov.be}}. Dit proces is problematisch voor de primaire doelgroep, de IT- en compliance-afdeling van Scrada. Dit omwille van verschillende redenen:
+Hoewel Scrada als Certified Peppol Access Point een belangrijke rol speelt in veilige e-facturatie, zijn er een aantal factoren die een gevaar kunnen vormen voor de veiligheid van het Peppol-netwerk van het bedrijf.
+Momenteel wordt de KYC identificatie manueel uitgevoerd aan de hand van een kopie van de identiteitskaart van de klant die gecontroleerd wordt op de openbare KBO-databank \footnote{Raadpleegbaar via: \url{https://kbopub.economie.fgov.be}}. Dit proces is problematisch voor de hoofddoelgroep, de IT- en compliance-afdeling van Scrada. 
+Dit omwille van verschillende redenen:
 \begin{itemize}
   \item \textbf{GDPR-risico's:} Het verwerken van volledige identiteitskaarten is tegenstrijdig met het principe van dataminimalisatie. 
   Daarnaast dwingt de huidige werkwijze Scrada om meer persoonsgegevens te verwerken dan noodzakelijk is, wat de naleving van de GDPR-wetgeving bemoeilijkt en onnodige privacyrisico's met zich meebrengt.
-  \item \textbf{Efficiëntie:} De manuele handelingen maken het proces traag en foutgevoelig bij een stijgend aantal klanten. Daarnaast vermoeilijkt dit ook de schaalbaarheid van het bedrijfsproces.
+  \item \textbf{Efficiëntie:} De manuele handelingen maken het proces traag en foutgevoelig bij een stijgend aantal klanten. Daarnaast zorgt dit ook voor moeilijkheden bij schaalbaarheid van het bedrijfsproces.
   \item \textbf{Fraudegevoeligheid:} Handmatige verificatie is minder bestand tegen geavanceerde vormen van identiteitsfraude dan geautomatiseerde, cryptografische methoden.
 \end{itemize}
 
@@ -53,7 +54,7 @@ De deelvragen die bijdragen aan het vormen van een antwoord op deze centrale ond
     \item {{Hoe verloopt het huidige manuele KYC-proces bij Scrada als binnen het Peppol-netwerk?}}
     \item {{Welke bottlenecks ervaart Scrada bij de huidige manuele verificatie?}}
     \item {{Op welke specifieke stappen van de Customer Due Diligence (CDD) kan automatisering toegepast worden?}}
-    \item {{Welke technologieën, zoals NFC-uitlezing en API-koppelingen, kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}}
+    \item {{Welke technologieën, zoals OCR-extractie en API-koppelingen, kunnen gebruikt worden om het KYC-proces bij Scrada te automatiseren?}}
     \item {{Welke bedrijfs- en persoonsgegevens worden verzameld en hoe verhouden de huidige opslagtermijnen zich tot de GDPR?}}
     \item {{Wat zijn de kenmerken van een GDPR-conforme procedure en hoe kan 'Data Sovereignty' de privacyrisico's bij Scrada verlagen?}}
     \item {{Welke frauderisico’s, zoals identiteitsfraude bij ID-kopieën, bestaan er bij het huidige manuele proces?}}
@@ -64,23 +65,23 @@ De deelvragen die bijdragen aan het vormen van een antwoord op deze centrale ond
 \begin{itemize}
     \item {{Hoe kunnen geautomatiseerde eKYC-processen door middel van 'Privacy by Design' conform blijven aan de GDPR-regels?}}
     \item {{Welke risico’s bestaan bij het verwerken van digitale identiteitsgegevens in een geautomatiseerd proces?}}
-    \item {{Welke maatregelen zoals biometrische liveness-detectie en cryptografische verificatie, kunnen fraude in de eKYC-flow voorkomen?}}
-    \item {{Hoe kan het gebruik van NFC-technologie bijdragen aan kostenreductie ten opzichte van dure SaaS-oplossingen zoals itsme®?}}
+    \item {{Welke maatregelen zoals biometrische liveness-detectie en checksum validatie, kunnen fraude in de eKYC-flow voorkomen?}}
+    \item {{Hoe kan het gebruik van NFC- of OCR-technologie bijdragen aan kostenreductie ten opzichte van dure SaaS-oplossingen zoals itsme®?}}
 \end{itemize}
 
 \section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
 \label{sec:onderzoeksdoelstelling}
 
 De doelstelling van dit onderzoek is om een geautomatiseerd KYC-proces te ontwerpen en te implementeren dat voldoet aan de GDPR-regelgeving, bestand is tegen fraude en kostenefficiënt is voor Scrada. 
-Daarnaast is het vanaf januari 2026 in België om verplicht voor btw-plichtige ondernemingen om een digitale facturatie te gebruiken bij B2B-transacties, wat de relevantie van dit onderzoek verder onderstreept en de nood voor automatisering versterkt \autocite{Vlaio2025}.
+Daarnaast is het vanaf januari 2026 in België verplicht voor btw-plichtige ondernemingen om een digitale facturatie te gebruiken bij B2B-transacties, wat de relevantie van dit onderzoek verder onderstreept en de nood voor automatisering versterkt \autocite{Vlaio2025}.
 Dit omvat het identificeren van geschikte technologieën, het ontwikkelen van een prototype en het evalueren van de effectiviteit van het nieuwe proces in vergelijking met de huidige methoden.
 Bijgevolg is het resultaat een Proof-of-Concept (PoC) die aantoont dat identiteitsverificatie sneller en veiliger kan zonder de huidige privacyrisico's.
 
 De criteria voor een succesvolle Proof-of-Concept zijn:
 \begin{itemize}
-    \item \textbf{Efficiëntie:} Een reductie van de gemiddelde KYC-doorlooptijd met minimaal 50\%. Daarnaast moet de oplossing ook kostenefficiënt zijn, met een duidelijke kosten-batenanalyse die aantoont dat de implementatie van het geautomatiseerde KYC-proces financieel haalbaar is voor Scrada.
+    \item \textbf{Efficiëntie:} Een reductie van de gemiddelde KYC-doorlooptijd met minimaal 50 procent. Daarnaast moet de oplossing ook kostenefficiënt zijn, met een duidelijke kosten-batenanalyse die aantoont dat de implementatie van het geautomatiseerde KYC-proces financieel haalbaar is voor Scrada.
     \item \textbf{Compliance:} Het elimineren van de noodzaak om volledige kopieën van identiteitskaarten op te slaan, conform aan de GDPR-principes.
-    \item \textbf{Validatie:} Een werkend prototype dat succesvol communiceert met externe databronnen (zoals de KBO API) en de integriteit van de gebruiker verifieert.
+    \item \textbf{Validatie:} Een werkend prototype dat succesvol communiceert met externe databronnen (zoals de VIES of KBO API) en de integriteit van de gebruiker verifieert.
 \end{itemize}
 
 
@@ -93,7 +94,7 @@ De criteria voor een succesvolle Proof-of-Concept zijn:
 
 De rest van deze bachelorproef is als volgt opgebouwd:
 
-In Hoofdstuk~\ref{ch:stand-van-zaken} wordt de theoretische basis gelegd. Hierbij wordt de huidige wetgeving rond de GDPR, de werking van het Peppol-netwerk en moderne KYC-technologieën onderzocht. Dit vormt het referentiekader waarbinnen de automatisering moet plaatsvinden.
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt de theoretische basis gelegd. Hierbij wordt de huidige wetgeving rond de GDPR, de werking van het Peppol-netwerk en moderne KYC-technologieën onderzocht. Dit vormt het fundament waarbinnen de automatisering moet plaatsvinden.
 In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen. Daarnaast vindt in dit hoofdstuk de analyse van de huidige werking bij Scrada plaats. 
 Hier worden de bestaande manuele handelingen in kaart gebracht en getoetst aan de GDPR-principes om te kunnen identificeren waar de grootste bottlenecks liggen en waar automatisering efficiënt kan toegepast worden.
 In Hoofdstuk~\ref{ch:proof-of-concept} wordt op basis van die analyse het ontwerp en de ontwikkeling van de Proof-of-Concept beschreven, waarbij de technische keuzes voor automatisering worden uitgelicht.

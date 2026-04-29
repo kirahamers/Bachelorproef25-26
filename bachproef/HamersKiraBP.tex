@@ -11,7 +11,12 @@
 % - If you write your thesis in English (remark: only possible after getting
 %   explicit approval!), remove the option "dutch," or replace with "english".
 
-\usepackage{lipsum} % For blind text, can be removed after adding actual content
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{float} % For blind text, can be removed after adding actual content
 
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
@@ -22,7 +27,7 @@
 %% If you compile with the make_thesis.{bat,sh} script, use the following
 %% import instead:
 %% Gebruik deze instellingen om de v3 error te forceren te stoppen
-\usepackage[chapter, draft]{minted}
+\usepackage[chapter]{minted}
 \usemintedstyle{solarized-light}
 
 %% Formatting for minted environments.

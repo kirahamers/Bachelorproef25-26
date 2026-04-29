@@ -77,40 +77,41 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
     if (mounted) setState(() => _isInitializing = false);
   }
 
-  Future<void> _checkLiveness(CameraImage image) async {
-    if (_isLive || _isProcessingFrame) return;
-    _isProcessingFrame = true;
+Future<void> _checkLiveness(CameraImage image) async {
+  if (_isProcessingFrame) return; // Verwijder de check op _isLive
+  _isProcessingFrame = true;
 
-    try {
-      final inputImage = _inputImageFromCameraImage(image);
-      if (inputImage == null) return;
+  try {
+    final inputImage = _inputImageFromCameraImage(image);
+    if (inputImage == null) return;
 
-      final faces = await _faceDetector.processImage(inputImage);
+    final faces = await _faceDetector.processImage(inputImage);
 
-      if (faces.isNotEmpty) {
-        final face = faces.first;
-        double eyeOpenProb = face.leftEyeOpenProbability ?? 1.0;
+    if (faces.isNotEmpty) {
+      final face = faces.first;
+      
+      double eyeOpenProb = face.leftEyeOpenProbability ?? 1.0;
+      if (eyeOpenProb < 0.2) _hasBlinked = true;
 
-        if (eyeOpenProb < 0.2) {
-          _hasBlinked = true;
+      double headRotation = face.headEulerAngleY ?? 0;
+      
+      if (_hasBlinked && headRotation.abs() > 10) {
+        if (mounted && !_isLive) {
+          setState(() {
+            _isLive = true;
+          });
         }
-        
-        if (_hasBlinked && eyeOpenProb > 0.7) {
-          if (mounted) {
-            setState(() {
-              _isLive = true;
-            });
-          }
-          await _controller?.stopImageStream();
-        }
+      } else if (headRotation.abs() < 5 && _isLive) {
       }
-    } catch (e) {
-      debugPrint("Liveness check error: $e");
-    } finally {
-      _isProcessingFrame = false;
+    } else {
+      if (mounted) setState(() => _isLive = false);
     }
+  } catch (e) {
+    debugPrint("Liveness check error: $e");
+  } finally {
+    _isProcessingFrame = false;
   }
-
+}
 //verwerken van live camera naar ML Kit input
   InputImage? _inputImageFromCameraImage(CameraImage image) {
     final sensorOrientation = _controller!.description.sensorOrientation;
@@ -185,7 +186,6 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
           CameraMaskOverlay(isGezicht: isGezicht),
           CameraFocusFrame(isGezicht: isGezicht),
 
-          // 1. De instructies overlay (met spread operator voor de list)
           if (isGezicht && _showInstructions)
             Container(
               color: Colors.black.withOpacity(0.8),
@@ -230,14 +230,12 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
               ),
             ),
 
-          // 2. De Camera UI (alleen tonen als instructies weg zijn OF het is geen gezichtsscan)
-          // Gebruik de spread operator '...' voor de list
           if (!isGezicht || !_showInstructions) ...[
             Positioned(
               top: 40, left: 0, right: 0,
               child: Text(
                 isGezicht 
-                  ? (_isLive ? "Neem nu de foto." : (_hasBlinked ? "Kijk in de camera..." : "Knipper met je ogen")) 
+                  ? (_isLive ? "Neem nu de foto." : (_hasBlinked ? "Kijk in de camera..." : "Knipper met uw ogen en draai lichtjes uw hoofd")) 
                   : "Plaats de ID-kaart in het kader",
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500),

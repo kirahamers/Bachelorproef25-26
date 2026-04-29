@@ -47,7 +47,7 @@ Deze theoretische basis was essentieel om te voorkomen dat er oplossingen worden
 \end{itemize}
 
 \section{Fase 2: Probleemstelling en Procesanalyse (AS-IS)}
-Da de literatuurstudie werd er onderzoek gedaan naar het huidge proces bij Scrada, waarbij momenteel de manuele verificatie van de KBO centraal staat.
+Na literatuurstudie werd er onderzoek gedaan naar het huidige proces bij Scrada, waarbij momenteel de manuele verificatie van de KBO centraal staat.
 Om gericht onderzoek te doen vond een interview plaats met de copromotor, die ook de oprichter van Scrada is en dus een diepe kennis heeft van de interne processen.
 
 De vragen die tijdens het interview gevraagd werden waren opgesteld aan de hand van de literatuurstudie, waarbij de focus lag op het identificeren van de belangrijkste pijnpunten in het huidige proces en de juridische en technische kwetsbaarheden die daarmee gepaard gaan.
@@ -79,53 +79,48 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
 
 \begin{figure}[ht]
     \centering
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[node distance=1.2cm and 0.6cm]
+    \begin{tikzpicture}[node distance=1cm and 0.5cm, font=\small]
+        % Swimlanes
+        \draw[thick] (-1, 3) -- (14, 3);
+        \draw[thick] (-1, 0.5) -- (14, 0.5);
+        \draw[thick] (-1, -3) -- (14, -3);
+        
+        \node[rotate=90, font=\bfseries] at (-0.7, 1.75) {Klant (App)};
+        \node[rotate=90, font=\bfseries] at (-0.7, -1.25) {Scrada (Staf)};
 
-        \draw[thick] (-1, 2.5) -- (13, 2.5);
-        \draw[thick] (-1, 0.5) -- (13, 0.5);
-        \draw[thick] (-1, -5.5) -- (13, -5.5);
-        \node[rotate=90, font=\bfseries] at (-0.7, 1.5) {Klant (App)};
-        \node[rotate=90, font=\bfseries] at (-0.7, -2.5) {Scrada (Backend/Staf)};
+        \node (start) [start] at (0, 1.75) {};
+        \node (input) [task, right=0.5cm of start, text width=2.2cm] {Invoer BTW-nr \& Email};
+        \node (verify) [task, right=0.5cm of input, text width=2.2cm] {E-mailverificatie bevestigen};
+        \node (upload) [task, right=0.5cm of verify, text width=2.2cm] {Upload kopie ID-kaart};
 
-        \node (start) [start] at (0, 1.5) {};
-        \node (input) [task] [right=0.5cm of start] {Invoer BTW-nr \& Email};
-        \node (verify_mail) [task] [right=0.7cm of input] {E-mailverificatie bevestigen};
-        \node (upload) [task] [below=0.8cm of verify_mail] {Upload kopie ID-kaart};
+        \node (kbo) [task, below=2cm of upload, text width=2.5cm] {Medewerker: Opzoeking KBO};
+        \node (compare) [task, left=0.8cm of kbo, text width=2.5cm] {Handmatige Match ID vs. KBO};
+        \node (decision) [gateway, left=0.8cm of compare] {Match?};
         
-        \node (kbo_manual) [task] [right=0.7cm of notif] {Medewerker: Opzoeking KBO};
-        \node (compare) [task] [right=0.7cm of kbo_manual] {Handmatige Match ID vs. Bestuurders};
+        \node (approve) [task, below=0.8cm of decision, text width=2.2cm] {Manuele validatie};
+        \node (retention) [task, left=0.8cm of approve, text width=2.2cm] {Bewaring 6 mnd (Audit)};
+        \node (delete) [task, left=0.8cm of retention, text width=1.8cm] {Wissen ID (GDPR)};
+        \node (end) [end, left=0.5cm of delete] {};
         
-        \node (decision) [gateway] [right=0.7cm of compare] {Match?};
-        
-        \node (approve) [task] [below=0.8cm of decision] {Manuele validatie in systeem};
-        \node (reset) [task] at ($(decision) + (2.5, 2.5)$) {Reset \& verwittig klant};
-        
-        \node (retention) [task] [left=1.5cm of approve] {Bewaring 6 mnd (Audit)};
-        \node (delete) [task] [left=1cm of retention] {Wissen ID (GDPR)};
-        \node (end) [end] [left=0.8cm of delete] {};
+        \node (reset) [task, above=1.5cm of input, text width=2.2cm] {Reset \& verwittig klant};
 
         \draw [arrow] (start) -- (input);
-        \draw [arrow] (input) -- (vies);
-        \draw [arrow] (vies) -- (verify_mail);
-        \draw [arrow] (verify_mail) -- (upload);
-        \draw [arrow] (upload) -- (notif);
-        \draw [arrow] (notif) -- (kbo_manual);
-        \draw [arrow] (kbo_manual) -- (compare);
+        \draw [arrow] (input) -- (verify);
+        \draw [arrow] (verify) -- (upload);
+        \draw [arrow] (upload) -- (kbo);
+        \draw [arrow] (kbo) -- (compare);
         \draw [arrow] (compare) -- (decision);
         
-        \draw [arrow] (decision) -- node[anchor=east, font=\scriptsize] {Ja} (approve);
-        \draw [arrow] (decision.east) -| node[anchor=south west, font=\scriptsize] {Nee} (reset);
+        \draw [arrow] (decision) -- node[anchor=east] {Ja} (approve);
+        \draw [arrow] (decision) -| node[anchor=south west, pos=0.7] {Nee} (reset);
         \draw [arrow] (reset) -- (input);
         
         \draw [arrow] (approve) -- (retention);
         \draw [arrow] (retention) -- (delete);
         \draw [arrow] (delete) -- (end);
-
     \end{tikzpicture}
-    }
-    \caption[BPMN Huidig Proces]{BPMN-visualisatie van het huidige proces inclusief manuele KBO-verificatie (AS-IS).}
-    \label{fig:bpmn-huidig-vies}
+    \caption{BPMN-visualisatie van het huidige proces (AS-IS).}
+    \label{fig:bpmn-huidig-tikz}
 \end{figure}
 
 Tijdens het interview werd het proces weergegeven van de initiële onboarding tot de uiteindelijke activatie op het Peppol-netwerk. Hierbij werd een \textit{Business Process Model and Notation} (BPMN) gecreëerd
@@ -148,7 +143,7 @@ wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkt
 Scrada onderscheidt zich in de markt door het gebruik van blockchaintechnologie voor de onveranderlijkheid van digitale wettelijke boeken, conform de Circulaire 2020/C/20 van de FOD Financiën (te vinden op https://www.scrada.be/). 
 Door middel van cryptografische verificatie garandeert het platform dat financiële data integer en onweerlegbaar blijft. 
 Deze bestaande functionaliteit is een belangrijk fundament voor dit onderzoek. Aangezien de huidige blockchain-implementatie de integriteit van de financiële data waarborgt, 
-is het belangrijk dat in het ontwikkelde Proof-of-Concept de data ook veilig wordt opgeslaan. Bij een verder interview werd meegegeven dat alleen de financiële data op de blockchain opgeslagen wordt, en 
+is het belangrijk dat in het ontwikkelde Proof-of-Concept de data ook veilig wordt opgeslagen. Bij een verder interview werd meegegeven dat alleen de financiële data op de blockchain opgeslagen wordt, en 
 dit niet van toepassing is van de data na de registratie. Hier werd een voorstel gedaan om dit op te lossen door encryptie te gebruiken, wat later in de Proof-of-Concept verder toegelicht wordt.
 
 
@@ -184,7 +179,7 @@ De focus van de PoC ligt primair op de automatische KBO-verificatie en de overee
     De .NET-backend werkt als de centrale hub die de mobiele applicatie verbindt met externe verificatiebronnen. Deze bestaat uit verschillende services:
         \begin{itemize}
         \item \textbf{Kruispuntbank van Ondernemingen (KBO):} via de KBO-service kunnen de officiele bestuurders van het opgegeven bedrijf opgehaald worden. Dit is een API dat betalend is, waarbij een pakket kan aangekocht worden voor vijftig euro per tweeduizend requests. Aangezien dit buiten de scope valt om 
-        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geimplementeerd worden. In een interview met de co-promotor werd meegedeeld dat er dagelijks aantal requests requests zijn, dus deze implementatie is haalbaar
+        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geïmplementeerd worden. In een interview met de co-promotor werd meegedeeld dat er dagelijks aantal requests requests zijn, dus deze implementatie is haalbaar
         voor Scrada (Wanneer bedrijven peppol verplicht moesten implementeren was dit aantal echter veel hoger).
         \item \textbf{BTW-validatie (VIES):} Via het gratis en openbare Vat Information Exchange System kan officeel gecontroleerd worden of een BTW- of ondernemingsnummer geldig en kan zo ook de naam van de onderneming opgehaald worden.
         \item \textbf{London Stock Exchange Group (LSEG):} de LSEG service wordt gebruikt als internationale veiligheidsscreening. Hierbij wordt geverifieerd of entiteiten voorkomen op sanctielijsten of betrokken zijn bij witwaspraktijken, conform aan de AML richtlijnen.
@@ -192,26 +187,93 @@ De focus van de PoC ligt primair op de automatische KBO-verificatie en de overee
         \item \textbf{Risiconiveau:} Deze service berekent het risiconiveau gebaseerd op alle andere services, zoals de bedrijfsstatus en sanctielijsten.
 \end{itemize}
 
-De communicatie tussen de Flutter-frontend en de .NET-backend verloopt via een REST-interface, waarbij gegevens in JSON-formaat worden uitgewisseld voor een modulaire en schaalbare architectuur.
+De communicatie tussen de Flutter-frontend en de .NET-backend verloopt via een REST-interface, waarbij gegevens in JSON-formaat worden uitgewisseld voor een schaalbare architectuur.
 
 \end{enumerate}
+
+\begin{figure}[ht]
+    \centering
+    \begin{tikzpicture}[node distance=1cm and 0.5cm, font=\small]
+        \draw[thick] (-1, 4) -- (15, 4);
+        \draw[thick] (-1, 1.5) -- (15, 1.5);
+        \draw[thick] (-1, -2.5) -- (15, -2.5);
+        \draw[thick] (-1, -5.5) -- (15, -5.5);
+        
+        \node[rotate=90, font=\bfseries] at (-0.7, 2.75) {Klant (App)};
+        \node[rotate=90, font=\bfseries] at (-0.7, -0.5) {Systeem (.NET)};
+        \node[rotate=90, font=\bfseries] at (-0.7, -4) {Externe Bronnen};
+
+        \node (start) [start] at (0, 2.75) {};
+        \node (input) [task, right=0.5cm of start, text width=2.2cm] {Invoer BTW-nr \& Scan eID};
+
+        \node (split) [gateway, right=0.6cm of input] {+}; 
+        
+        \node (liveness) [task, right=1.2cm of split, text width=2.2cm] {On-device Biometrie};
+        \node (otp) [task, right=0.7cm of liveness, text width=2.2cm] {E-mail (OTP)};
+
+        \node (vies) [task, below=2.5cm of input, text width=2.2cm] {VIES Validatie (Status)};
+        \node (scraping) [task, at={(7.4, -0.5)}, text width=2.2cm] {KBO Scraping (Bestuurders)};
+        
+        \node (join) [gateway, right=0.7cm of scraping] {+};
+        
+        \node (match) [task, right=0.7cm of join, text width=2.2cm] {Autom. Match ID vs. KBO};
+        \node (decision) [gateway, right=0.7cm of match] {?};
+        
+        \node (activatie) [task, below=1cm of decision, text width=2.2cm] {Automatische Activatie};
+        \node (fail) [task, above=1.5cm of otp, text width=2.2cm] {Foutmelding \& Retry};
+        \node (end) [end, left=1cm of activatie] {};
+
+        \node (ext_vies) [rectangle, draw, dashed, at={(1.8, -4)}] {EU VIES API};
+        \node (ext_kbo) [rectangle, draw, dashed, at={(7.4, -4)}] {KBO Public Search};
+
+        \draw [arrow] (start) -- (input);
+        \draw [arrow] (input) -- (split);
+        
+        \draw [arrow] (split) |- (vies);
+        \draw [arrow] (split) -- (liveness); 
+        
+        \draw [arrow] (liveness) -- (otp);
+        \draw [arrow] (otp) -- (scraping);
+        
+        \draw [arrow] (vies) -| (join); 
+        \draw [arrow] (scraping) -- (join);
+        
+        \draw [arrow, dashed, <->] (vies) -- (ext_vies);
+        \draw [arrow, dashed, <->] (scraping) -- (ext_kbo);
+        
+        \draw [arrow] (join) -- (match);
+        \draw [arrow] (match) -- (decision);
+
+        \draw [arrow] (decision) -- node[anchor=east] {Ja} (activatie);
+        \draw [arrow] (decision) |- node[anchor=south west, pos=0.8] {Nee} (fail);
+        \draw [arrow] (fail) -| (input);
+        \draw [arrow] (activatie) -- (end);
+    \end{tikzpicture}
+    \caption{BPMN-visualisatie van het geautomatiseerde proces.}
+\end{figure}
+
+In Figuur \ref{fig:bpmn-to-be} wordt dit geautomatiseerde proces gevisualiseerd. Hieruit blijkt dat de menselijke tussenkomst volledig is vervangen door systeemtaken die communiceren met externe bronnen.
 
 \begin{itemize}
     \item \textbf{Onderzoeksmethode:} Iteratieve softwareontwikkeling met continue feedback van de copromotor.
     \item \textbf{Deliverable:} Functionerend prototype en gedocumenteerd TO-BE procesmodel.
 \end{itemize}
 
-\section{Fase 4: Validatie, Testen en Business Case}
-In de finale fase wordt het artefact geëvalueerd aan de hand van de initiële onderzoeksvraag. De validatie bestaat uit drie testonderdelen:
+\section{Fase 4: Validatie en Evaluatie van de PoC}
+In de finale fase wordt de ontwikkelde applicatie geëvalueerd. 
+Aangezien het een Proof-of-Concept is, ligt de focus op het valideren van de werking via de gebruikersinterface 
+en het toetsen van de resultaten aan de onderzoeksvraag.
 
 \begin{itemize}
-    \item \textbf{Technisch-functionele testen:} Het simuleren van foutieve invoer, zoals verlopen identiteitsbewijzen, ongeldige ondernemingsnummers en frauduleuze gezichtsscans (bijvoorbeeld een foto van een foto, een AI gegenereerde afbeelding).
-    \item \textbf{GDPR-validatie:} Een audit op de data-flow om te bevestigen dat er geen excessieve gegevens worden opgeslagen en de gegevens worden automatisch gewist zodra de bewaartermijn is verstreken, zonder dat er een medewerker tussen komt.
-    \item \textbf{Economische evaluatie:} Er wordt een vergelijking gemaakt tussen de operationele kosten van het nieuwe systeem (API-consumptie) versus de manuele loonkost en de kosten van externe SaaS-platforms.
+    \item \textbf{Functionele Acceptatietesten (Manual Testing):} Via de UI van de Flutter-applicatie is gecontroleerd of de volledige correcte flow (van BTW-invoer tot biometrische match) foutloos wordt doorlopen. 
+    Hierbij is handmatig geverifieerd of de backend de juiste data ophaalt uit de KBO-scraper en VIES.
+    \item \textbf{Scenario-gebaseerde validatie:} Er is getest met specifieke scenario's om de robuustheid te bepalen, 
+    zoals het invoeren van een ongeldig ondernemingsnummer of het simuleren van een mismatch tussen de eID en de gebruiker (negative testing).
+    \item \textbf{GDPR-check:} Er is visueel en via log-analyse in de backend gecontroleerd of persoonsgegevens (zoals biometrische vectoren en eID-gegevens) 
+    niet onnodig worden opgeslagen op de server.
 \end{itemize}
 
-De resultaten van deze testen vormen de basis voor de Business Case die aantoont of de voorgestelde automatisering daadwerkelijk een kostenefficiënte en veilige meerwaarde biedt voor Scrada.
 \begin{itemize}
-    \item \textbf{Onderzoeksmethode:} Functionele acceptatietesten en vergelijkende analyse.
-    \item \textbf{Deliverable:} Evaluatierapport en conclusie van de bachelorproef.
+    \item \textbf{Onderzoeksmethode:} Kwalitatieve evaluatie via scenario-testen en vergelijkende analyse met het huidige manuele proces.
+    \item \textbf{Deliverable:} Evaluatie van de testscenario's en eindsynthese.
 \end{itemize}

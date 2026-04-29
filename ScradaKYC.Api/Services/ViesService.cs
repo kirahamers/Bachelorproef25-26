@@ -6,8 +6,13 @@ namespace ScradaKYC.Api.Services
     {
         public async Task<(bool IsValid, string Name)> CheckVatNumber(string vatNumber)
         {
+            //demo
+            if (vatNumber.Contains("0123456789")) 
+            {
+                return (true, "DEMO ENTITEIT");
+            }
+
             //BE zit in de URL, dus in principe kan gewoon ondernemingsnummer worden ingetypt
-            //TODO: vragen wat copromotor liever heeft
             var url = $"https://ec.europa.eu/taxation_customs/vies/rest-api/ms/BE/vat/{vatNumber}";
             using var client = new HttpClient();
             var response = await client.GetAsync(url);
