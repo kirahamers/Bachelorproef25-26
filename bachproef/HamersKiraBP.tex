@@ -11,6 +11,12 @@
 % - If you write your thesis in English (remark: only possible after getting
 %   explicit approval!), remove the option "dutch," or replace with "english".
 
+\usetikzlibrary{calc, positioning}
+% Voorkom conflicten met de Nederlandse babel (actieve karakters)
+\makeatletter
+\tikzset{every picture/.append style={execute at begin picture={\shorthandoff{"}}, execute at end picture={\shorthandon{"}}}}
+\makeatother
+
 \usepackage{lipsum}
 \usepackage{listings}
 \usepackage{xcolor}

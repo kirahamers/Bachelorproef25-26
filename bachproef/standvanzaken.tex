@@ -143,8 +143,8 @@ Bij een geautomatiseerd proces (vaak eKYC genoemd) worden de menselijke handelin
 De stappen verlopen doorgaans als volgt \autocite{ItsmeKYC2024, Deloitte2024}:
 
 \begin{enumerate}
-    \item \textbf{Digitale Identiteitsverificatie:} In plaats van een fysieke upload van een ID-kaart, gebruikt de klant een digitale ID zoals itsme®. 
-    Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen. Echter, dure externe Saas-oplossingen zoals itsme® worden best vermeden 
+    \item \textbf{Digitale Identiteitsverificatie:} In plaats van een fysieke upload van een ID-kaart, gebruikt de klant een digitale ID zoals itsme. 
+    Hierdoor worden geverifieerde gegevens (naam, geboortedatum, etc.) direct en foutloos in het systeem ingeladen. Echter, dure externe Saas-oplossingen zoals itsme worden best vermeden 
     aangezien de jaarlijkse licentiekosten van dergelijke platforms kunnen oplopen tot €50.000, wat niet kostenefficiënt is voor een bedrijf als Scrada dat een groot aantal klanten moet onboarden. 
     In plaats daarvan kan er gebruik worden gemaakt van de NFC-technologie die in moderne identiteitsbewijzen is geïntegreerd, waardoor een directe uitlezing van de chip mogelijk is via een mobiele app.
     De keuze voor een oplossing via NFC-technologie sluit aan bij de visie van \autocite{Kumar2020}, die stellen dat een modern eKYC-proces gebruik moet maken van digitale handtekeningen en asymmetrische cryptografie om een 'Single Source of Truth' te creëren.
@@ -236,11 +236,11 @@ Het gebruik van een consortium blockchain-model, waarbij meerdere organisaties s
 
 \begin{table}[h!]
 \centering
-\caption{Vergelijking tussen de huidige manuele werkwijze, de marktstandaard (itsme®) en de voorgestelde PoC.}
+\caption{Vergelijking tussen de huidige manuele werkwijze, de marktstandaard (itsme) en de voorgestelde PoC.}
 \label{tab:kyc-vergelijking-compleet}
 \begin{tabular}{|l|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
 \hline
-\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{itsme® (SaaS-oplossing)} & \textbf{Eigen PoC (Automatisering)} \\ \hline
+\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{itsme (SaaS-oplossing)} & \textbf{Eigen PoC (Automatisering)} \\ \hline
 \textbf{Kostenstructuur} & Loonevenredig: hoge kost door manuele uren van medewerkers. & Zeer hoog: jaarlijkse licentiekosten en transactiekosten. & Kostenefficiënt: eenmalige ontwikkeling en lage API-kosten. \\ \hline
 \textbf{Klantervaring} & Traag proces door handmatige uploads en wachten op validatie. & Seamless: snelle verificatie via een externe, vertrouwde app. & Seamless self-service: onmiddellijke verificatie direct in de Scrada-omgeving. \\ \hline
 \textbf{Verificatiemethode} & Visuele controle van kopieën door een medewerker (foutgevoelig). & Digitale identiteit via een gecertificeerde provider. & On-device biometrie, liveness-detectie en RRN-checksum. \\ \hline

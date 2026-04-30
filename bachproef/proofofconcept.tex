@@ -7,17 +7,21 @@ Hoewel er in hoofdstuk 2 over NFC-technologie en Blockchain besproken werd als d
 een combinatie van OCR en web scraping. De reden hiervoor is de hardware-beperking, aangezien niet alle identiteitskaarten en mobiele apparaten momenteel
 beschikken over NFC-readers of NFC-chips. Anderzijds blijft de focus van deze bachelorproef ook op de kostenefficiëntie.
 Door gebruik te maken van publieke APIs in de backend en open-source AI-modellen in de front-end zoals MobileFacenet (wat later in dit hoofstuk verder uitgewerkt wordt), kan een manueel, tijdrovend proces omgezet worden
-naar een veiligere, geautomatiseerd proces zonder hoge kosten, zoals bijvoorbeeld van toepassing is bij itsme®.
+naar een veiligere, geautomatiseerd proces zonder hoge kosten, zoals bijvoorbeeld van toepassing is bij itsme.
+
 \medskip
+
 De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten bevat:
 
 \section{Systeemarchitectuur}
 De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een client-server model waarbij de mobiele applicatie wordt gebruikt als interface voor
 gebruikersinteractie en gebruik van hardwarefuncties en AI-modellen, terwijl de .NET-backend verantwoordelijk is voor het oproepen van de externe API's (KBO en VIES) en het beheren van de bedrijfslogica.
+
 \medskip
+
 In Figuur \ref{fig:sequence-diagram-kyc} wordt de interactie gevisualiseerd aan de hand van een sequence diagram. Hierin is te zien hoe de gegevensstroom verloopt van de initiële scan door de gebruiker tot de uiteindelijke biometrische verificatie.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
     \begin{tikzpicture}[node distance=2.5cm, auto, >=stealth]
 
@@ -50,7 +54,7 @@ In Figuur \ref{fig:sequence-diagram-kyc} wordt de interactie gevisualiseerd aan 
 
     \end{tikzpicture}
     \caption{Sequence Diagram van het geautomatiseerde KYC-proces.}
-    \label{fig:sequence-diagram-kyc-fixed}
+    \label{fig:sequence-diagram-kyc}
 \end{figure}
 
 \subsection{Netwerk en gebruik van emulators}
@@ -102,7 +106,7 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
 
 \end{itemize}  
 
-\begin{listing}[H]
+\begin{listing}[ht]
 \begin{lstlisting}[language=html, basicstyle=\tiny\ttfamily, breaklines=true, frame=lines]
 <!DOCTYPE html>
 <html lang="nl">
@@ -152,39 +156,38 @@ Flutter biedt een cross-platform ontwikkelingsomgeving die het mogelijk maakt om
 
 De visuele flow van de applicatie, zoals weergegeven in Figuur \ref{fig:app-flow}, illustreert de verschillende stappen die de gebruiker doorloopt: van het invoeren van de bedrijfsgegevens tot de uiteindelijke biometrische verificatie via de camera.
 
-\begin{figure}[H]
+\begin{figure}[ht]
      \centering
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{application_screenshot}
-         \caption{Invoer ondernemingsnummer en data extractie}
+         \caption{Invoer ondernemingsnummer}
          \label{fig:stap1}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{camera_instructions}
-         \caption{Instructies voor de live-selfie}
+         \caption{Instructies live-selfie}
          \label{fig:stap2}
      \end{subfigure}
 
-     \vspace{1em}
+     \vspace{2em}
 
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{camera}
-         \caption{Live-selfie en Liveness Detection}
+         \caption{Liveness Detection}
          \label{fig:stap3}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.48\textwidth}
+     \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{biometrics}
-         \caption{Biometrische match en afronding}
+         \caption{Biometrische match}
          \label{fig:stap4}
      \end{subfigure}
-
-     \caption{De volledige onboarding-flow van de Scrada KYC-app: van data-extractie tot identiteitsverificatie.}
+     \caption{De volledige onboarding-flow van de Scrada KYC-app.}
      \label{fig:full-app-flow}
 \end{figure}
 
@@ -202,7 +205,7 @@ Als extra check wordt ook een checksum berekend op basis van de cijfers in het r
 waarbij de laatste 2 cijfers het resultaat zijn.
 Bij personen die na 2000 zijn geboren is dit echter anders, want er wordt geen onderscheid gemaakt of een persoon in 19xx of 20xx geboren is. Indien de checksum niet zou kloppen, wordt er een '2' voor de 9 cijfers geplaatst en wordt de berekening herhaald.
 Deze methode is noodzakelijk omdat de checksum-logica voor personen geboren vanaf het jaar 2000 een extra prefix vereist om wiskundig correct te blijven, de geldigheid van het nummer te verfiëren en fraude te voorkomen. 
-Deze checksum werd online gevonden en is open source via de link https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/.
+Deze checksum werd online gevonden en is open source via de \url{https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/}.
 
 \subsection{Technische Implementatie en Uitdagingen van de Biometrische Vergelijking}
 De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitdaging in verband met de runtime-omgeving.
@@ -229,9 +232,9 @@ De formule voor de Cosine Similarity is als volgt:
 \end{equation}
 Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen 0 en 1, waarbij 1 een perfecte match is en 0 een volledige mismatch.
 
-\begin{figure}[H]
+\begin{figure}[ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{Cosine\_Similarity\_Vector.png}
+    \includegraphics[width=0.5\textwidth]{Cosine_Similarity_Vector.png}
     \caption{Visuele weergave van Cosine Similarity: hoe dichter de vectoren bij elkaar liggen qua hoek, hoe hoger de overeenkomst tussen de embeddings \autocite{MachineLearningPlus2024}.}
     \label{fig:cosine-sim}
 \end{figure}
@@ -307,7 +310,7 @@ Door de directe validatie en feedback (bijvoorbeeld een foutieve ID-scan), kan d
 aangevraagd worden door middel van een hulp knop, of kunnen extra instructies opgezocht worden met een info knop.
 
 \section{Alternatieven en Marktvergelijking}
-Tijdens de analysefase werden alternatieven zoals \textit{itsme®} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 
+Tijdens de analysefase werden alternatieven zoals \textit{itsme} en \textit{Smart-ID} overwogen. Hoewel deze diensten een hoge mate van zekerheid bieden, 
 zijn de bijhorende API-kosten en de noodzaak voor externe applicaties een drempel voor kleine ondernemingen. De ontwikkelde PoC biedt een kostenefficiënt alternatief door gebruik te maken van open-source modellen en lokale verwerking.
 
 \section{GDPR-Conformiteit in de PoC}

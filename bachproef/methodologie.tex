@@ -37,7 +37,7 @@ De studie focuste op drie hoofdgebieden:
 \begin{enumerate}
 \item \textbf{Wet- en Regelgeving:} Er is een diepgaande analyse uitgevoerd van de \textit{General Data Protection Regulation} (GDPR) en de Belgische anti-witwaswetgeving (AML). Hierbij lag de focus op de principes van dataminimalisatie, opslagbeperking en de juridische bewijslast die rust op financiële tussenpersonen.
 \item \textbf{Technische Standaarden:} Het Peppol-ecosysteem en het bijbehorende Interoperability Framework werden bestudeerd om de rol van Scrada als Service Provider (Corner 2) te definiëren. Dit deel bepaalt de verantwoordelijkheden met betrekking tot het verifiëren van zenders (Corner 1) op het netwerk.
-\item \textbf{Technologische State-of-the-art:} Er is onderzoek gedaan naar bestaande technologieën voor digitale identiteitsverificatie, variërend van gecentraliseerde oplossingen zoals itsme® tot gedecentraliseerde hardware-oplossingen zoals NFC-scanning en AI-gestuurde biometrie (liveness-detectie).
+\item \textbf{Technologische State-of-the-art:} Er is onderzoek gedaan naar bestaande technologieën voor digitale identiteitsverificatie, variërend van gecentraliseerde oplossingen zoals itsme tot gedecentraliseerde hardware-oplossingen zoals NFC-scanning en AI-gestuurde biometrie (liveness-detectie).
 \end{enumerate}
 
 Deze theoretische basis was essentieel om te voorkomen dat er oplossingen worden ontwikkeld die technisch weliswaar efficiënt zijn, maar juridisch onhoudbaar of niet conform de Peppol-voorschriften blijken te zijn.
@@ -56,7 +56,7 @@ De vragen zijn als volgt geformuleerd:
     \item Welke gegevens moet de klant minimaal ingeven? Is er een voorkeur voor het gebruik van het ondernemingsnummer, of is er ook ruimte voor alternatieve methoden zoals e-mailverificatie of telefoonnummervalidatie?
     \item Wat zijn de belangrijkste 'red flags' die momenteel handmatig gespot wordt tijdens het onboardingproces? (Bijv. bedrijven die pas 2 dagen bestaan, buitenlandse bestuurders bij Belgische firma's, etc.)
     \item Wanneer worden de documenten verwijderd? Worden deze na 30 dagen verwijderd, of direct na validatie? (In de huidige situatie worden de documenten handmatig verwijderd, maar er is een wens om dit te automatiseren volgens de GDPR-principes van opslagbeperking).
-    \item Is er een voorkeur voor een specifieke methode van digitale ID zoals itsme® (populair in België)? Of kijken we eerder naar eID-uitlezers of NFC-scanning van paspoorten?
+    \item Is er een voorkeur voor een specifieke methode van digitale ID zoals itsme (populair in België)? Of kijken we eerder naar eID-uitlezers of NFC-scanning van paspoorten?
     \item Hoe groot is de zorg binnen Scrada voor vervalste digitale documenten? Moet de PoC liveness-detectie (bijv. een selfie-video) ondersteunen? (biometrics)
     \item In welke taal of framework wordt de huidige frontend van Scrada geschreven? (Bijv. Angular, React, Vue?). Dit zodat het PoC hierop kan aansluiten en de integrate vlot kan verlopen.
     \item Is er een test-omgeving of een set met 'dummy' klantgegevens die ik gebruikt mag worden voor het onderzoek, zodat er niet met echte persoonsgegevens gewerkt wordt?
@@ -137,7 +137,7 @@ van het jaar nog niet bereikt, maar tijdens de piek kan dit oplopen tot uren per
 
 Op het gebied van juridische en technische kwetsbaarheid kwam naar voren dat het huidige proces van handmatige uploads (foto's of scans van ID-kaarten) kwetsbaar is voor fraude met vervalste documenten. 
 Zonder biometrische verificatie of liveness-detectie kan Scrada momenteel niet met 100 procent zekerheid garanderen dat de persoon op de foto ook de persoon is die de aanvraag indient. 
-Bovendien vormt de verwerking van onversleutelde identiteitsbewijzen een risico onder de GDPR. Hoewel itsme® als een veilige authenticatiemethode wordt beschouwd,
+Bovendien vormt de verwerking van onversleutelde identiteitsbewijzen een risico onder de GDPR. Hoewel itsme als een veilige authenticatiemethode wordt beschouwd,
 wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkte flexibiliteit (het vereist een aparte app en is niet universeel toepasbaar, vooral voor buitenlandse klanten).
 
 Scrada onderscheidt zich in de markt door het gebruik van blockchaintechnologie voor de onveranderlijkheid van digitale wettelijke boeken, conform de Circulaire 2020/C/20 van de FOD Financiën (te vinden op https://www.scrada.be/). 
