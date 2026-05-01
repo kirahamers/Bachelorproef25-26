@@ -6,6 +6,10 @@
 
 \documentclass[a0,portrait]{hogent-poster}
 \usepackage{fontawesome5}
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{caption}
 
 % Info over de opleiding
 \course{Bachelorproef}
@@ -21,82 +25,160 @@
 \supervisor{Tom Antjon}
 \cosupervisor{Jeffrey Baeke (Scrada)}
 
-% Indien ingevuld, wordt deze informatie toegevoegd aan het einde van de
-% abstract. Zet in commentaar als je dit niet wilt.
 \specialisation{Mobile \& Enterprise Development}
 \keywords{KYC, GDPR-conformiteit, automatisering}
 \projectrepo{https://github.com/kirahamers/Bachelorproef25-26.git}
 
+\definecolor{boxblue}{RGB}{230,242,250}
+\definecolor{boxgreen}{RGB}{230,249,247}
+\definecolor{boxred}{RGB}{250,230,233}
+\definecolor{pastelorange}{RGB}{255, 235, 210}
+\definecolor{pastelblue}{RGB}{215, 235, 250}
+\definecolor{pastelpurple}{RGB}{240, 230, 250}
+\definecolor{pastelgreen}{RGB}{220, 245, 230}
+
+\newtcolorbox{posterbox}[1]{
+    colback=white,
+    colframe=hogent-blue,
+    arc=4mm,
+    boxrule=0.6mm,
+    title={\huge #1},
+    fonttitle=\bfseries\sffamily,
+    width=\linewidth,
+    halign=left,
+    valign=top,
+    top=2.5mm,
+    bottom=2.5mm,
+    left=3.5mm,
+    right=3.5mm,
+    before skip=3.5mm,
+    after skip=3.5mm
+}
+
 \begin{document}
 
-\maketitle
+\begin{minipage}[c]{0.72\linewidth}
+    \maketitle
+\end{minipage}%
+\hfill
+\begin{minipage}[c]{0.25\linewidth}
+    \centering
+    \includegraphics[width=0.75\linewidth]{scrada_poster.png}
+\end{minipage}
 
 \begin{center}
+    \vspace{-0.5cm}
     \rule{\linewidth}{2pt} \\
-    \vspace{0.5cm}
+    \vspace{0.3cm}
     {\huge\titlefont\color{hogent-blue} Abstract} \\
-    \vspace{0.5cm}
+    \vspace{0.3cm}
     \begin{minipage}{0.95\linewidth}
-        \itshape\Large
+        \itshape\large
         Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
         Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
-        Door een hybride koppeling van de Europese VIES-API en een op maat gemaakte KBO-webscraper, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
+        Door een hybride koppeling van de Europese VIES-API en de KBO webservice, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
         Het resultaat is een sneller, veiliger en self-service onboarding proces.
     \end{minipage}
-    \vspace{0.5cm}
+    \vspace{0.3cm}
     \rule{\linewidth}{2pt}
 \end{center}
 
 \begin{multicols}{2}
-\LARGE % Goede balans tussen leesbaarheid en ruimtebesparing
+\large
 
-\section{\faInfoCircle \quad Introductie}
+\begin{posterbox}{\faInfoCircle \quad Introductie}
 Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiëren (AML-wetgeving). 
-De huidige methode bij Scrada vereist manuele invoer van KBO-gegevens, wat de efficiëntie verlaagd.
+De huidige methode bij Scrada vereist manuele invoer van KBO-gegevens, wat de efficiëntie verlaagt.
 
-\vspace{0.3cm}
-\fbox{
-    \begin{minipage}{0.9\linewidth}
-        \textit{“Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden?”} 
-    \end{minipage}
-}
+\vspace{0.4cm}
+\begin{tcolorbox}[colback=boxblue!70,colframe=hogent-blue,arc=3mm,boxrule=0.5mm,center,width=0.95\linewidth]
+    \centering
+    \itshape\Large ``Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden?''
+\end{tcolorbox}
+\end{posterbox}
 
-\section{\faLightbulb \quad De Oplossing}
+\begin{posterbox}{\faLightbulb \quad De Oplossing}
 Vanwege de hoge licentiekosten van de officiële KBO-API, is gekozen voor een kostenloze PoC:
 \begin{itemize}
     \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API.
     \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper (HtmlAgilityPack), dat bij productie niet aangeraden is maar perfect toepasbaar is voor een PoC.
     \item \textbf{Identiteitsmatch:} Vergelijking met OCR-data van de eID, samen met een biometriecheck aan de hand van een live-selfie.
 \end{itemize}
+\end{posterbox}
 
-\section{\faProjectDiagram \quad Systeemarchitectuur}
-\begin{wrapfigure}{r}{0.45\linewidth}
-    \centering
-    \vspace{-20pt}
-    \fbox{\includegraphics[width=\linewidth]{poster-screenshot.png}}
-    \captionof{figure}{\small Data-flow.}
-    \vspace{-10pt}
-\end{wrapfigure}
+\begin{posterbox}{\faFingerprint \quad Biometrische Verificatie}
+Om identiteitsfraude tegen te gaan, is biometrie essentieel:
+\begin{itemize}
+    \item \textbf{Gezichtsherkenning:} Match tussen live-selfie en eID-foto.
+    \item \textbf{Liveness Detection:} Voorkomt fraude door fysieke aanwezigheid te verifiëren voor de biometrie.
+    \item \textbf{Bevoegdheidscheck:} Match met de statutaire bestuurders uit de KBO en de naam op de gescande ID.
+\end{itemize}
+\end{posterbox}
+
+\definecolor{pastelorange}{RGB}{255, 235, 210}
+\definecolor{pastelblue}{RGB}{215, 235, 250}
+\definecolor{pastelpurple}{RGB}{240, 230, 250}
+\definecolor{pastelgreen}{RGB}{220, 245, 230}
+
+\begin{posterbox}{\faTasks \quad Het Onboarding-proces}
+\begin{center}
+    \vspace{0.2cm}
+
+    \tcbox[colback=pastelorange, colframe=orange!40, arc=5mm, boxrule=1mm]{
+        \Large \textbf{1. Ondernemingsnummer}
+    } \\
+    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
+    
+    \tcbox[colback=pastelblue, colframe=blue!40, arc=5mm, boxrule=1mm]{
+        \Large \textbf{2. eID-scan}
+    } \\
+    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
+    
+    \tcbox[colback=pastelpurple, colframe=purple!40, arc=5mm, boxrule=1mm]{
+        \Large \textbf{3. Biometrie}
+    } \\
+    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
+    
+    \tcbox[colback=pastelgreen, colframe=green!50!black!30, arc=5mm, boxrule=1mm]{
+        \Large \textbf{4. Afronding}
+    }
+    
+    \vspace{0.2cm}
+\end{center}
+\end{posterbox}
+
+\columnbreak
+
+\begin{posterbox}{\faProjectDiagram \quad Systeemarchitectuur}
 De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend. 
 De flow van data-extractie loopt van de KBO-scraper rechtstreeks naar de Flutter UI, 
 waardoor de gebruiker onmiddellijk feedback krijgt over de geldigheid van de bedrijfsgegevens.
 
-\section{\faFingerprint \quad Biometrische Verificatie}
-Om identiteitsfraude tegen te gaan, is biometrie essentieel:
-\begin{itemize}
-    \item \textbf{Gezichtsherkenning:} Match tussen live-selfie met en eID-foto.
-    \item \textbf{Liveness Detection:} Voorkomt fraude door fysieke aanwezigheid te verifiëren voor de biometrie.
-    \item \textbf{Bevoegdheidscheck:} Match met de statutaire bestuurders uit de KBO en de naam op de gescande ID.
-\end{itemize}
+\vspace{0.4cm}
+\begin{center}
+    \begin{minipage}[t]{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{poster-screenshot.png}
+    \end{minipage}%
+    \hfill
+    \begin{minipage}[t]{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{biometrics_poster.png}
+    \end{minipage}\\[0.2cm]
+    \captionof{figure}{\small Data-flow \& Biometrie}
+\end{center}
+\end{posterbox}
 
-\section{\faCheckDouble \quad Resultaten \& Verificatie}
+\begin{posterbox}{\faCheckDouble \quad Resultaten \& Verificatie}
 De PoC bewijst dat een volledige check niet meer dan 2 minuten duurt. 
 Er is een naadloze match tussen live data en biometrie. De backend vertaalt ruwe HTML naar tekst voor een betrouwbare vergelijking.
+\end{posterbox}
 
-\section{\faFlagCheckered \quad Conclusie}
+\begin{posterbox}{\faFlagCheckered \quad Conclusie}
 Manuele KYC-processen bij Scrada zijn verleden tijd. 
 De Flutter-app zorgt voor een hogere snelheid en veiligheid. 
 De architectuur is al voorbereid op de essentiële implementatie van officiële KBO-API voor productie.
+\end{posterbox}
 
 \end{multicols}
 \end{document}
