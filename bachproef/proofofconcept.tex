@@ -100,7 +100,7 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
     de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risico van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoog risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
-    \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_json}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
+    \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_api_response}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
     \item \textbf{EncryptionService:} Deze service zorgt voor het waarborgen van Privacy by Design. De applicatie maakt gebruik van AES-256 (Advanced Encryption Standard) om gevoelige persoonsgegevens, zoals e-mailadressen, te versleutelen voordat deze worden opgeslagen. 
     Door gebruik te maken van een 32-byte sleutel en een unieke Initialization Vector (IV) per encryptie-ronde \footnote{Conform aan de officiële documentatie van Microsoft over data-encryptie in .NET: \url{https://learn.microsoft.com/en-us/dotnet/standard/security/encrypting-data}}. Dit is een belangrijke stap voor de AVG-wetgeving binnen het Scrada-platform.
 
@@ -136,6 +136,36 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
 \end{lstlisting}
 \caption{Volledige HTML-broncode van de KBO Public Search login pagina.}
 \label{lst:kbo-full-html}
+\end{listing}
+
+\begin{listing}[ht]
+\begin{minted}[frame=lines, framesep=2mm, fontsize=\small]{json}
+{
+  "isValid" : true,
+  "requestDate" : "2026-05-03T18:17:00.571Z",
+  "userError" : "VALID",
+  "name" : "BV SCRADA",
+  "address" : "Windgat 15\n9521 Sint-Lievens-Houtem",
+  "requestIdentifier" : "",
+  "originalVatNumber" : "BE0793904121",
+  "vatNumber" : "0793904121",
+  "viesApproximate" : {
+    "name" : "---",
+    "street" : "---",
+    "postalCode" : "---",
+    "city" : "---",
+    "companyType" : "---",
+    "matchName" : 3,
+    "matchStreet" : 3,
+    "matchPostalCode" : 3,
+    "matchCity" : 3,
+    "matchCompanyType" : 3
+  },
+  "rulesApplied" : [ "COUNTRY" ]
+}
+\end{minted}
+\caption{JSON API-response voor KYC-verificatie met VIES.}
+\label{lst:vies-api-response}
 \end{listing}
 
 \subsection{Controller laag}
@@ -188,7 +218,7 @@ De visuele flow van de applicatie, zoals weergegeven in Figuur \ref{fig:app-flow
          \label{fig:stap4}
      \end{subfigure}
      \caption{De volledige onboarding-flow van de Scrada KYC-app.}
-     \label{fig:full-app-flow}
+     \label{fig:app-flow}
 \end{figure}
 
 \subsection{Optische Tekstherkenning en Scan-logica}

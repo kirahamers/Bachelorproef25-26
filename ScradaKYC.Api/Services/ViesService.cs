@@ -29,6 +29,7 @@ namespace ScradaKYC.Api.Services
             bool isValid = root.GetProperty("isValid").GetBoolean();
             string name = root.GetProperty("name").GetString() ?? "Naam onbekend";
 
+            Console.WriteLine(content);
             return (isValid, name);
         }
     }
