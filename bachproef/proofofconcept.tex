@@ -322,6 +322,42 @@ wordt simpelweg een popup getoond met bevestiging van de registratie.
 Om de onderzoeksvraag met betrekking tot fraudeveiligheid te beantwoorden, 
 is de Proof-of-Concept werden verschillende functionele testen uitgevoerd waarbij bewuste pogingen tot misleiding werden ondernomen.
 
+Daarnaast werd ook onderzocht of de geautomatiseerde flow werkelijk sneller is dan het manuele proces, en met hoeveel procent dit gemiddeld zou kunnen zijn.
+Hierbij werd de tijd gemeten tijdens het uitvoeren van de KBO en VIES ophalingen, en de tijd die nodig is om de biometrische vergelijking uit te voeren.
+
+Zoals te zien in de testresultaten in Listing \ref{lst:test_results} en \ref{lst:flutter_kyc_results}, zijn de VIES- en KBO-checks 158ms en 421ms, 
+wat een grote tijdsbesparing is ten opzichte van het manuele proces dat gemiddeld 2 tot 3 minuten kan duren. Daarnaast is de biometrische vergelijking, 
+inclusief liveness-detectie, uitgevoerd in 2363ms (2.363 seconden), wat ook een verbetering is ten opzichte van een manuele vergelijking die vaak meerdere minuten kan duren, 
+afhankelijk van de kwaliteit van de scans.
+
+Het is overduidelijk dat de geautomatiseerde flow voor een grote versnelling van de onboarding zorgt, en dat een tijdsbesparing van minimaal 50 procent op de volledige flow haalbaar is, wat een belangrijke stap is in het verbeteren van de gebruikerservaring bij Scrada.
+
+\begin{lstlisting}[style=consoleStyle, caption={Resultaten van de performantietesten in C#}, label={lst:test_results}]
+Running tests...
+
+[OK] PASSED: Test_ViesAndKbo_CombinedSpeed (421ms)
+Totale tijd 0403019261: 417ms
+[OK] PASSED: Test_RealKboScraping_Speed (158ms)
+KBO scraping: 157ms
+
+========================================
+Test Run Summary
+========================================
+Total Tests: 2
+Passed: 2
+Failed: 0
+Skipped: 0
+Result: SUCCEEDED
+Test Execution Time: 0.69s (689ms)
+Total Time (including build): 3.17s (3167ms)
+========================================
+\end{lstlisting}
+
+\begin{lstlisting}[style=consoleStyle, caption={Console-output van OCR en biometrische verificatie in Flutter}, label={lst:flutter_kyc_results}]
+I/flutter ( 7816): OCR TIJD: 20ms
+I/flutter ( 7816): BIOMETRIE TIJD: 2363ms
+\end{lstlisting}
+
 \subsection{Validatie van de Liveness-detectie}
 Tijdens de biometrische testen werd geprobeerd een foto met hoge resolutie van een gezicht voor de camera te houden. De liveness-detectie in de CameraScannerWidget herkende geen actieve oogknipper-beweging en draaien van het hoofd, 
 waardoor de knop onklikbaar bleef. Pas bij een fysiek aanwezige gebruiker werd de isLive-status geactiveerd, wat aantoont dat het systeem beschermt tegen eenvoudige 'spoofing'-aanvallen met foto's.

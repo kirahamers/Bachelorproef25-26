@@ -53,6 +53,8 @@ class _KycScreenState extends State<KycScreen> {
   }
 
 void _processScannedData(String text, String path, bool isFront) {
+  //testen hoe lang OCR duurt
+  final sw = Stopwatch()..start();
     setState(() {
       if (isFront) _frontPath = path; else _backPath = path;
     });
@@ -92,6 +94,9 @@ if (clean.contains("IDBEL")) {
                   _idScanController.text = naamRaw.toUpperCase();
                   _backPath = path;
                 });
+
+                sw.stop();
+                debugPrint("STOPWATCH OCR (${isFront ? 'Voorkant' : 'Achterkant'}): ${sw.elapsedMilliseconds}ms");
 
             }
           }
@@ -177,19 +182,31 @@ Future<void> _biometricCheck() async {
 
 Future<void> _checkBiometrics(String selfiePath) async {
   setState(() => _isLoading = true);
+  final sw = Stopwatch()..start();
 
   try {
+    if (_frontPath == null || !await File(_frontPath!).exists()) {
+      _showError("Foto van ID-kaart niet gevonden. Scan de voorkant opnieuw.");
+      return;
+    }
+    if (!await File(selfiePath).exists()) {
+      _showError("Selfie niet gevonden. Probeer opnieuw.");
+      return;
+    }
+
     final File? faceIdCrop = await _idService.extractFace(_frontPath!);
-    
     final File? selfieCrop = await _idService.extractFace(selfiePath);
 
     if (faceIdCrop == null || selfieCrop == null) {
+      sw.stop();
       _showError("Gezicht niet herkend. Zorg voor goede verlichting.");
       return;
     }
 
-    //vectoren vergelijken in embeddings
     double matchScore = await _idService.getSimilarityScore(faceIdCrop, selfieCrop);
+
+    sw.stop();
+    debugPrint("BIOMETRIE TIJD: ${sw.elapsedMilliseconds}ms");
 
     setState(() {
       _face = faceIdCrop;
@@ -197,18 +214,18 @@ Future<void> _checkBiometrics(String selfiePath) async {
       _faceMatchScore = matchScore;
       
       if (matchScore > 0.60) {
-        _matchResultaat = "GEZICHTSVERGELIJKING OK\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
+        _matchResultaat = "GEZICHTSVERGELIJKING OK\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%\nVerwerkt in: ${sw.elapsedMilliseconds}ms";
         _verifieerEID();
       } else {
         _matchResultaat = "GEZICHTSVERGELIJKING MISLUKT\nGelijkenis: ${(matchScore * 100).toStringAsFixed(1)}%";
       }
-
-
     });
   } catch (e) {
-    _showError("Biometrie fout: $e");
+    sw.stop();
+    debugPrint("Biometrie fout: $e");
+    _showError("Er ging iets mis bij de biometrische controle.");
   } finally {
-    setState(() => _isLoading = false);
+    if (mounted) setState(() => _isLoading = false);
   }
 }
 
