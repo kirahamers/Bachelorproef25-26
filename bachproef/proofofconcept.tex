@@ -74,7 +74,7 @@ Andere overwogen opties voor het kostenloos ophalen van de statutaire bestuurder
     \item \textbf{Publieke API's:} Naast de officiële API van FOD economie zijn er nog mogelijke APIs zoals OpenCorporates. Hoewel technisch functioneel, bleek deze ook beperkt tot een betalende licentie, wat leidde tot Unauthorized-fouten tijdens de implementatie.
     \item \textbf{KBO Open Data (CSV):} De officiële Open Data dataset van de federale overheid werd geanalyseerd op bruikbaarheid. Hoewel bestanden zoals \texttt{enterprise.csv} (86 MB) van de Open Data CSV bedrijfsnamen bevatten, bleken de persoonsgegevens van bestuurders omwille van GDPR-restricties niet aanwezig in de publiek toegankelijke downloads. 
     Daarnaast is batch-verwerking via CSV minder geschikt voor de vereiste real-time validatie. Deze oplossing zou daarnaast ook de noodzaak hebben van een database en een mechanisme om deze regelmatig te updaten, wat de complexiteit van de PoC zou verhogen.
-    \item \textbf{Finale Keuze:} Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo-full-html} terugegeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden. 
+    \item \textbf{Finale Keuze:} Na een aantal pogingen om toch een connectie te kunnen maken met de KBO-databank, werd onderstaande response \ref{lst:kbo-full-html} teruggeven, wat dus aanwijst op de noodzaak van een betalende subscriptie dat niet omzeild kan worden. 
     Vanwege de bovengenoemde beperkingen en het feit dat de officiële KBO-webservices betalend zijn (50 euro per 2000 requests), is voor deze PoC gekozen voor een hybride oplossing: de volledig functionele en gratis VIES-API voor bedrijfsvalidatie, samen met een 
     web scraping-implementatie. Door de publieke KBO Public Search-omgeving te parsen aan de hand van de HtmlAgilityPack-bibliotheek in de .NET-backend, kan de applicatie live de namen van actieve bestuurders en vaste vertegenwoordigers ophalen. 
 
@@ -235,7 +235,8 @@ Als extra check wordt ook een checksum berekend op basis van de cijfers in het r
 waarbij de laatste 2 cijfers het resultaat zijn.
 Bij personen die na 2000 zijn geboren is dit echter anders, want er wordt geen onderscheid gemaakt of een persoon in 19xx of 20xx geboren is. Indien de checksum niet zou kloppen, wordt er een '2' voor de 9 cijfers geplaatst en wordt de berekening herhaald.
 Deze methode is noodzakelijk omdat de checksum-logica voor personen geboren vanaf het jaar 2000 een extra prefix vereist om wiskundig correct te blijven, de geldigheid van het nummer te verfiëren en fraude te voorkomen. 
-Deze checksum werd online gevonden en is open source via de \url{https://sandervandevelde.wordpress.com/2020/08/13/belgische-rijksregisternummer-checksum-testen-dutch/}.
+Deze checksum werd online gevonden en is open source via de URL \url{https://sandervandevelde.wordpress.com/2020/08/13/} \linebreak
+\url{belgische-rijksregisternummer-checksum-testen-dutch/}.
 
 \subsection{Technische Implementatie en Uitdagingen van de Biometrische Vergelijking}
 De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitdaging in verband met de runtime-omgeving.

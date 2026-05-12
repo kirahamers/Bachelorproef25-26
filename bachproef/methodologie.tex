@@ -77,52 +77,6 @@ De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzamel
     van elke nieuwe klant op het moment van onboarding correct is geverifieerd.
 \end{enumerate}
 
-\begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}[node distance=1cm and 0.5cm, font=\small]
-        % Swimlanes
-        \draw[thick] (-1, 3) -- (14, 3);
-        \draw[thick] (-1, 0.5) -- (14, 0.5);
-        \draw[thick] (-1, -3) -- (14, -3);
-        
-        \node[rotate=90, font=\bfseries] at (-0.7, 1.75) {Klant (App)};
-        \node[rotate=90, font=\bfseries] at (-0.7, -1.25) {Scrada (Staf)};
-
-        \node (start) [start] at (0, 1.75) {};
-        \node (input) [task, right=0.5cm of start, text width=2.2cm] {Invoer BTW-nr \& Email};
-        \node (verify) [task, right=0.5cm of input, text width=2.2cm] {E-mailverificatie bevestigen};
-        \node (upload) [task, right=0.5cm of verify, text width=2.2cm] {Upload kopie ID-kaart};
-
-        \node (kbo) [task, below=2cm of upload, text width=2.5cm] {Medewerker: Opzoeking KBO};
-        \node (compare) [task, left=0.8cm of kbo, text width=2.5cm] {Handmatige Match ID vs. KBO};
-        \node (decision) [gateway, left=0.8cm of compare] {Match?};
-        
-        \node (approve) [task, below=0.8cm of decision, text width=2.2cm] {Manuele validatie};
-        \node (retention) [task, left=0.8cm of approve, text width=2.2cm] {Bewaring 6 mnd (Audit)};
-        \node (delete) [task, left=0.8cm of retention, text width=1.8cm] {Wissen ID (GDPR)};
-        \node (end) [end, left=0.5cm of delete] {};
-        
-        \node (reset) [task, above=1.5cm of input, text width=2.2cm] {Reset \& verwittig klant};
-
-        \draw [arrow] (start) -- (input);
-        \draw [arrow] (input) -- (verify);
-        \draw [arrow] (verify) -- (upload);
-        \draw [arrow] (upload) -- (kbo);
-        \draw [arrow] (kbo) -- (compare);
-        \draw [arrow] (compare) -- (decision);
-        
-        \draw [arrow] (decision) -- node[anchor=east] {Ja} (approve);
-        \draw [arrow] (decision) -| node[anchor=south west, pos=0.7] {Nee} (reset);
-        \draw [arrow] (reset) -- (input);
-        
-        \draw [arrow] (approve) -- (retention);
-        \draw [arrow] (retention) -- (delete);
-        \draw [arrow] (delete) -- (end);
-    \end{tikzpicture}
-    \caption{BPMN-visualisatie van het huidige proces (AS-IS).}
-    \label{fig:bpmn-huidig-tikz}
-\end{figure}
-
 Tijdens het interview werd het proces weergegeven van de initiële onboarding tot de uiteindelijke activatie op het Peppol-netwerk. Hierbij werd een \textit{Business Process Model and Notation} (BPMN) gecreëerd
 om de interactie tussen de klant (Corner 1) en de Service Provider (Corner 2) visueel vast te leggen. 
 De focus bij de analyse van het huidige proces lag op het identificeren van kritieke menselijke foutmarges en juridische kwetsbaarheden die de betrouwbaarheid van het KYC-traject ondermijnen.
@@ -158,16 +112,6 @@ dit niet van toepassing is van de data na de registratie. Hier werd een voorstel
 De kern van de bachelorproef is de ontwikkeling van de Proof-of-Concept (PoC). Hierbij is gekozen voor een agile ontwikkelingsmethode (iteratief ontwerpen), 
 waarbij functionele onderdelen afgestemd konden worden aan de technische infrastructuur van Scrada. De architectuur van de PoC bestaat uit drie hoofdcomponenten die samenwerken:
 
-In deze Proof-of-Concept wordt gebruikgemaakt van de KBO Public Search \url{https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html} om bedrijfsgegevens in real-time op te halen via web scraping, aangezien de KBO API niet publiek en gratis toegankelijk is. 
-Dit gebeurt via een .NET backend die fungeert als tussenlaag tussen de mobiele applicatie en de externe databron. 
-Deze architectuur voorkomt directe blootstelling van externe endpoints en laat toe om bijkomende validatielogica (zoals risicoscores) centraal te beheren.
-
-Hoewel de controle op sanctielijsten via LSEG World-Check een cruciaal onderdeel is van het theoretische KYC-proces, 
-is de daadwerkelijke technische integratie hiervan buiten de scope (Out of Scope) van deze Proof-of-Concept gehouden. 
-LSEG is een gesloten, commercieel en duur B2B (Business-to-Business) systeem dat zware licenties en specifieke authenticatie vereist, 
-wat niet haalbaar is binnen dit academisch onderzoek doordat een betaald en zakelijk contract hiervoor vereist is. 
-De focus van de PoC ligt primair op de automatische KBO-verificatie en de overeenkomst tussen de identiteitskaart en de gebruiker.
-
 \begin{enumerate}
     \item \textbf{Mobiele Hardware-integratie (Flutter):} Aangezien de applicatie gebouwd is in Flutter, maakt de POC gebruik van Flutter-plugins om gebruik te kunnen maken van de smartphone-hardware.
     Hierbij wordt het handmatig inscannen van de identeitskaart toegepast. Deze keuze werd gemaakt omdat nog niet alle huidige mobiele apparaten en identiteitskaarten beschikken tot de NFC-read mogelijkheid beschikken.
@@ -179,79 +123,24 @@ De focus van de PoC ligt primair op de automatische KBO-verificatie en de overee
     De .NET-backend werkt als de centrale hub die de mobiele applicatie verbindt met externe verificatiebronnen. Deze bestaat uit verschillende services:
         \begin{itemize}
         \item \textbf{Kruispuntbank van Ondernemingen (KBO):} via de KBO-service kunnen de officiele bestuurders van het opgegeven bedrijf opgehaald worden. Dit is een API dat betalend is, waarbij een pakket kan aangekocht worden voor vijftig euro per tweeduizend requests. Aangezien dit buiten de scope valt om 
-        betalende APIs te gebruiken, werd een mockup service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geïmplementeerd worden. In een interview met de co-promotor werd meegedeeld dat er dagelijks aantal requests requests zijn, dus deze implementatie is haalbaar
-        voor Scrada (Wanneer bedrijven peppol verplicht moesten implementeren was dit aantal echter veel hoger).
+        betalende APIs te gebruiken, werd een mock service gebruikt. In een latere fase van de applicatie kan de API aangekocht en eenvoudig geïmplementeerd worden. In een interview met de co-promotor werd meegedeeld dat er dagelijks een paar requests zijn, dus deze implementatie is haalbaar
+        voor Scrada (Wanneer bedrijven peppol verplicht moesten implementeren was dit aantal echter veel hoger).\footnote{In deze Proof-of-Concept wordt gebruikgemaakt van de KBO Public Search \url{https://kbopub.economie.fgov.be/kbopub/zoeknummerform.html} om bedrijfsgegevens in real-time op te halen via web scraping, aangezien de KBO API niet publiek en gratis toegankelijk is. 
+Dit gebeurt via een .NET backend die fungeert als tussenlaag tussen de mobiele applicatie en de externe databron. 
+Deze architectuur voorkomt directe blootstelling van externe endpoints en laat toe om bijkomende validatielogica (zoals risicoscores) centraal te beheren.}
         \item \textbf{BTW-validatie (VIES):} Via het gratis en openbare Vat Information Exchange System kan officeel gecontroleerd worden of een BTW- of ondernemingsnummer geldig en kan zo ook de naam van de onderneming opgehaald worden.
         \item \textbf{London Stock Exchange Group (LSEG):} de LSEG service wordt gebruikt als internationale veiligheidsscreening. Hierbij wordt geverifieerd of entiteiten voorkomen op sanctielijsten of betrokken zijn bij witwaspraktijken, conform aan de AML richtlijnen.
-        Om toegang te krijgen tot deze API, is een streng screeningproces nodig en zijn de licentiekosten ook erg hoog. Hierdoor valt de implentatie van deze API buiten de scope van deze applicatie, maar is het nog steeds van belang dit te vermelden om in de toekomst dit zo fraudeveilig mogelijk te maken
+        Om toegang te krijgen tot deze API, is een streng screeningproces nodig en zijn de licentiekosten ook erg hoog. Hierdoor valt de implentatie van deze API buiten de scope van deze applicatie, maar is het nog steeds van belang dit te vermelden om in de toekomst dit zo fraudeveilig mogelijk te maken.\footnote{Hoewel de controle op sanctielijsten via LSEG World-Check een cruciaal onderdeel is van het theoretische KYC-proces, 
+is de daadwerkelijke technische integratie hiervan buiten de scope (Out of Scope) van deze Proof-of-Concept gehouden. 
+LSEG is een gesloten, commercieel en duur B2B (Business-to-Business) systeem dat zware licenties en specifieke authenticatie vereist, 
+wat niet haalbaar is binnen dit academisch onderzoek doordat een betaald en zakelijk contract hiervoor vereist is. 
+De focus van de PoC ligt primair op de automatische KBO-verificatie en de overeenkomst tussen de identiteitskaart en de gebruiker.
+}
         \item \textbf{Risiconiveau:} Deze service berekent het risiconiveau gebaseerd op alle andere services, zoals de bedrijfsstatus en sanctielijsten.
 \end{itemize}
 
 De communicatie tussen de Flutter-frontend en de .NET-backend verloopt via een REST-interface, waarbij gegevens in JSON-formaat worden uitgewisseld voor een schaalbare architectuur.
 
 \end{enumerate}
-
-\begin{figure}[ht]
-    \centering
-    \begin{tikzpicture}[node distance=1cm and 0.5cm, font=\small]
-        \draw[thick] (-1, 4) -- (15, 4);
-        \draw[thick] (-1, 1.5) -- (15, 1.5);
-        \draw[thick] (-1, -2.5) -- (15, -2.5);
-        \draw[thick] (-1, -5.5) -- (15, -5.5);
-        
-        \node[rotate=90, font=\bfseries] at (-0.7, 2.75) {Klant (App)};
-        \node[rotate=90, font=\bfseries] at (-0.7, -0.5) {Systeem (.NET)};
-        \node[rotate=90, font=\bfseries] at (-0.7, -4) {Externe Bronnen};
-
-        \node (start) [start] at (0, 2.75) {};
-        \node (input) [task, right=0.5cm of start, text width=2.2cm] {Invoer BTW-nr \& Scan eID};
-
-        \node (split) [gateway, right=0.6cm of input] {+}; 
-        
-        \node (liveness) [task, right=1.2cm of split, text width=2.2cm] {On-device Biometrie};
-        \node (otp) [task, right=0.7cm of liveness, text width=2.2cm] {E-mail (OTP)};
-
-        \node (vies) [task, below=2.5cm of input, text width=2.2cm] {VIES Validatie (Status)};
-        \node (scraping) [task, at={(7.4, -0.5)}, text width=2.2cm] {KBO Scraping (Bestuurders)};
-        
-        \node (join) [gateway, right=0.7cm of scraping] {+};
-        
-        \node (match) [task, right=0.7cm of join, text width=2.2cm] {Autom. Match ID vs. KBO};
-        \node (decision) [gateway, right=0.7cm of match] {?};
-        
-        \node (activatie) [task, below=1cm of decision, text width=2.2cm] {Automatische Activatie};
-        \node (fail) [task, above=1.5cm of otp, text width=2.2cm] {Foutmelding \& Retry};
-        \node (end) [end, left=1cm of activatie] {};
-
-        \node (ext_vies) [rectangle, draw, dashed, at={(1.8, -4)}] {EU VIES API};
-        \node (ext_kbo) [rectangle, draw, dashed, at={(7.4, -4)}] {KBO Public Search};
-
-        \draw [arrow] (start) -- (input);
-        \draw [arrow] (input) -- (split);
-        
-        \draw [arrow] (split) |- (vies);
-        \draw [arrow] (split) -- (liveness); 
-        
-        \draw [arrow] (liveness) -- (otp);
-        \draw [arrow] (otp) -- (scraping);
-        
-        \draw [arrow] (vies) -| (join); 
-        \draw [arrow] (scraping) -- (join);
-        
-        \draw [arrow, dashed, <->] (vies) -- (ext_vies);
-        \draw [arrow, dashed, <->] (scraping) -- (ext_kbo);
-        
-        \draw [arrow] (join) -- (match);
-        \draw [arrow] (match) -- (decision);
-
-        \draw [arrow] (decision) -- node[anchor=east] {Ja} (activatie);
-        \draw [arrow] (decision) |- node[anchor=south west, pos=0.8] {Nee} (fail);
-        \draw [arrow] (fail) -| (input);
-        \draw [arrow] (activatie) -- (end);
-    \end{tikzpicture}
-    \caption{BPMN-visualisatie van het geautomatiseerde proces.}
-         \label{fig:bpmn-to-be}
-\end{figure}
 
 In Figuur \ref{fig:bpmn-to-be} wordt dit geautomatiseerde proces gevisualiseerd. Hieruit blijkt dat de menselijke tussenkomst volledig is vervangen door systeemtaken die communiceren met externe bronnen.
 
@@ -278,3 +167,94 @@ en het toetsen van de resultaten aan de onderzoeksvraag.
     \item \textbf{Onderzoeksmethode:} Kwalitatieve evaluatie via scenario-testen en vergelijkende analyse met het huidige manuele proces.
     \item \textbf{Deliverable:} Evaluatie van de testscenario's en eindsynthese.
 \end{itemize}
+
+\begin{figure}[p]
+    \centering
+    \begin{tikzpicture}[node distance=1.3cm, font=\small, scale=0.9, every node/.style={scale=0.9}]
+        \node (header) [font=\large\bfseries] {BPMN: Huidig Handmatig Proces (AS-IS)};
+
+        \node (start) [start, below=0.8cm of header] {};
+        \node (input) [task, below=of start, text width=4.5cm] {Klant: Invoer BTW-nr \& Email};
+        \node (verify) [task, below=of input, text width=4.5cm] {Klant: E-mailverificatie (Link)};
+        \node (upload) [task, below=of verify, text width=4.5cm] {Klant: Upload kopie ID-kaart};
+
+        \node (manual_start) [draw, dashed, below=0.8cm of upload, inner sep=5pt, fill=orange!5] {\textit{Begin Handmatige Verificatie}};
+
+        \node (kbo) [task, below=0.8cm of manual_start, text width=5cm, fill=orange!10] {Medewerker: Opzoeking in KBO-databank};
+        \node (compare) [task, below=of kbo, text width=5cm, fill=orange!10] {Medewerker: Handmatige vergelijking ID vs. KBO-data};
+
+        \node (decision) [gateway, below=of compare] {Match?};
+        
+        \node (approve) [task, below=1cm of decision, text width=4.5cm] {Handmatige validatie in systeem};
+        \node (audit) [task, below=of approve, text width=4.5cm] {Bewaring document (6 mnd audit)};
+        \node (end) [end, below=0.8cm of audit] {};
+
+        \node (reset) [task, right=1.5cm of decision, text width=3cm] {Reset account \& verwittig klant};
+
+        \draw [arrow] (start) -- (input);
+        \draw [arrow] (input) -- (verify);
+        \draw [arrow] (verify) -- (upload);
+        \draw [arrow] (upload) -- (manual_start);
+        \draw [arrow] (manual_start) -- (kbo);
+        \draw [arrow] (kbo) -- (compare);
+        \draw [arrow] (compare) -- (decision);
+        \draw [arrow] (decision) -- node[anchor=west] {Ja} (approve);
+        \draw [arrow] (decision) -- node[anchor=south] {Nee} (reset);
+        \draw [arrow] (reset) |- (input);
+        \draw [arrow] (approve) -- (audit);
+        \draw [arrow] (audit) -- (end);
+
+    \end{tikzpicture}
+    \caption{BPMN-visualisatie van het huidige proces (AS-IS).}
+    \label{fig:bpmn-as-is-vertical}
+\end{figure}
+
+\de
+
+\begin{figure}[p]
+    \centering
+    \begin{tikzpicture}[node distance=1.5cm, font=\small, scale=0.9, every node/.style={scale=0.9}]
+        \node (header2) [font=\large\bfseries] {BPMN: Geautomatiseerd Proces (TO-BE)};
+
+        \node (start2) [start, below=0.8cm of header2] {};
+        \node (input2) [task, below=of start2, text width=5.5cm] {\textbf{App:} Invoer BTW-nr \& Scan eID (OCR)};
+
+        \node (split) [gateway, below=1.2cm of input2] {+};
+        
+        \node (vies) [task, left=1.5cm of split, anchor=north, text width=3.5cm, yshift=-1cm] {\textbf{Systeem:} Real-time VIES Validatie};
+        \node (bio) [task, right=1.5cm of split, anchor=north, text width=3.5cm, yshift=-1cm] {\textbf{App:} Biometrie \& Liveness-detectie};
+
+        \node (join) [gateway, below=3.5cm of split] {+};
+        
+        \node (kbo2) [task, below=of join, text width=5.5cm, fill=blue!5] {\textbf{Systeem:} KBO Scraping \& Gegevensmatch};
+
+        \node (decision2) [gateway, below=of kbo2] {Match?};
+        
+        \node (activatie) [task, below=1.2cm of decision2, text width=5.5cm, fill=green!10] {\textbf{Resultaat:} Automatische Activatie op Peppol-netwerk};
+        \node (end2) [end, below=0.8cm of activatie] {};
+
+        \node (fail) [task, right=2cm of decision2, text width=3.5cm, fill=red!5] {Foutmelding \& Opnieuw proberen};
+
+        \draw [arrow] (start2) -- (input2);
+        \draw [arrow] (input2) -- (split);
+        
+        \draw [arrow] (split) -| (vies);
+        \draw [arrow] (split) -| (bio);
+        
+        \draw [arrow] (vies) |- (join);
+        \draw [arrow] (bio) |- (join);
+        
+        \draw [arrow] (join) -- (kbo2);
+        \draw [arrow] (kbo2) -- (decision2);
+        
+        \draw [arrow] (decision2) -- node[anchor=west, font=\bfseries] {Ja} (activatie);
+        \draw [arrow] (decision2) -- node[anchor=south, font=\bfseries] {Nee} (fail);
+        
+        \draw [arrow] (fail.north) |- ([yshift=0.5cm]input2.south) -- (input2.east);
+        
+        \draw [arrow] (activatie) -- (end2);
+
+    \end{tikzpicture}
+    \caption{BPMN-visualisatie van het geautomatiseerde proces, gesimplificeerd aangezien scraping van KBO-gegevens toegepast wordt.}
+    \label{fig:bpmn-to-be-vertical-v2}
+\end{figure}
