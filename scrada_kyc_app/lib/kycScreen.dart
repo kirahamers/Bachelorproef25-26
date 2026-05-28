@@ -292,7 +292,7 @@ Future<void> _registreerNu() async {
     
     alert("Bedankt! Bekijk uw mail om uw registratie te voltooien.");
 
-    
+    await _cleanupTemporaryFiles();
   }
 
   void alert(String boodschap) {
@@ -382,6 +382,19 @@ void _showHelp() {
       ],
     ),
   );
+}
+
+Future<void> _cleanupTemporaryFiles() async {
+  List<String?> pathsToDelete = [_frontPath, _backPath, _liveSelfieFile?.path];
+  for (String? path in pathsToDelete) {
+    if (path != null) {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+        debugPrint("Tijdelijk bestand verwijderd: $path");
+      }
+    }
+  }
 }
 
 @override

@@ -94,7 +94,8 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     Dit is ook essentieel om de foutmarge bij inconsistenties te verkleinen, een punt dat in paragraaf 3.2.1 werd vermeld, zoals het ontbreken van tweede voornamen in de KBO databank.
     Het algoritme splitst de opgehaalde KBO-naam op in afzonderlijke woorden en verifieert of elk essentieel deel aanwezig is in de OCR-output van de indentitetiskaart.
     Hoewel de service momenteel functioneert via scraping, is de architectuur reeds voorbereid met een integratielaag (in comments) voor de officiële (betalende) WSConsultAgentEnterprise-webservice. Voor een PoC volstaat web scraping om de flow te kunnen demonstreren,
-    maar in productie wordt dit niet aangeraden aangezien volgens de KBO databank web scraping op de website niet toegestaan is. Er wordt daarom aangeraden om de KBO-API aan te schaffen.
+    maar in productie wordt dit niet aangeraden aangezien volgens de KBO databank web scraping op de website niet toegestaan is onder algemene gebruiksvoorwaarden. Voor de PoC wordt web scraping in dit geval toegepast om de data-flow met identiteitsverifciatie te demonstreren zonder
+    een commercieel contract te moeten sluiten. Er wordt daarom vereist om uiteindelijk de officiële KBO-API aan te schaffen, om juridische conformiteit te waarborgen en betrouwbaarheid van de gegevens te garanderen.
     \item \textbf{LsegService:} Een simulatie van de World-Check screening. Een bedrijf kan mogelijks uit 3 termen bestaan: maffia, fraud en scam. Bij een match van een van deze termen, wordt het bedrijf als 'hoog risico' gemarkeerd. In de huidige PoC-fase is deze service nog niet geïmplementeerd, maar kan deze in de toekomst gemakkelijk worden toegevoegd als een extra laag in de backend
     om extra veiligheid te garanderen bij het registreren van bedrijven.
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
@@ -251,6 +252,9 @@ De essentie van de identiteitsverificatie binnen de applicatie is de vergelijkin
 
 Om ervoor te zorgen dat beide afbeeldingen optimaal zijn voor de vergelijking, worden ze eerst bewerkt.
 Dit houdt in dat de foto gecropped wordt tot alleen het gezicht (om zoveel mogelijk ruis te vermijden) en dat de belichting wordt aangepast (om de invloed van variabele lichtinval te verminderen).
+Dit werd eerst gedaan aan de hand van een \texttt{normalize} methode die de pixelwaarden van de afbeelding aanpast naar een standaard bereik, maar na een aantal tests bleek dat deze methode niet voldoende robuust was tegen variabele lichtomstandigheden.
+Als resultaat hadden foto's met minder goede belichting een betere resultaat dan foto's met goede belichting, wat uiteraard niet de bedoeling is. Om dit probleem aan te pakken werd \texttt{histogramEqualization} toegepast,
+wat meer aanpasbar is aan de verschillende belichtingen en zorgt voor een betere contrastverdeling in de afbeelding, waardoor de gezichtskenmerken beter worden benadrukt en de nauwkeurigheid van de vergelijking verbetert.
 Het lokaliseren en croppen van het gezicht gebeurt aan de hand van de \texttt{google\_ml\_kit\_face\_detection}, waarbij een bounding box wordt getekend rond het gedetecteerde gezicht en deze wordt gecropped voor verdere verwerking.
 Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
 De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity, die in de code omgezet werd naar percentage. 
@@ -304,14 +308,17 @@ Zodra de identiteit van de bestuurder succesvol is geverifieerd via de biometris
 Hierbij is het essentieel dat de gevalideerde bedrijfsgegevens worden gekoppeld aan de contactgegevens van de nieuwe gebruiker.
 
 \subsection{ontwerp van de data-architectuur}
-Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend. 
-Deze zijn echter buiten de scope van de PoC en enkel de noodzakelijke gevalideerde velden worden doorgegeven, terwijl de biometrische pixels na verwerking worden verwijderd (Privacy by Design).
+Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend
+(deze zijn echter buiten de scope van de PoC en enkel de noodzakelijke gevalideerde velden worden doorgegeven). 
+De biometrische pixels na verwerking worden verwijderd via een expliciete (\texttt{delete}) methode die na de generatie van de biometrische embedding wordt aangeroepen op de tijdelijke bestanden in de cache. 
+Zo blijft de duur van de opslag van biometrische data minimaal en enkel binnen de actieve KYC-sessie, wat voldoet aan de GDPR-vereisten voor gegevensminimalisatie en opslagbeperking.
 De volgende datavelden worden opgeslagen om het account van de klant te vervolledigen:
 \begin{itemize}
     \item \textbf{Ondernemingsnummer:} De unieke sleutel die de koppeling legt met de KBO-databank.
     \item \textbf{Naam van de bestuurder:} De statutaire naam zoals gevalideerd tijdens de eID-scan en de KBO-check.
     \item \textbf{E-mailadres:} De primaire identificator voor het Scrada-platform.
     \item \textbf{Telefoonnummer (Optioneel):} Verwerkt als extra contactpunt of voor toekomstige implementatie van Multi-Factor Authentication (MFA).
+    \item \textbf{Biometrische match-score:} De numerieke waarde van de vergelijking tussen de pasfoto en de live-selfie, opgeslagen voor audit- en kwaliteitscontrole doeleinden. In dit getal kan geen directe link worden gelegd met de originele afbeeldingen of live selfies, aangezien deze na verwerking worden verwijderd.
 \end{itemize}
 
 \subsection{Notificatie en Validatiebevestiging}
@@ -320,7 +327,7 @@ wordt simpelweg een popup getoond met bevestiging van de registratie.
 
 \section{Evaluatie van de Testresultaten}
 Om de onderzoeksvraag met betrekking tot fraudeveiligheid te beantwoorden, 
-is de Proof-of-Concept werden verschillende functionele testen uitgevoerd waarbij bewuste pogingen tot misleiding werden ondernomen.
+werden in de Proof-of-Concept verschillende functionele testen uitgevoerd waarbij bewuste pogingen tot misleiding werden ondernomen.
 
 Daarnaast werd ook onderzocht of de geautomatiseerde flow werkelijk sneller is dan het manuele proces, en met hoeveel procent dit gemiddeld zou kunnen zijn.
 Hierbij werd de tijd gemeten tijdens het uitvoeren van de KBO en VIES ophalingen, en de tijd die nodig is om de biometrische vergelijking uit te voeren.
@@ -367,6 +374,29 @@ De algoritmische validatie is getest door een geldig rijksregisternummer handmat
 Het systeem gaf een "Checksum mismatch" foutmelding, aangezien de wiskundige modulo-berekening niet meer overeenkwam met het controlegetal. 
 Daarnaast is de naamvergelijking getest met een scenario waarbij de KBO-databank enkel de voornaam en achternaam bevatte (bijv. "JAN JANSSENS"), 
 terwijl de eID ook de tweede voornaam vermeldde ("JAN PIETER JANSSENS"). Dankzij de geïmplementeerde heuristiek, die de naam opsplitst in afzonderlijke tekstblokken, werd de match correct gevalideerd in plaats van afgewezen. 
+
+\subsection{Evaluatie van de Biometrische Nauwkeurigheid}
+Om de betrouwbaarheid van het biometrische model (MobileFaceNet) onder verschillende condities te bepalen, is een test uitgevoerd met verschillende scenario's (waaronder echte gebruikers en bewuste 'spoofing'-pogingen aan de hand van bestaande foto's). 
+
+Uit de resultaten werd een duidelijke correlatie tussen de lichtintensiteit en de nauwkeurigheid van de \textit{Cosine Similarity} score. 
+Zoals weergegeven in Tabel \ref{tab:biometrische-testresultaten}, resulteerde een optimale belichting in een match-score van 72,8\%, terwijl dit bij een uitdagende, donkerdere belichting daalde naar 64,0\%. 
+Aan de hand van deze scores werd de drempelwaarde van 0,60 bevestigd als een veilige grens, om ook zo bij minder optimale omstandigheden een correctie validatie te accepteren.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Scenario} & \textbf{Input Type} & \textbf{Gem. Score} & \textbf{Resultaat} \\ \hline
+    Goede belichting & Eigen ID + Selfie & 72,8\% & Match (OK) \\ \hline
+    Matige/Donkere belichting & Eigen ID + Selfie & 64,0\% & Match (OK) \\ \hline
+    Mismatch (Andere persoon) & Eigen ID + Foto vriend & 35,0\% & No Match \\ \hline
+    Spoofing (Foto op scherm) & Eigen ID + Foto & N.v.t. & Liveness Failed \\ \hline
+    \end{tabular}
+    \caption{Resultaten van de biometrische testscenario's.}
+    \label{tab:biometrische-testresultaten}
+\end{table}
+
+\noindent \textbf{Interpretatie:} De variatie in scores onderstreept het belang van de gekozen drempelwaarde van 0,60. Hoewel de score daalt bij een donkerdere belichting, blijft het systeem accuraat. De \textit{False Acceptance Rate} (FAR) bedroeg 0\% bij spoofing-pogingen, wat aantoont dat de geïmplementeerde liveness-detectie, ondanks de hardwarematige beperkingen van de emulator-omgeving, effectief bijdraagt aan de fraudeveiligheid.
 
 \subsection{Efficiëntie}
 In vergelijking met het huidige manuele proces bij Scrada, waarbij een medewerker handmatig de KBO moet raadplegen en gegevens moet overtypen, vermindert de geautomatiseerde flow de tijd om dezelfde acties uit te voeren. 

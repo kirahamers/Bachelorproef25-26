@@ -99,6 +99,7 @@ Future<void> _checkLiveness(CameraImage image) async {
         if (mounted && !_isLive) {
           setState(() {
             _isLive = true;
+            _hasBlinked = false;
           });
         }
       } else if (headRotation.abs() < 5 && _isLive) {

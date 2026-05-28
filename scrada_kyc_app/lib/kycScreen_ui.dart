@@ -122,6 +122,14 @@ class BiometricResultWidget extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 15),
+        if (score != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+              "Match Score: ${(score! * 100).toStringAsFixed(1)}%",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFF8B0000)),
+            ),
+          ),
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(

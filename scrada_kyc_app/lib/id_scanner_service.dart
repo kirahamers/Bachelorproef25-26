@@ -64,37 +64,41 @@ double _calculateCosineSimilarity(List<double> e1, List<double> e2) {
 }
 
 Future<File?> extractFace(String imagePath) async {
-  final inputImage = InputImage.fromFilePath(imagePath);
-  //ML Kit om gezicht te detecteren + croppen
-  final List<Face> faces = await _faceDetector.processImage(inputImage);
+  final bytes = await File(imagePath).readAsBytes();
+  img.Image? originalImage = img.decodeImage(bytes);
+  if (originalImage == null) return null;
+
+  Future<List<Face>> detect(img.Image image) async {
+    final tempDir = Directory.systemTemp;
+    final tempFile = File('${tempDir.path}/temp_detect.jpg');
+    await tempFile.writeAsBytes(img.encodeJpg(image));
+    return await _faceDetector.processImage(InputImage.fromFilePath(tempFile.path));
+  }
+
+  List<Face> faces = await detect(originalImage);
+
+  //contrast verhogen als geen gezicht gevonden wordt
+  if (faces.isEmpty) {
+    debugPrint("Geen gezicht gevonden, probeer pre-processing...");
+    final enhancedImage = img.adjustColor(originalImage, contrast: 1.5, brightness: 1.1);
+    faces = await detect(enhancedImage);
+  }
 
   if (faces.isEmpty) return null;
 
   final face = faces.first;
   final rect = face.boundingBox;
 
-//pixels lezen
-  final bytes = await File(imagePath).readAsBytes();
-  img.Image? originalImage = img.decodeImage(bytes);
-
-  if (originalImage == null) return null;
-
   int padding = (rect.width * 0.05).toInt();
-  
-  //voor crop
   int x = (rect.left - padding).clamp(0, originalImage.width).toInt();
   int y = (rect.top - padding).clamp(0, originalImage.height).toInt();
   int w = (rect.width + padding * 2).clamp(0, originalImage.width - x).toInt();
   int h = (rect.height + padding * 2).clamp(0, originalImage.height - y).toInt();
 
-final croppedFace = img.copyCrop(originalImage, x: x, y: y, width: w, height: h);
+  final croppedFace = img.copyCrop(originalImage, x: x, y: y, width: w, height: h);
 
-//voor belichting en contrast gelijk te maken met id foto
-  final normalizedFace = img.adjustColor(
-    croppedFace, 
-    contrast: 1.2,
-    brightness: 1.0, 
-  );
+  //TFLite model (contrast aanpassen)
+  final normalizedFace = img.adjustColor(croppedFace, contrast: 1.2, brightness: 1.0);
 
   final tempDir = Directory.systemTemp;
   final faceFile = File('${tempDir.path}/face_id_crop_${DateTime.now().millisecondsSinceEpoch}.jpg');

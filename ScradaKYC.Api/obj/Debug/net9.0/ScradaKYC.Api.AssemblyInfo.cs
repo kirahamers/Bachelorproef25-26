@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ScradaKYC.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2d4ab3f8f6dade4632312e7aef83e54efb0084c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ac9d4cc319bf22af6168a2c8f362b110f12c4ffc")]
 [assembly: System.Reflection.AssemblyProductAttribute("ScradaKYC.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScradaKYC.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
