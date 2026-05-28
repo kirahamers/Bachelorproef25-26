@@ -28,7 +28,7 @@ De beantwoording van de deelvragen vormt de conclusie, met tot slot een samenvat
     \item \textbf{Technologieën:} OCR-extractie, VIES-API koppelingen en web scraping (enkel als demonstratie van de PoC) zijn ingezet voor de automatisering.
     \item \textbf{Data en GDPR:} De huidige opslag van onversleutelde kopieën is niet conform aan de GDPR en opslagtermijnen zijn geminimaliseerd door lokale verwerking.
     \item \textbf{Privacy:} Privacy by Design en Data Sovereignty verlagen risico's door biometrische data lokaal op het toestel te houden.
-    \item \textbf{Frauderisico's:} Handmatige verificatie is kwetsbaar voor vervalste ID-kopieën zonder biometrische controle.
+    \item \textbf{Frauderisico's:} Handmatige verificatie is kwetsbaar voor vervalste ID-\-kopieën zonder biometrische controle.
     \item \textbf{Kosten:} De huidige kosten bestaan uit manuele tijdsgebruik door medewerkers.
 \end{itemize}
 
@@ -44,19 +44,19 @@ De automatisering van het KYC-proces wordt gerealiseerd door een verschuiving na
 De drie kernpijlers van de onderzoeksvraag zijn als volgt vervuld:
 
 \begin{itemize}
-    \item \textbf{Kostenefficiëntie:} Door gebruik te maken van open-source AI-modellen (MobileFaceNet) en on-device verwerking (TensorFlow Lite), is Scrada niet afhankelijk van dure externe SaaS-oplossingen zoals itsme. Bovendien bewijst de PoC dat met technieken zoals webscraping (dat uitdrukkelijk enkel voor de demonstratie van de Poc bedoeld is) 
+    \item \textbf{Kostenefficiëntie:} Door gebruik te maken van open-source AI-modellen (MobileFaceNet) en on-device verwerking (TensorFlow Lite), is Scrada niet afhankelijk van dure externe SaaS-oplossingen zoals itsme. \\ Bovendien bewijst de PoC dat met technieken zoals webscraping (dat uitdrukkelijk enkel voor de demonstratie van de Poc bedoeld is) 
     en gratis API's (VIES) de instapkosten tot een minimum beperkt blijven. De enige bijkomende kosten die deze applicatie zou hebben, zijn het gebruik van de KBO-API, wat op een schaal als Scrada haalbaar is.
-    \item \textbf{Fraudeveiligheid:} De PoC bevat meerdere beveiligingslagen. De biometrische gezichtsvergelijking en actieve liveness-detectie voorkomen identiteitsfraude met foto's of video's. Daarnaast zorgt de wiskundige RRN-checksum-validatie en het heuristische match-algoritme met de KBO-databank voor een duidelijke controle op de authenticiteit van de opgehaalde en ingegeven informatie.
-    \item \textbf{GDPR-conformiteit:} Conform aan de privacy-by-design-principes vindt de biometrische analyse volledig lokaal op het toestel plaats. Hierdoor verlaat gevoelige ruwe data (pixels) nooit het apparaat van de klant. Enkel de gevalideerde uitkomsten worden naar de backend verzonden, die al gebruikmaakt van encryptie. Hierdoor zijn de risico's bij gegevensverwerking miniem en conform de Europese privacywetgeving.
+    \item \textbf{Fraudeveiligheid:} De PoC bevat meerdere beveiligingslagen. \\ De biometrische gezichtsvergelijking en actieve liveness-detectie voorkomen identiteitsfraude met foto's of video's. Daarnaast zorgt de wiskundige RRN-checksum-validatie en het heuristische match-algoritme met de KBO-databank voor een duidelijke controle op de authenticiteit van de opgehaalde en ingegeven informatie.
+    \item \textbf{GDPR-conformiteit:} Conform aan de privacy-by-design-principes vindt de biometrische analyse volledig lokaal op het toestel plaats. \\ Hierdoor verlaat gevoelige ruwe data (pixels) nooit het apparaat van de klant. Enkel de gevalideerde uitkomsten worden naar de backend verzonden, die al gebruikmaakt van encryptie. Hierdoor zijn de risico's bij gegevensverwerking miniem en conform de Europese privacywetgeving.
 \end{itemize}
 
 \section{Reflectie}
 De evaluatie van de testresultaten toont aan dat de doelstelling van minimaal 50 procent tijdsbesparing op de totale onboarding behaald wordt, en zelfs meer bij de meeste gevallen (indien er geen fouten optreden). 
-Bij manuele verificatie is de gemiddelde doorlooptijd 10 minuten, terwijl de geautomatiseerde flow gemiddeld slechts 2-3 minuten in beslag neemt.
+\\ Bij manuele verificatie is de gemiddelde doorlooptijd 10 minuten, terwijl de geautomatiseerde flow gemiddeld slechts 2-3 minuten in beslag neemt.
 Er is echter een technische trade-off vastgesteld: de rekenintensieve liveness-detectie veroorzaakt een lichte daling in de match-score van de biometrie. 
 Voor een productieomgeving zal een nauwkeurige meting van de drempelwaarden (thresholds) essentieel zijn om een balans te vinden tussen veiligheid en gebruiksgemak.
 
-Daarnaast is de huidige kosteloze webscraping-methode voor de KBO-gegevens niet aangeraden. Voor een stabiel gebruik van de KBO-databank is het gebruik van de officiële KBO-webservice vereist.
+Daarnaast is de huidige kosteloze webscraping-methode voor de KBO-\-gegevens niet aangeraden. Voor een stabiel gebruik van de KBO-databank is het gebruik van de officiële KBO-webservice vereist.
 
 \section{Toekomstvisie}
 Hoewel de huidige focus van deze Proof-of-Concept ligt op de directe automatisering via AI en API-integraties, 
@@ -64,6 +64,6 @@ biedt de huidige omgeving van Scrada interessante mogelijkheden voor de verdere 
 is het een logische denkoefening om te kijken of deze toepassing ook een meerwaarde kan zijn voor identiteitsbeheer.
 In een theoretisch scenario zou de ontwikkelde automatisering kunnen gebruikt worden als de eerste stap in een 'One-Time Verification'-model. 
 De gecontroleerde identiteit zou dan als een veilige code op de blockchain bewaard kunnen worden, waardoor een gebruiker zich niet telkens opnieuw hoeft te bewijzen. Hierbij blijft de eindgebruiker de eigenaar van zijn data, terwijl de betrouwbaarheid voor het platform gegarandeerd blijft.
-Het is echter belangrijk om te benadrukken dat deze blockchain-integratie voor KYC geen deel uitmaakt van de huidige technische realisatie. De focus van dit onderzoek blijft beperkt tot het leveren van een werkende, kostenefficiënte oplossing die vandaag de dag al ingezet kan worden. 
+\\ Het is echter belangrijk om te benadrukken dat deze blockchain-integratie voor KYC geen deel uitmaakt van de huidige technische realisatie. De focus van dit onderzoek blijft beperkt tot het leveren van een werkende, kostenefficiënte oplossing die vandaag de dag al ingezet kan worden. 
 Tot slot kan in de toekomst ook gekeken worden naar de integratie van andere vormen van identiteitsverificatie, zoals het gebruik van NFC-technologie, die ervoor kan zorgen dat het scannen van de identiteitskaart sneller, gemakkelijker en gebruiksvriendelijker wordt.
 Deze PoC vormt als conclusie het fundament voor een snellere en veiligere onboarding binnen het Peppol-netwerk.

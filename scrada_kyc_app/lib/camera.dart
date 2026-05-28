@@ -210,7 +210,7 @@ Future<void> _checkLiveness(CameraImage image) async {
                       const SizedBox(height: 20),
                       const Text("1. Zorg voor goede belichting", style: TextStyle(fontSize: 15, color: Colors.black87)),
                       const Text("2. Haal haar uit uw gezicht", style: TextStyle(fontSize: 15, color: Colors.black87)),
-                      const Text("3. Kijk neutraal (niet glimlachen)", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                      const Text("3. Kijk neutraal (niet glimlachen) en recht naar de camera", style: TextStyle(fontSize: 15, color: Colors.black87)),
                       const SizedBox(height: 25),
                       
                       SizedBox(

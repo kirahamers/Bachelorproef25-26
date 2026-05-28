@@ -59,7 +59,7 @@ In Figuur \ref{fig:sequence-diagram-kyc} wordt de interactie gevisualiseerd aan 
 
 \subsection{Netwerk en gebruik van emulators}
 Aangezien er persoonlijk geen toegang is tot een een fysieke android smartphone,
-werd de PoC ontwikkeld en getest op een Android-emulator (Android Studio). Om netwerkverzoeken te kunnen doen vanuit de emulator, werd gebruik gemaakt van het speciale IP-adres \texttt{10.0.2.2}.
+werd de PoC ontwikkeld en getest op een Android-emulator (Android Studio). \\ Om netwerkverzoeken te kunnen doen vanuit de emulator, werd gebruik gemaakt van het speciale IP-adres \texttt{10.0.2.2}.
 Dit adres wordt door de Android-emulator gerouteerd (loopback adres) naar de localhost van de host zodat de applicatie in de emulator verbinding kan maken met de backend die lokaal draait (\texttt{127.0.0.1}).
 Met een fysieke android smartphone zou de backend simpelweg bereikbaar zijn via het lokale IP-adres van de machine, waar ook de backend op draait.
 
@@ -88,10 +88,10 @@ Andere overwogen opties voor het kostenloos ophalen van de statutaire bestuurder
 De service laag van de backend is verantwoordelijk voor het verwerken van de bedrijfslogica en het aanroepen van de externe API's.
 
 \begin{itemize}
-    \item \textbf{KboService:} Deze service is verantwoordelijk voor het valideren van de statutaire bestuurders van een onderneming. In de huidige PoC-fase is deze geïmplementeerd als een web scraper die door middel van de HtmlAgilityPack-bibliotheek de publieke KBO Public Search-website raadpleegt. 
+    \item \textbf{KboService:} Deze service is verantwoordelijk voor het valideren van de statutaire bestuurders van een onderneming. \\ In de huidige PoC-fase is deze geïmplementeerd als een web scraper die door middel van de HtmlAgilityPack-bibliotheek de publieke KBO Public Search-website raadpleegt. 
     De service haalt live de namen van de statutaire bestuurder(s) van het opgegeven bedrijf (via BTW- of ondernemingsnummer) op.
     De opgehaalde data wordt vervolgens omgezet door een algoritme dat leestekens en onnodige spaties verwijdert en de tekst omzet naar hoofdletters. Dit proces is belangrijk om een betrouwbare match met de gescande eID-gegevens te garanderen.
-    Dit is ook essentieel om de foutmarge bij inconsistenties te verkleinen, een punt dat in paragraaf 3.2.1 werd vermeld, zoals het ontbreken van tweede voornamen in de KBO databank.
+    \\ Dit is ook essentieel om de foutmarge bij inconsistenties te verkleinen, een punt dat in paragraaf 3.2.1 werd vermeld, zoals het ontbreken van tweede voornamen in de KBO databank.
     Het algoritme splitst de opgehaalde KBO-naam op in afzonderlijke woorden en verifieert of elk essentieel deel aanwezig is in de OCR-output van de indentitetiskaart.
     Hoewel de service momenteel functioneert via scraping, is de architectuur reeds voorbereid met een integratielaag (in comments) voor de officiële (betalende) WSConsultAgentEnterprise-webservice. Voor een PoC volstaat web scraping om de flow te kunnen demonstreren,
     maar in productie wordt dit niet aangeraden aangezien volgens de KBO databank web scraping op de website niet toegestaan is onder algemene gebruiksvoorwaarden. Voor de PoC wordt web scraping in dit geval toegepast om de data-flow met identiteitsverifciatie te demonstreren zonder
@@ -101,9 +101,9 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
     \item \textbf{RiskService:} Deze service bevat de algoritmische logica om een risicoprofiel (Low, Medium, High) op te stellen op basis van de status van de onderneming en de validiteit van het ondernemingsnummer. Deze werkt samen met
     de de LsegService, wanneer deze niet de status "Cleared" teruggeeft zal automatisch een risico van "High" teruggegeven worden, wat meegeeft dat het bedrijf een hoog risico heeft en niet geaccepteerd kan worden of nood heeft aan een human in the loop validatie.
     Zoals bij de LsegService is dit ook een extra laag die verwijst naar de AML (Anti-Money Laundering) controle.
-    \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies_api_response}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
-    \item \textbf{EncryptionService:} Deze service zorgt voor het waarborgen van Privacy by Design. De applicatie maakt gebruik van AES-256 (Advanced Encryption Standard) om gevoelige persoonsgegevens, zoals e-mailadressen, te versleutelen voordat deze worden opgeslagen. 
-    Door gebruik te maken van een 32-byte sleutel en een unieke Initialization Vector (IV) per encryptie-ronde \footnote{Conform aan de officiële documentatie van Microsoft over data-encryptie in .NET: \url{https://learn.microsoft.com/en-us/dotnet/standard/security/encrypting-data}}. Dit is een belangrijke stap voor de AVG-wetgeving binnen het Scrada-platform.
+    \item \textbf{ViesService:} Deze service is volledig functioneel en verwijst naar de VIES-API van de Europese Commissie via de URL \url{https://ec.europa.eu/taxation/customs/vies/rest-api/ms/BE/vat/vatNumber}. Aan de hand van een opgegeven ondernemingsnummer of BTW-nummer retourneert deze service onderstaande JSON-response \ref{lst:vies-api-response}, waarbij in dit geval de naam en geldigheid van ondernemingsnummer centraal staan.
+    \item \textbf{EncryptionService:} Deze service zorgt voor het waarborgen van Privacy by Design. De applicatie maakt gebruik van AES-256 (Advanced Encryption \\ Standard) om gevoelige persoonsgegevens, zoals e-mailadressen, te versleutelen voordat deze worden opgeslagen. 
+    Door gebruik te maken van een 32-byte sleutel en een unieke Initialization Vector (IV) per encryptie-ronde \footnote{Conform aan de officiële documentatie van Microsoft over data-encryptie in .NET: \url{https://learn.microsoft.com/en-us/dotnet/standard/security/encrypting-data}}. \\ Dit is een belangrijke stap voor de AVG-wetgeving binnen het Scrada-platform.
 
 \end{itemize}  
 
@@ -173,8 +173,8 @@ De service laag van de backend is verantwoordelijk voor het verwerken van de bed
 De controller-laag zorgt voor de communicatie met de frontend en is verantwoordelijk voor het ontvangen van HTTP-verzoeken, aanroepen van bedrijfslogica in services en terugsturen van antwoorden.
 
 \begin{itemize}
-\item \textbf{KycController:} Deze controller vergemakkelijkt het Know Your Customer-proces door verschillende datastromen samen te brengen.
-Bij ontvangst van een ondernemingsnummer verwijdert de controller eerst punten en spaties om een uniform formaat te krijgen voor de onderliggende services.
+\item \textbf{KycController:} Deze controller vergemakkelijkt het Know Your Customer-\-proces door verschillende datastromen samen te brengen.
+Bij ontvangst van een ondernemingsnummer verwijdert de controller eerst punten en spaties om een uniform formaat te krijgen voor de onderliggende services. \\
 De controller coördineert de workflow tussen de ViesService, KboService, LsegService en RiskService.
 Het resultaat is een JSON-object dat de geldigheid van het BTW-nummer, de actuele KBO-status, een sanctie-check en een berekend risicoprofiel bevat. Dit stelt de applicatie in staat om in één enkel verzoek een volledig beeld van de entiteit te verkrijgen.
 \item \textbf{RegistrationController:} Deze controller beheert de afronding van het registratieproces via het complete-endpoint. 
@@ -185,7 +185,7 @@ Bij de productie kan hier een koppeling worden gemaakt met een mailservice, om z
 De mobiele interface van de PoC is ontwikkeld met het Flutter-framework. 
 Flutter biedt een cross-platform ontwikkelingsomgeving die het mogelijk maakt om één codebase te gebruiken voor zowel Android als iOS, wat de ontwikkeling en de onderhoud van de applicatie vergemakkelijkt.
 
-De visuele flow van de applicatie, zoals weergegeven in Figuur \ref{fig:app-flow}, illustreert de verschillende stappen die de gebruiker doorloopt: van het invoeren van de bedrijfsgegevens tot de uiteindelijke biometrische verificatie via de camera.
+De visuele flow van de applicatie, zoals weergegeven in Figuur \ref{fig:onboarding-start} en \ref{fig:biometrische-validatie}, illustreert de verschillende stappen die de gebruiker doorloopt: van het invoeren van de bedrijfsgegevens tot de uiteindelijke biometrische verificatie via de camera.
 
 \begin{figure}[ht]
      \centering
@@ -193,45 +193,44 @@ De visuele flow van de applicatie, zoals weergegeven in Figuur \ref{fig:app-flow
          \centering
          \includegraphics[width=\textwidth]{application_screenshot}
          \caption{Invoer ondernemingsnummer}
-         \label{fig:stap1}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{camera_instructions}
          \caption{Instructies live-selfie}
-         \label{fig:stap2}
      \end{subfigure}
+     \caption{Deel 1: Start van de onboarding-flow.}
+     \label{fig:onboarding-start}
+\end{figure}
 
-     \vspace{2em}
-
+\begin{figure}[ht]
+     \centering
      \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{camera}
          \caption{Liveness Detection}
-         \label{fig:stap3}
      \end{subfigure}
      \hfill
      \begin{subfigure}[b]{0.45\textwidth}
          \centering
          \includegraphics[width=\textwidth]{biometrics}
          \caption{Biometrische match}
-         \label{fig:stap4}
      \end{subfigure}
-     \caption{De volledige onboarding-flow van de Scrada KYC-app.}
-     \label{fig:app-flow}
+     \caption{Deel 2: Biometrische validatie en registratie.}
+     \label{fig:biometrische-validatie}
 \end{figure}
 
 \subsection{Optische Tekstherkenning en Scan-logica}
-Voor de verwerking van visuele data, in dit geval de extractie van gegevens uit de identiteitskaart, wordt gebruikgemaakt van de \texttt{google\_ml\_kit}. Tijdens de implementatie werd vastgesteld dat de tekstherkenning van boven naar beneden gelezen wordt, 
+Voor de verwerking van visuele data, in dit geval de extractie van gegevens uit de identiteitskaart, wordt gebruikgemaakt van de \texttt{google\_ml\_kit}. \\ Tijdens de implementatie werd vastgesteld dat de tekstherkenning van boven naar beneden gelezen wordt, 
 dus was dit een proces van trial-and-error om de juste tekstvelden te kunnen identificeren. 
 \begin{itemize}
     \item \textbf{Heuristiek:} De parser zoekt eerst naar de landcode (bijv. "BELGIË") om het type document te identificeren.
-    \item \textbf{Foutcorrectie:} Door variabele lichtinval bij analoge scans is een aangepaste functie (\texttt{fixOcrErrors}) geïmplementeerd die veelvoorkomende OCR-fouten (zoals het verwarren van de letter 'O' met het cijfer '0') corrigeert op basis van de verwachte structuur van het Rijksregisternummer.
+    \item \textbf{Foutcorrectie:} Door variabele lichtinval bij analoge scans is een aangepaste functie (\texttt{fixOcrErrors}) geïmplementeerd die veelvoorkomende \\ OCR-fouten (zoals het verwarren van de letter 'O' met het cijfer '0') corrigeert op basis van de verwachte structuur van het Rijksregisternummer.
 \end{itemize}
 Aangezien het gebruik van een ID-scanner plugin of library kostloos niet mogelijk is, werd deze aanpak gekozen. Om deze zo robuust mogelijk te maken werd de naam niet uitgelezen van de voorkant
 van de ID-kaart maar van de achterkant, waar de naam in een vaste structuur staat en beter te herkennen is. Daarnaast, om de geldigheid van de identiteitskaart te verifieren, 
-wordt ook de vervaldatum uitgelezen en vergeleken met de huidige datum. Indien de kaart verlopen is, zal er een foutmelding worden weergegeven en zal de gebruiker worden gevraagd om een geldige kaart te scannen.
+wordt ook de vervaldatum uitgelezen en vergeleken met de huidige datum. \\ Indien de kaart verlopen is, zal er een foutmelding worden weergegeven en zal de gebruiker worden gevraagd om een geldige kaart te scannen.
 Als extra check wordt ook een checksum berekend op basis van de cijfers in het rijksregisternummer. Het rijksregisternummer begint met de geboortedatum van de houder (YY.MM.DD). Indien de houder voor het jaar 2000 geboren is, worden de eerste 9 cijfers genomen en wordt een modulo 97 berekening er op uitgevoerd, 
 waarbij de laatste 2 cijfers het resultaat zijn.
 Bij personen die na 2000 zijn geboren is dit echter anders, want er wordt geen onderscheid gemaakt of een persoon in 19xx of 20xx geboren is. Indien de checksum niet zou kloppen, wordt er een '2' voor de 9 cijfers geplaatst en wordt de berekening herhaald.
@@ -245,7 +244,7 @@ Er ontstond namelijk een conflict tussen de verschillende processor-architecture
 De standaard TFLite-plugins leveren vaak niet de benodigde binaire bestanden voor beide omgevingen mee, waardoor na integratie van het AI-model problemen ontstonden bij het opstarten van de applicatie. 
 
 Om dit op te lossen, is handmatig Asset Management toegepast in de Android Native Development Kit structuur. Voor de emulator is de \texttt{libtensorflowlite\_c.so} bibliotheek geplaatst in de map \texttt{jniLibs/x86\_64/}. 
-Voor een uiteindelijke productie-release op fysieke hardware is een gelijkaardige map \texttt{jniLibs/arm64-v8a/} noodzakelijk, waarin dan de corresponderende ARM-versie van de bibliotheek wordt geplaatst.
+Voor een uiteindelijke productie-release op fysieke hardware is een gelijkaardige map \texttt{jniLibs/arm64-v8a/} noodzakelijk, waarin dan de corresponderende ARM-\-versie van de bibliotheek wordt geplaatst.
 
 \subsection{Biometrische Analyse en Resultaten}
 De essentie van de identiteitsverificatie binnen de applicatie is de vergelijking tussen de gescande pasfoto en de live-opname. 
@@ -256,9 +255,9 @@ Dit werd eerst gedaan aan de hand van een \texttt{normalize} methode die de pixe
 Als resultaat hadden foto's met minder goede belichting een betere resultaat dan foto's met goede belichting, wat uiteraard niet de bedoeling is. Om dit probleem aan te pakken werd \texttt{histogramEqualization} toegepast,
 wat meer aanpasbar is aan de verschillende belichtingen en zorgt voor een betere contrastverdeling in de afbeelding, waardoor de gezichtskenmerken beter worden benadrukt en de nauwkeurigheid van de vergelijking verbetert.
 Het lokaliseren en croppen van het gezicht gebeurt aan de hand van de \texttt{google\_ml\_kit\_face\_detection}, waarbij een bounding box wordt getekend rond het gedetecteerde gezicht en deze wordt gecropped voor verdere verwerking.
-Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
+Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. \\ Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
 De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity, die in de code omgezet werd naar percentage. 
-Cosine Similarity is een meetmethode die de cosinus van de hoek tussen twee vectoren in een meerdimensionale ruimte berekent. 
+Cosine Similarity is een meetmethode die de cosinus van de hoek tussen twee vectoren in een meerdimensionale ruimte berekent. \\
 In de context van deze PoC zijn de vectoren de arrays met wiskundige waarden (embeddings) die door het MobileFaceNet-model zijn gegenereerd.
 
 De formule voor de Cosine Similarity is als volgt:
@@ -307,7 +306,7 @@ Caused by: java.lang.IllegalArgumentException: No available camera can be found.
 Zodra de identiteit van de bestuurder succesvol is geverifieerd via de biometrische match, wordt het registratieproces verder uitgevoerd. 
 Hierbij is het essentieel dat de gevalideerde bedrijfsgegevens worden gekoppeld aan de contactgegevens van de nieuwe gebruiker.
 
-\subsection{ontwerp van de data-architectuur}
+\subsection{Ontwerp van de data-architectuur}
 Hoewel de biometrische pixels lokaal worden verwerkt en gewist (privacy-by-design), worden de resultaten van de KYC-check samen met de identificerende gegevens opgeslagen in de database van de backend
 (deze zijn echter buiten de scope van de PoC en enkel de noodzakelijke gevalideerde velden worden doorgegeven). 
 De biometrische pixels na verwerking worden verwijderd via een expliciete (\texttt{delete}) methode die na de generatie van de biometrische embedding wordt aangeroepen op de tijdelijke bestanden in de cache. 
@@ -389,21 +388,21 @@ Aan de hand van deze scores werd de drempelwaarde van 0,60 bevestigd als een vei
     \textbf{Scenario} & \textbf{Input Type} & \textbf{Gem. Score} & \textbf{Resultaat} \\ \hline
     Goede belichting & Eigen ID + Selfie & 72,8\% & Match (OK) \\ \hline
     Matige/Donkere belichting & Eigen ID + Selfie & 64,0\% & Match (OK) \\ \hline
-    Mismatch (Andere persoon) & Eigen ID + Foto vriend & 35,0\% & No Match \\ \hline
+    Mismatch (Andere persoon) & Eigen ID + Foto andere persoon & -6,1\% & No Match \\ \hline
     Spoofing (Foto op scherm) & Eigen ID + Foto & N.v.t. & Liveness Failed \\ \hline
     \end{tabular}
     \caption{Resultaten van de biometrische testscenario's.}
     \label{tab:biometrische-testresultaten}
 \end{table}
 
-\noindent \textbf{Interpretatie:} De variatie in scores onderstreept het belang van de gekozen drempelwaarde van 0,60. Hoewel de score daalt bij een donkerdere belichting, blijft het systeem accuraat. De \textit{False Acceptance Rate} (FAR) bedroeg 0\% bij spoofing-pogingen, wat aantoont dat de geïmplementeerde liveness-detectie, ondanks de hardwarematige beperkingen van de emulator-omgeving, effectief bijdraagt aan de fraudeveiligheid.
+\noindent \textbf{Interpretatie:} De variatie in scores onderstreept het belang van de gekozen drempelwaarde van 0,60. Hoewel de score daalt bij een donkerdere belichting, blijft het systeem accuraat. De \textit{False Acceptance Rate} (FAR) bedroeg 0\% bij spoofing-pogingen, wat aantoont dat de geïmplementeerde liveness-detectie, ondanks de hardwarematige beperkingen van de emulatoromgeving, effectief bijdraagt aan de fraudeveiligheid.
 
 \subsection{Efficiëntie}
 In vergelijking met het huidige manuele proces bij Scrada, waarbij een medewerker handmatig de KBO moet raadplegen en gegevens moet overtypen, vermindert de geautomatiseerde flow de tijd om dezelfde acties uit te voeren. 
 De volledige flow, van de eID-scan tot de finale biometrische match, duurt gemiddeld twee minuten (indien alles succesvol is). Dit ondersteunt de hypothese dat een tijdsbesparing van minimaal 50 procent op de volledige onboarding haalbaar is.
 
 Daarnaast wordt de onboarding verschoven naar de klant zelf. In de plaats dat een medewerker van Scrada alle stappen uitvoert, moet de klant zelf bewijzen dat die de werkelijke bestuurder is van het ingegeven bedrijf.
-Door de directe validatie en feedback (bijvoorbeeld een foutieve ID-scan), kan de klant zelf te weten komen welke stap opnieuw moet gedaan worden, en bij eventuele constante foutmeldingen kan nog steeds een human-in-the-loop 
+\\ Door de directe validatie en feedback (bijvoorbeeld een foutieve ID-scan), kan de klant zelf te weten komen welke stap opnieuw moet gedaan worden, en bij eventuele constante foutmeldingen kan nog steeds een human-in-the-loop 
 aangevraagd worden door middel van een hulp knop, of kunnen extra instructies opgezocht worden met een info knop.
 
 \section{Alternatieven en Marktvergelijking}
@@ -415,9 +414,9 @@ De PoC past het principe van Privacy-By-Design toe door:
 \begin{enumerate}
     \item \textbf{Lokale Verwerking:} AI-inferentie (het genereren van de embedding) vindt volledig lokaal op het toestel plaats via de geïntegreerde TFLite-runtime. Daarnaast wordt
     door het gebruik van de Euclidean Distance of Cosine Similarity voor de vergelijking, geen ruwe biometrische gegevens (zoals foto's of video-opnames) naar de backend verzonden, aangezien de gegenereeerde vectoren alleen maar wiskundige waarden bevatten.
-    Hierdoor kunnen de wiskundige representaties niet zomaar terug omgezet worden naar de originele beelden zonder de specifieke modelparameters, wat een extra laag van privacybescherming biedt.
+    \\ Hierdoor kunnen de wiskundige representaties niet zomaar terug omgezet worden naar de originele beelden zonder de specifieke modelparameters, wat een extra laag van privacybescherming biedt.
     \item \textbf{Dataminimalisatie en Doelbinding:} Conform aan het principe van dataminimalisatie worden enkel de strikt noodzakelijke gegevens verwerkt. De applicatie verzendt enkel de finale validatiestatus, de noodzakelijke KBO-gegevens en contactgegevens zoals e-mail en telefoonnummer naar de backend. 
     Ruwe biometrische pixels of video-opnames verlaten het toestel nooit, waardoor de verwerking beperkt blijft tot het specifieke doel: het verifiëren van de identiteit van de bestuurder in een lokale omgeving.
-    \item \textbf{Opslagbeperking en Liveness-integratie:} Om te voldoen aan de eis van opslagbeperking worden tijdelijke bestanden, zoals de cropped foto's, enkel opgeslagen in de cache-directory van het besturingssysteem. Deze gegevens worden na de sessie gewist. 
+    \item \textbf{Opslagbeperking en Liveness-integratie:} Om te voldoen aan de eis van opslagbeperking worden tijdelijke bestanden, zoals de cropped foto's, enkel opgeslagen in de cache-directory van het besturingssysteem. \\ Deze gegevens worden na de sessie gewist. 
     Daarnaast is de liveness detection een technische waarborg voor de integriteit van de biometrische gegevens, waarbij wordt gegarandeerd dat enkel de data van een fysiek aanwezige betrokkene wordt verwerkt.
 \end{enumerate}

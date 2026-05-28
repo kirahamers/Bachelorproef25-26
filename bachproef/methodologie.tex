@@ -30,7 +30,7 @@ In dit hoofdstuk wordt de onderzoeksstrategie toegelicht die kan toegepast worde
 Het onderzoek is opgedeeld in vier fasen, waarbij telkens de link tussen juridische compliance en technische haalbaarheid centraal staat.
 
 \section{Fase 1: Literatuurstudie en Theoretisch Kader}
-De initiële fase van het onderzoek bestond uit de literatuurstudie van relevante wet- en regelgeving (zoals de GDPR) en technische standaarden (zoals Peppol). 
+De initiële fase van het onderzoek bestond uit de literatuurstudie van relevante wet- en regelgeving (zoals de GDPR) en technische standaarden (zoals Peppol). \\
 Deze theoretische basis was essentieel om de context van het probleem te begrijpen en om te voorkomen dat er oplossingen worden ontwikkeld die juridisch niet houdbaar zijn.
 
 De studie focuste op drie hoofdgebieden:
@@ -90,12 +90,12 @@ wat een extra administratieve last vormt en de doorlooptijd van het onboardingpr
 van het jaar nog niet bereikt, maar tijdens de piek kan dit oplopen tot uren per dag), wat op lange termijn een grote inefficiëntie is die geautomatiseerd kan worden.
 
 Op het gebied van juridische en technische kwetsbaarheid kwam naar voren dat het huidige proces van handmatige uploads (foto's of scans van ID-kaarten) kwetsbaar is voor fraude met vervalste documenten. 
-Zonder biometrische verificatie of liveness-detectie kan Scrada momenteel niet met 100 procent zekerheid garanderen dat de persoon op de foto ook de persoon is die de aanvraag indient. 
+Zonder biometrische verificatie of liveness-detectie kan Scrada momenteel niet met 100 procent zekerheid garanderen dat de persoon op de foto ook de persoon is die de aanvraag indient. \\
 Bovendien vormt de verwerking van onversleutelde identiteitsbewijzen een risico onder de GDPR. Hoewel itsme als een veilige authenticatiemethode wordt beschouwd,
 wordt deze niet ingezet voor het KYC-proces vanwege de hoge kosten en de beperkte flexibiliteit (het vereist een aparte app en is niet universeel toepasbaar, vooral voor buitenlandse klanten).
 
 Scrada onderscheidt zich in de markt door het gebruik van blockchaintechnologie voor de onveranderlijkheid van digitale wettelijke boeken, conform de Circulaire 2020/C/20 van de FOD Financiën (te vinden op https://www.scrada.be/). 
-Door middel van cryptografische verificatie garandeert het platform dat financiële data integer en onweerlegbaar blijft. 
+\\ Door middel van cryptografische verificatie garandeert het platform dat financiële data integer en onweerlegbaar blijft. 
 Deze bestaande functionaliteit is een belangrijk fundament voor dit onderzoek. Aangezien de huidige blockchain-implementatie de integriteit van de financiële data waarborgt, 
 is het belangrijk dat in het ontwikkelde Proof-of-Concept de data ook veilig wordt opgeslagen. Bij een verder interview werd meegegeven dat alleen de financiële data op de blockchain opgeslagen wordt, en 
 dit niet van toepassing is van de data na de registratie. Hier werd een voorstel gedaan om dit op te lossen door encryptie te gebruiken, wat later in de Proof-of-Concept verder toegelicht wordt.
@@ -115,7 +115,7 @@ waarbij functionele onderdelen afgestemd konden worden aan de technische infrast
 \begin{enumerate}
     \item \textbf{Mobiele Hardware-integratie (Flutter):} Aangezien de applicatie gebouwd is in Flutter, maakt de POC gebruik van Flutter-plugins om gebruik te kunnen maken van de smartphone-hardware.
     Hierbij wordt het handmatig inscannen van de identeitskaart toegepast. Deze keuze werd gemaakt omdat nog niet alle huidige mobiele apparaten en identiteitskaarten beschikken tot de NFC-read mogelijkheid beschikken.
-    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie werd een hybride AI-architectuur geconfigureerd en geïntegreerd om de vergelijking tussen de gescande identeitskaart en een live-foto van de gebruiker te vergelijken. Het nemen van de live-foto
+    \item \textbf{Biometrische Validatie (AI):} Voor de biometrische validatie werd een hybride AI-architectuur geconfigureerd en geïntegreerd om de vergelijking tussen de gescande identeitskaart en een live-foto van de gebruiker te vergelijken. \\ Het nemen van de live-foto
     maakt ook gebruik van liveness-detectie, om zo fraude te voorkomen en te bevestigen dat er een echte persoon achter de camera staat. Er werd onder andere Google ML Kit gebruikt voor de algemene taken die deze Software Development Kit (SDK) bevat, zoals Text Recognition/Optical Character Recognition (OCR)
     voor het aflezen van de identeitskaart, Face Detection voor het localiseren van het gezicht en Face Classification voor  de liveness gezichtdetectie, waarbij de laatste twee gebruikt worden voor de biometrische verificatie van de identiteitskaart. Daarnaast werd ook TFLite en MobileFaceNet gebruikt om de
     biometrische vergelijking uit te kunnen voeren via hun AI-model. Tot slot werd voor de verificatiescore Cosine Similarity gebruikt.
@@ -206,7 +206,7 @@ en het toetsen van de resultaten aan de onderzoeksvraag.
 
     \end{tikzpicture}
     \caption{BPMN-visualisatie van het huidige proces (AS-IS).}
-    \label{fig:bpmn-as-is-vertical}
+    \label{fig:bpmn-as-is}
 \end{figure}
 
 \de
@@ -256,5 +256,5 @@ en het toetsen van de resultaten aan de onderzoeksvraag.
 
     \end{tikzpicture}
     \caption{BPMN-visualisatie van het geautomatiseerde proces, gesimplificeerd aangezien scraping van KBO-gegevens toegepast wordt.}
-    \label{fig:bpmn-to-be-vertical-v2}
+    \label{fig:bpmn-to-be}
 \end{figure}

@@ -32,8 +32,8 @@ vergemakkelijkt door middel van open standaarden \autocite{OpenPeppolMain2024}.
 \subsection{Het Four-Corner Model}
 De architectuur van Peppol is gebaseerd op het \textit{Four-Corner Model} (zie Figuur \ref{fig:peppol-model}). 
 Dit model is ontworpen om de beperkingen van traditionele, gesloten 'three-corner' netwerken te doorbreken, 
-waarbij zenders en ontvangers verplicht bij dezelfde provider aangesloten moesten zijn \autocite{PeppolEndUser2024}. 
-De Peppol-architectuur bestaat uit de volgende vier partijen:
+waarbij zenders en ontvangers verplicht bij dezelfde provider aangesloten moesten zijn \autocite{PeppolEndUser2024}. \\
+De Peppol-\-architectuur bestaat uit de volgende vier partijen:
 \begin{itemize}
     \item \textbf{Corner 1 (De Verzender):} Het bedrijf of de organisatie die de elektronische factuur verstuurt (de cliënt).
     \item \textbf{Corner 2 (Access Point Verzender):} De \textit{Service Provider} van de verzender (Scrada), verantwoordelijk voor het veilig op het netwerk brengen van de documenten.
@@ -42,10 +42,10 @@ De Peppol-architectuur bestaat uit de volgende vier partijen:
 \end{itemize}
 
 \subsection{Scrada als Poortwachter (Corner 2)}
-Binnen dit decentrale model draagt Corner 2 een grote verantwoordelijkheid. 
+Binnen dit decentrale model draagt Corner 2 een grote verantwoordelijkheid. \\
 Omdat het Peppol-netwerk fundamenteel gebaseerd is op gedeeld onderling vertrouwen (trust), 
-gaan Corner 3 en 4 er van uit dat Corner 2 de identiteit van Corner 1 heeft geverifieerd voordat toegang tot het netwerk wordt toegestaan. 
-Omdat Scrada een officieel erkende Service Provider is, moet het bedrijf zich strikt houden aan het Peppol Interoperability Framework (de werkelijke naam van Peppol). 
+gaan Corner 3 en 4 er van uit dat Corner 2 de identiteit van Corner 1 heeft geverifieerd voordat toegang tot het netwerk wordt toegestaan. \\
+Aangezien Scrada een officieel erkende Service Provider is, moet het bedrijf zich strikt houden aan het Peppol Interoperability Framework (de werkelijke naam van Peppol). \\
 Die zorgt ervoor dat elektronische documenten gestandaardiseerd worden voor validatie en veilige uitwisseling 
 tussen Service Providers wereldwijd. Hierbij wordt gebruikgemaakt van de internationale ISO/IEC 19845-standaard (Universal Business Language), waardoor facturen over grenzen en sectoren heen leesbaar blijven zonder dat zender en ontvanger dezelfde software hoeven te gebruiken \autocite{PeppolFramework2024}.
 Dit zijn verplichte juridische en technische afspraken die ervoor zorgen dat alle partijen in het netwerk op dezelfde, 
@@ -78,7 +78,7 @@ anti-witwaswetgeving (AML) \autocite{FODFinancien2026}.
 Deze wetgeving vereist dat bedrijven de identiteit van hun klanten verifiëren, 
 de herkomst van fondsen controleren en verdachte activiteiten melden aan de autoriteiten. 
 De AML-regelgeving is ontworpen om het witwassen van geld, de financiering van terrorisme (de ‘wet AML’) en het verspreiden van massavernietigingswapens
-te voorkomen en te bestrijden, en heeft strenge regels voor bedrijven om ervoor te zorgen dat ze niet onbedoeld betrokken raken bij illegale activiteiten. 
+te voorkomen en te bestrijden, en heeft strenge regels voor bedrijven om ervoor te zorgen dat ze niet onbedoeld betrokken raken bij illegale activiteiten. \\
 Het niet naleven van deze wetgeving kan leiden tot zware boetes en reputatieschade, wat de noodzaak benadrukt voor bedrijven zoals Scrada om een veilig en compliant KYC-proces te implementeren.
 Daarom moet hierop de nadruk gezet worden bij het ontwerpen van een geautomatiseerd KYC-systeem, waarbij zowel de juridische vereisten als de operationaliteit van belang zijn.
 Hierbij speelt de Administratie van de Thesaurie een belangrijke rol (een onderdeel van de FOD Financiën) die 
@@ -121,7 +121,7 @@ Volgens de \autocite{LSEG2024} bestaat een effectief proces uit drie essentiële
 
 \begin{enumerate}
     \item \textbf{Customer Identification Program (CIP):} In de eerste fase van het KYC-proces vindt de onboarding plaats. Hier wordt de essentiële informatie van de klant verzameld met behulp van betrouwbare bronnen zoals paspoorten, rijbewijzen of bedrijfsregistraties.
-    \item \textbf{Customer Due Diligence (CDD):} In deze fase wordt de verzamelde informatie geverifieerd aan de hand van betrouwbare, onafhankelijke bronnen. Er wordt onderzocht of het bedrijf legitiem is en of er eventuele risico's verbonden zijn aan de zakelijke relatie, bijvoorbeeld door te controleren op sanctielijsten en te bekijken wat de intenties van de klant zijn.
+    \item \textbf{Customer Due Diligence (CDD):} In deze fase wordt de verzamelde informatie geverifieerd aan de hand van betrouwbare, onafhankelijke bronnen. \\ Er wordt onderzocht of het bedrijf legitiem is en of er eventuele risico's verbonden zijn aan de zakelijke relatie, bijvoorbeeld door te controleren op sanctielijsten en te bekijken wat de intenties van de klant zijn.
     Hierbij wordt gebruik gemaakt van de LSEG World-Check-database, die uitgebreide informatie bevat over individuen en bedrijven die mogelijk sancties of andere risico's vormen. Er kan ook gebruik worden gemaakt van
     andere bronnen zoals de Kruispuntbank van Ondernemingen (KBO), waar alle Belgische ondernemingen en hun identificatiegegevens te vinden zijn en het UBO-register (Ultimate Beneficial Owner), dat een overzicht geeft van de uiteindelijke belanghebbenden van een bedrijf.
     \item \textbf{Ongoing Monitoring:} KYC stopt niet na de onboarding maar wordt tijdens de hele customer journey voortgezet. De zakelijke relatie moet periodiek gecontroleerd worden om te garanderen dat de risicoprofielen actueel blijven en verdachte transactiepatronen tijdig gedetecteerd worden.
@@ -136,7 +136,7 @@ De stappen die binnen een manueel KYC-proces worden ondernomen, verlopen als vol
 \end{itemize}
 
 \section{Het Geautomatiseerde KYC-proces (eKYC)}
-In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een seamless onboarding, wat zorgt voor een hogere conversie. Volgens \autocite{Deloitte2024} is dit essentieel voor de klanttevredenheid
+In vergelijking met het manuele KYC-proces streeft een geautomatiseerd proces naar een seamless onboarding, wat zorgt voor een hogere conversie. \\ Volgens \autocite{Deloitte2024} is dit essentieel voor de klanttevredenheid
 terwijl men ook aan de AML-wetgeving voldoet. 
 
 Bij een geautomatiseerd proces (vaak eKYC genoemd) worden de menselijke handelingen vervangen door API-aanroepen en digitale identiteitsverificatie. 
@@ -191,19 +191,19 @@ dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet 
 Om de authenticiteit van een identeitskaart te garanderen, kan er ook gebruik worden gemaakt van biometrische verificatie.
 Dit kan aan de hand van gezichtsherkenning via een foto of video van de klant die vergeleken wordt met de foto op het identiteitsbewijs, die via
 een NFC-chip wordt afgelezen. Indien de identiteitskaart geen NFC-chip bevat, kan er ook gebruik worden gemaakt van OCR (Optical Character Recognition) om de gegevens van de kaart te bekijken.
-De preprocessing is hierbij van groot belang, aangezien de kwaliteit van de input(zoals een slechte belichting of een lage resolutie) de nauwkeurigheid van OCR kan beïnvloeden. Daarbij wordt ook feature recognition toegepast, waarbij specifieke kenmerken van het document worden herkend, zoals de lay-out, het lettertype en de aanwezigheid van beveiligingskenmerken (zoals hologrammen of watermerken), wat helpt om vervalsingen te detecteren.
+De preprocessing is hierbij van groot belang, aangezien de kwaliteit van de input(zoals een slechte belichting of een lage resolutie) de nauwkeurigheid van OCR kan beïnvloeden. \\ Daarbij wordt ook feature recognition toegepast, waarbij specifieke kenmerken van het document worden herkend, zoals de lay-out, het lettertype en de aanwezigheid van beveiligingskenmerken (zoals hologrammen of watermerken), wat helpt om vervalsingen te detecteren.
 OCR kan samen gebruikt worden met AI om ook ICR (Intelligent Character Recognition) toe te passen, waarbij de software niet alleen de tekst herkent, maar ook de context begrijpt, 
 zoals het onderscheiden van een naam, adres of geboortedatum (\autocite{IBM_OCR_2024}).
 
 Volgens een recente literatuurstudie van \autocite{FaceLivenessMDPI2023} is gezichtsherkenning een cruciaal onderdeel van biometrische authenticatie
-om bepaalde spoofing-aanvallen te voorkomen, zoals print- en replay-attacks. Hierbij worden er foto's op papier of video's op schermen gebruikt in de plaats van een echt gezicht.
+om bepaalde spoofing-aanvallen te voorkomen, zoals print- en replay-attacks. Hierbij worden er foto's op papier of video's op schermen gebruikt in de plaats van een echt gezicht. \\
 Het gebruik van Deep Learning-modellen zorgt ervoor dat verschillen in textuur, beweging en 3D-structuur kunnen worden geanalyseerd om te bepalen of het gezicht echt is of een afbeelding, 
 war ervoor zorgt dat de nauwkeurigheid van het KYC-proces verbetert en de kans op identiteitsfraude vermindert. Daarnaast kan ook liveness-detectie geïmplementeerd worden, waarbij de gebruiker achter het toestel
 moet bewijzen dat die echt is en geen afbeelding.
 
 \section{Software-architectuur en API-integraties}
 Om een geautomatiseerd KYC-proces te implementeren die de eerder besproken technologieën gebruikt, is een robuuste software-architectuur nodig die 
-integreert met de hardware en externe bronnen zoals de KBO en LSEG World-Check. Bij moderne applicaties wordt er gebruikt gemaakt van cross-platform frameworks (zoals React Native of Flutter), 
+integreert met de hardware en externe bronnen zoals de KBO en LSEG World-Check. \\ Bij moderne applicaties wordt er gebruikt gemaakt van cross-platform frameworks (zoals React Native of Flutter), 
 die gebruik maken van plugins om zo de KYC-functionaliteit te integreren zoals de biometrische verificatie via de camera en eventueel het uitlezen van de NFC-chip \autocite{FlutterArch2024}.
 
 Daarnaast is de backend verantwoordelijk is voor de API-integraties, dataopslag en het beheer van de KYC-statussen.
@@ -224,7 +224,7 @@ In plaats van documenten fysiek op de chain op te slaan, wat inefficiënt is en 
     \item \textbf{Off-chain opslag (de data-laag):} Door beperkte opslag op de blockchain wordt aangeraden om de geëncrypteerde KYC-documenten op te slaan in gedecentraliseerde systemen zoals IPFS (InterPlanetary File System), waar data omgezet wordt naar JSON-formaat.
     \item \textbf{On-chain validatie (de blockchain-laag):} Alleen de cryptografische hashes van de documenten worden op de blockchain geplaatst. Dit zorgt voor de onveranderlijkheid (immutability) en integriteit van de gegevens zonder de privacy te schenden, aangezien de data niet publiek is op de ledger.
     \item \textbf{Smart Contracts (de logische laag):} Zelf-uitvoerende codes automatiseren de toegang. Wanneer een organisatie (bijv. Corner 3 in het Peppol-model) de identiteit wil verifiëren, roept het systeem een smart contract aan dat de klant om expliciete toestemming vraagt. Pas na deze toestemming wordt de hash vrijgegeven om de authenticiteit van de off-chain data te bevestigen.
-    Volgens \autocite{Yadav2020} zorgt dit model voor een bijna onkraakbare cryptografische beveiliging voor financiële transacties.
+    \\ Volgens \autocite{Yadav2020} zorgt dit model voor een bijna onkraakbare cryptografische beveiliging voor financiële transacties.
 \end{itemize}
 
 \subsection{Economische en structurele impact}
