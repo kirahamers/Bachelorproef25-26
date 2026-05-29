@@ -27,7 +27,6 @@ class _CameraScannerWidgetState extends State<CameraScannerWidget> {
   final _faceDetector = FaceDetector(options: FaceDetectorOptions(enableClassification: true));
   
   bool _isInitializing = true;
-  int _selectedCameraIndex = 0;
   FlashMode _currentFlashMode = FlashMode.off;
 
   bool _showInstructions = true;
@@ -188,48 +187,54 @@ Future<void> _checkLiveness(CameraImage image) async {
           CameraFocusFrame(isGezicht: isGezicht),
 
           if (isGezicht && _showInstructions)
-            Container(
-              color: Colors.black.withOpacity(0.8),
-              child: Center(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 40),
-                  padding: const EdgeInsets.all(25),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.lightbulb, color: Color(0xFF8B0000), size: 40),
-                      const SizedBox(height: 15),
-                      const Text(
+          Container(
+            color: Colors.black.withOpacity(0.8),
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 40),
+                padding: const EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Center(child: Icon(Icons.lightbulb, color: Color(0xFF8B0000), size: 40)),
+                    const SizedBox(height: 15),
+                    const Center(
+                      child: Text(
                         "INSTRUCTIES",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
-                      const SizedBox(height: 20),
-                      const Text("1. Zorg voor goede belichting", style: TextStyle(fontSize: 15, color: Colors.black87)),
-                      const Text("2. Haal haar uit uw gezicht", style: TextStyle(fontSize: 15, color: Colors.black87)),
-                      const Text("3. Kijk neutraal (niet glimlachen) en recht naar de camera", style: TextStyle(fontSize: 15, color: Colors.black87)),
-                      const SizedBox(height: 25),
-                      
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF8B0000),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          onPressed: () => setState(() => _showInstructions = false),
-                          child: const Text("BEGREPEN"),
+                    ),
+                    const SizedBox(height: 20),
+                    
+                    const Text("1. Zorg voor goede belichting", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                    const SizedBox(height: 5),
+                    const Text("2. Verwijder eventueel uw bril", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                    const SizedBox(height: 5),
+                    const Text("3. Kijk neutraal (niet glimlachen) en recht naar de camera", style: TextStyle(fontSize: 15, color: Colors.black87)),
+                    const SizedBox(height: 25),
+                    
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8B0000),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
+                        onPressed: () => setState(() => _showInstructions = false),
+                        child: const Text("BEGREPEN"),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
+          ),
 
           if (!isGezicht || !_showInstructions) ...[
             Positioned(

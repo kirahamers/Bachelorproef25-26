@@ -11,7 +11,7 @@ naar een veiligere, geautomatiseerd proces zonder hoge kosten, zoals bijvoorbeel
 
 \medskip
 
-De PoC is ontworpen als een mobiele applicatie die de volgende functionaliteiten bevat:
+De PoC is ontworpen als een mobiele applicatie die als volgt opgesteld is:
 
 \section{Systeemarchitectuur}
 De architectuur van de Proof-of-Concept (PoC) is opgebouwd als een client-server model waarbij de mobiele applicatie wordt gebruikt als interface voor
@@ -236,7 +236,7 @@ waarbij de laatste 2 cijfers het resultaat zijn.
 Bij personen die na 2000 zijn geboren is dit echter anders, want er wordt geen onderscheid gemaakt of een persoon in 19xx of 20xx geboren is. Indien de checksum niet zou kloppen, wordt er een '2' voor de 9 cijfers geplaatst en wordt de berekening herhaald.
 Deze methode is noodzakelijk omdat de checksum-logica voor personen geboren vanaf het jaar 2000 een extra prefix vereist om wiskundig correct te blijven, de geldigheid van het nummer te verfiëren en fraude te voorkomen. 
 Deze checksum werd online gevonden en is open source via de URL \url{https://sandervandevelde.wordpress.com/2020/08/13/} \linebreak
-\url{belgische-rijksregisternummer-checksum-testen-dutch/}.
+\url{belgische-rijksregisternummer-checksum-testen-dutch/} \autocite{Sandervandevelde2020}.
 
 \subsection{Technische Implementatie en Uitdagingen van de Biometrische Vergelijking}
 De integratie van TensorFlow Lite (TFLite) voor biometrische verificatie was een uitdaging in verband met de runtime-omgeving.
@@ -250,10 +250,10 @@ Voor een uiteindelijke productie-release op fysieke hardware is een gelijkaardig
 De essentie van de identiteitsverificatie binnen de applicatie is de vergelijking tussen de gescande pasfoto en de live-opname. 
 
 Om ervoor te zorgen dat beide afbeeldingen optimaal zijn voor de vergelijking, worden ze eerst bewerkt.
-Dit houdt in dat de foto gecropped wordt tot alleen het gezicht (om zoveel mogelijk ruis te vermijden) en dat de belichting wordt aangepast (om de invloed van variabele lichtinval te verminderen).
+Dit houdt in dat de foto uitgeknipt wordt tot alleen het gezicht (om zoveel mogelijk ruis te vermijden) en dat de belichting wordt aangepast (om de invloed van variabele lichtinval te verminderen).
 Dit werd eerst gedaan aan de hand van een \texttt{normalize} methode die de pixelwaarden van de afbeelding aanpast naar een standaard bereik, maar na een aantal tests bleek dat deze methode niet voldoende robuust was tegen variabele lichtomstandigheden.
 Als resultaat hadden foto's met minder goede belichting een betere resultaat dan foto's met goede belichting, wat uiteraard niet de bedoeling is. Om dit probleem aan te pakken werd \texttt{histogramEqualization} toegepast,
-wat meer aanpasbar is aan de verschillende belichtingen en zorgt voor een betere contrastverdeling in de afbeelding, waardoor de gezichtskenmerken beter worden benadrukt en de nauwkeurigheid van de vergelijking verbetert.
+wat meer aanpasbaar is aan de verschillende belichtingen en zorgt voor een betere contrastverdeling in de afbeelding, waardoor de gezichtskenmerken beter worden benadrukt en de nauwkeurigheid van de vergelijking verbetert.
 Het lokaliseren en croppen van het gezicht gebeurt aan de hand van de \texttt{google\_ml\_kit\_face\_detection}, waarbij een bounding box wordt getekend rond het gedetecteerde gezicht en deze wordt gecropped voor verdere verwerking.
 Daarna wordt het AI-model MobileFaceNet gebruikt om een embedding te genereren van de pasfoto als de selfie. \\ Deze embeddings zijn wiskundige representaties van de gezichten in een hoog-dimensionale ruimte, waarbij vergelijkbare gezichten dicht bij elkaar liggen.
 De vergelijking wordt uitgevoerd aan de hand van de hoek tussen de vectoren in de embeddings, via de Cosine Similarity, die in de code omgezet werd naar percentage. 
@@ -264,7 +264,7 @@ De formule voor de Cosine Similarity is als volgt:
 \begin{equation}
     d = \frac{A \cdot B}{\|A\| \|B\|}
 \end{equation}
-Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen 0 en 1, waarbij 1 een perfecte match is en 0 een volledige mismatch.
+Waarbij $A$ en $B$ de embeddings zijn van de pasfoto en de selfie. De uitgekomen waarde ($d$) ligt tussen -1 en 1, waarbij 1 een perfecte match is, 0 geen enkele gelijkenis heeft en -1 een volledige mismatch is.
 
 \begin{figure}[ht]
     \centering
@@ -278,7 +278,7 @@ maar na een aantal testen bleek dat deze methode niet zo bestand is tegen belich
 Een alternatief, de Cosine Similarity, focust daarentegen op de oriëntatie van de vectoren in de embeddings en is daardoor ook veel toepasselijker bij deze real-world setting. 
 De gebruiker zal namelijk niet altijd in de beste setting zitten met een witte achtergrond, de Cosine Similarity kan zich hier beter tegen aanpassen.
 
-Om zeker te zijn dat de live-foto werkelijk live is en geen foto van een bestaande afbeelding, werd liveness-detectie geïmplementeerd om de fraudeveiligheid te verhogen.
+Om zeker te zijn dat de live-foto werkelijk live is en geen foto van een bestaande afbeelding of een filter, werd liveness-detectie geïmplementeerd om de fraudeveiligheid te verhogen.
 Tijdens de actieve liveness-check moet de processor simultaan de camera-stream verwerken voor knipper- en bewegingsdetectie via ML Kit en ook
 frames bufferen voor de uiteindelijke gezichtsvergelijking. Deze constante berekening zorgt voor een kleine vertraging in de exposure time, 
 wat zorgt voor een toename van motion blur (bewegingsonscherpte) in de live-opname. 
@@ -286,6 +286,12 @@ Omdat het MobileFaceNet-model zeer gevoelig is voor scherpe gezichtsuitdrukkinge
 zorgde dit voor een technische trade-off: door de constante verwerking van camera-frames voor de liveness-check daalt de gemiddelde match-score met ongeveer 10 procent.
 
 Desondanks is deze daling acceptabel, aangezien de drempelwaarde (threshold) voor een positieve match in de PoC is afgesteld op 0.60, wat voldoende marge biedt om zowel fraude te voorkomen als legitieme gebruikers vlot te onboarden.
+
+Het is van groot belang om te vermelden dat in tijden waar AI gegenereerde beelden of filters steeds realistischer worden, een robuustere liveness-detectie essentieel is indien de PoC in productie zou worden genomen.
+In de huidige Poc wordt fraude voorkomen door aan de hand van de liveness-detectie de kans op spoofing via foto's te minimaliseren, maar indien de technologie van deepfakes of andere geavanceerde technologieën gebruikt worden
+om de selfie te manipuleren, kan dit een risico worden. In de productie wordt het daarom aangeraden om bijvoorbeeld gecertificeerde Software Development Kits (SDK's) te gebruiken die geavanceerde liveness-detectie bieden, 
+zoals 3D-gezichtsherkenning, analyse van micro-expressies of zelfs het gebruik van biometrische sensoren (zoals infrarood) om de gebruiker te verifiëren.
+Aangezien gecertificeerde SDK's betalend zijn, valt dit buiten de scope van deze Poc, maar het is van belang deze te overwegen bij de productie.
 
 \begin{lstlisting}[
     language=bash, 
@@ -352,7 +358,7 @@ Test Run Summary
 Total Tests: 2
 Passed: 2
 Failed: 0
-Skipped: 0
+Skipped: 0ss
 Result: SUCCEEDED
 Test Execution Time: 0.69s (689ms)
 Total Time (including build): 3.17s (3167ms)
@@ -379,6 +385,7 @@ Om de betrouwbaarheid van het biometrische model (MobileFaceNet) onder verschill
 
 Uit de resultaten werd een duidelijke correlatie tussen de lichtintensiteit en de nauwkeurigheid van de \textit{Cosine Similarity} score. 
 Zoals weergegeven in Tabel \ref{tab:biometrische-testresultaten}, resulteerde een optimale belichting in een match-score van 72,8\%, terwijl dit bij een uitdagende, donkerdere belichting daalde naar 64,0\%. 
+Daarnaast werd ook getest hoe het model werkt bij een volledig andere persoon, en deze resulteerde in een negatieve score van -6,1\%, wat aangeeft dat er een mismatch is.
 Aan de hand van deze scores werd de drempelwaarde van 0,60 bevestigd als een veilige grens, om ook zo bij minder optimale omstandigheden een correctie validatie te accepteren.
 
 \begin{table}[ht]
@@ -386,7 +393,7 @@ Aan de hand van deze scores werd de drempelwaarde van 0,60 bevestigd als een vei
     \begin{tabular}{|l|l|l|l|}
     \hline
     \textbf{Scenario} & \textbf{Input Type} & \textbf{Gem. Score} & \textbf{Resultaat} \\ \hline
-    Goede belichting & Eigen ID + Selfie & 72,8\% & Match (OK) \\ \hline
+    Goede belichting & Eigen ID + Selfie & 80,4\% & Match (OK) \\ \hline
     Matige/Donkere belichting & Eigen ID + Selfie & 64,0\% & Match (OK) \\ \hline
     Mismatch (Andere persoon) & Eigen ID + Foto andere persoon & -6,1\% & No Match \\ \hline
     Spoofing (Foto op scherm) & Eigen ID + Foto & N.v.t. & Liveness Failed \\ \hline

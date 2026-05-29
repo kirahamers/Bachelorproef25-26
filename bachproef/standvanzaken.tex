@@ -191,15 +191,36 @@ dan komt de human-in-the-loop (exception handling) terug in beeld. Hierbij moet 
 Om de authenticiteit van een identeitskaart te garanderen, kan er ook gebruik worden gemaakt van biometrische verificatie.
 Dit kan aan de hand van gezichtsherkenning via een foto of video van de klant die vergeleken wordt met de foto op het identiteitsbewijs, die via
 een NFC-chip wordt afgelezen. Indien de identiteitskaart geen NFC-chip bevat, kan er ook gebruik worden gemaakt van OCR (Optical Character Recognition) om de gegevens van de kaart te bekijken.
-De preprocessing is hierbij van groot belang, aangezien de kwaliteit van de input(zoals een slechte belichting of een lage resolutie) de nauwkeurigheid van OCR kan beïnvloeden. \\ Daarbij wordt ook feature recognition toegepast, waarbij specifieke kenmerken van het document worden herkend, zoals de lay-out, het lettertype en de aanwezigheid van beveiligingskenmerken (zoals hologrammen of watermerken), wat helpt om vervalsingen te detecteren.
+De preprocessing is hierbij van groot belang, aangezien de kwaliteit van de input (zoals een slechte belichting of een lage resolutie) de nauwkeurigheid van OCR kan beïnvloeden. 
+\\ Daarbij wordt ook feature recognition toegepast, waarbij specifieke kenmerken van het document worden herkend, zoals de lay-out, het lettertype en de aanwezigheid van beveiligingskenmerken (zoals hologrammen of watermerken), wat helpt om vervalsingen te detecteren.
 OCR kan samen gebruikt worden met AI om ook ICR (Intelligent Character Recognition) toe te passen, waarbij de software niet alleen de tekst herkent, maar ook de context begrijpt, 
-zoals het onderscheiden van een naam, adres of geboortedatum (\autocite{IBM_OCR_2024}).
+zoals het onderscheiden van een naam, adres of geboortedatum \autocite{IBM_OCR_2024}.
 
 Volgens een recente literatuurstudie van \autocite{FaceLivenessMDPI2023} is gezichtsherkenning een cruciaal onderdeel van biometrische authenticatie
 om bepaalde spoofing-aanvallen te voorkomen, zoals print- en replay-attacks. Hierbij worden er foto's op papier of video's op schermen gebruikt in de plaats van een echt gezicht. \\
 Het gebruik van Deep Learning-modellen zorgt ervoor dat verschillen in textuur, beweging en 3D-structuur kunnen worden geanalyseerd om te bepalen of het gezicht echt is of een afbeelding, 
 war ervoor zorgt dat de nauwkeurigheid van het KYC-proces verbetert en de kans op identiteitsfraude vermindert. Daarnaast kan ook liveness-detectie geïmplementeerd worden, waarbij de gebruiker achter het toestel
 moet bewijzen dat die echt is en geen afbeelding.
+
+Aangezien de biometrie plaatsvindt op een mobiel apparaat, is het van groot belang om lichtgewichte modellen te overwegen die geoptimaliseerd zijn voor mobiel gebruik.
+Voor verwerking op mobiele apparaten zijn Convolutional Neural Network (CNN)-architecturen de industriestandaard \autocite{Kolluri2024}. CNN is een deep learning algoritme
+dat wordt gebruikt voor het herkennen van patronen in afbeeldingen, in de context van deze bachelorproef zijn dat identiteitskaarten en gezichten. Zoals te zien op Figuur \ref{fig:cnn-architectuur}, 
+bestaat een CNN uit meerdere lagen, waaronder convolutie lagen die filters toepassen om kenmerken/patronen te detecteren, pooling-lagen die de ruis verminderen om zo de essentiële data te houden en uiteindelijk wordt classificatie gedaan door de patronen in een voorspelling om te zetten
+(bijvoorbeeld het herkennen van het gezicht van een persoon) \autocite{Chen2021}. Er moet ook rekening gehouden worden met Privacy-by-Design; de biometrische data moet lokaal op het apparaat verwerkt worden zonder dat deze ergens anders wordt opgeslagen. Zo kan de privacy van de klant gegarandeerd worden.
+Na dat er biometrie plaatsvindt, is het ook van groot belang om te kunnen visualiseren wat de uitkomst van de vergelijking is, om zo te kunnen afleiding of er al dan niet een match is. Dit kan gedaan worden aan de hand van feature vectors waarbij visuele kenmerken worden omgezet naar vectoren, een lange lijst getallen die embeddings noemen \autocite{Kolluri2024}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{CNN.png} 
+    \caption{De basisstructuur van een CNN \autocite{Chen2021}.}
+    \label{fig:cnn-architectuur}
+\end{figure}
+
+Om te kunnen aftoetsen welk model het beste werkt voor Scrada, werd een tabel opgezet met de meest relevante modellen die geoptimaliseerd zijn voor mobiele apparaten.
+In tabel \ref{tab:model-vergelijking} wordt de accuraatheid, mobiele optimalisatie en de status in de Proof-of-Concept van verschillende modellen vergeleken. De accuraatheid is gebaseerd op de
+benchmarkresultaten van de Labeled Faces in the Wild (LFW) dataset, de industristandaard voor benchmarking an gezichtsherkenning. Hierbij is de definitieve keuze voor MobileFaceNet gemaakt,
+omdat dit model zorgt voor een goede balans tussen accuraatheid en mobiele toepasbaarheid in een Flutter omgeving met TFLite-integratie. Een alternatief dat ook overwogen werd is GhostFaceNets,
+die een betere mobiele optimalisatie heeft, maar een iets lagere accuraatheid en geen duidelijke implementatie in Flutter heeft. 
 
 \section{Software-architectuur en API-integraties}
 Om een geautomatiseerd KYC-proces te implementeren die de eerder besproken technologieën gebruikt, is een robuuste software-architectuur nodig die 
@@ -234,17 +255,33 @@ Het gebruik van een consortium blockchain-model, waarbij meerdere organisaties s
 \item \textbf{Eliminatie van redundantie:} Door gebruik te maken van de functies van DLT wordt de noodzaak voor tussenpersonen (third-parties) geelimineerd, wat dubbel werk en onnodige vertragingen in het KYC-proces voorkomt.
 \end{itemize}
 
+\section{Tabeloverzicht}
+
 \begin{table}[h!]
 \centering
 \caption{Vergelijking tussen de huidige manuele werkwijze, de marktstandaard (itsme) en de voorgestelde PoC.}
 \label{tab:kyc-vergelijking-compleet}
 \begin{tabular}{|l|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
 \hline
-\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{itsme (SaaS-oplossing)} & \textbf{Eigen PoC (Automatisering)} \\ \hline
+\textbf{Kenmerk} & \textbf{Manueel proces (Scrada huidig)} & \textbf{itsme (SaaS)} & \textbf{Eigen PoC (Automatisering)} \\ \hline
 \textbf{Kostenstructuur} & Loonevenredig: hoge kost door manuele uren van medewerkers. & Zeer hoog: jaarlijkse licentiekosten en transactiekosten. & Kostenefficiënt: eenmalige ontwikkeling en lage API-kosten. \\ \hline
 \textbf{Klantervaring} & Traag proces door handmatige uploads en wachten op validatie. & Seamless: snelle verificatie via een externe, vertrouwde app. & Seamless self-service: onmiddellijke verificatie direct in de Scrada-omgeving. \\ \hline
 \textbf{Verificatiemethode} & Visuele controle van kopieën door een medewerker (foutgevoelig). & Digitale identiteit via een gecertificeerde provider. & On-device biometrie, liveness-detectie en RRN-checksum. \\ \hline
 \textbf{Data-integriteit} & Risico op menselijke fouten bij het overtypen van gegevens. & Directe overdracht van geverifieerde brongegevens. & Automatische extractie via OCR met algoritmische controle. \\ \hline
 \textbf{Privacy (GDPR)} & Gecentraliseerd: gevoelige ID-kopieën blijven op de server staan. & Data-uitwisseling met een externe derde partij. & Privacy-by-design: lokale verwerking op het eigen toestel. \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Vergelijkende analyse van biometrische modellen.}
+\label{tab:model-vergelijking}
+\begin{tabular}{|l|p{3.5cm}|p{3.5cm}|p{3cm}|}
+\hline
+\textbf{Model} & \textbf{Accuraatheid} & \textbf{Mobiele Optimalisatie} & \textbf{Status in PoC} \\ \hline
+\textbf{MobileFaceNet} & 99.55\% \cite{ChenMobileFaceNet2018} & Zeer hoog, geoptimaliseerd voor mobiele apparaten & \textbf{Gekozen} \\ \hline
+\textbf{GhostFaceNets} & 99.33\% \cite{MedenGhostFaceNets2022} & Extreem hoog & State of the Art (SOTA) Alternatief \\ \hline
+\textbf{FaceNet} & 99.63\% \cite{Schroff2015} & Laag, zwaar model voor mobiele apparaten & Enkel als baseline \\ \hline
+\textbf{InsightFace (ArcFace)} & 99.80\% \cite{DengArcface2019} & Medium & Geen native Flutter SDK \\ \hline
 \end{tabular}
 \end{table}

@@ -130,25 +130,26 @@ Future<double> getSimilarityScore(File faceId, File selfie) async {
 //rescaling voor het model, MobileFaceNet is 112x112 input
     final resizedImage = img.copyResize(image, width: 112, height: 112);
 
-    double sum = 0;
-    //mean substraction
-    for (var pixel in resizedImage) {
-      sum += pixel.r + pixel.g + pixel.b;
-    }
-    double mean = sum / (112 * 112 * 3);
+    double sumR = 0, sumG = 0, sumB = 0;
+      for (var pixel in resizedImage) {
+        sumR += pixel.r;
+        sumG += pixel.g;
+        sumB += pixel.b;
+      }
+      double meanR = sumR / (112 * 112);
+      double meanG = sumG / (112 * 112);
+      double meanB = sumB / (112 * 112);
 
-  //omzetten naar FLoat32 voor TFLite
-    var input = Float32List(1 * 112 * 112 * 3);
-    var buffer = Float32List.view(input.buffer);
-    int pixelIndex = 0;
+      var input = Float32List(1 * 112 * 112 * 3);
+      var buffer = Float32List.view(input.buffer);
+      int pixelIndex = 0;
 
   for (var y = 0; y < 112; y++) {
     for (var x = 0; x < 112; x++) {
       var pixel = resizedImage.getPixel(x, y);
-      //(pixelwaarde - gemiddelde) / 128
-      buffer[pixelIndex++] = (pixel.r - mean) / 128.0;
-      buffer[pixelIndex++] = (pixel.g - mean) / 128.0;
-      buffer[pixelIndex++] = (pixel.b - mean) / 128.0;
+      buffer[pixelIndex++] = (pixel.r - meanR) / 128.0;
+      buffer[pixelIndex++] = (pixel.g - meanG) / 128.0;
+      buffer[pixelIndex++] = (pixel.b - meanB) / 128.0;
     }
   }
 

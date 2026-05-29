@@ -63,7 +63,7 @@ De vragen zijn als volgt geformuleerd:
 \end{itemize}
 
 \subsection{Huidige werkwijze bij Scrada}
-De huidige procedure binnen Scrada is manueel proces. Hoewel de gegevensverzameling digitaal verloopt, is de verificatiestap volledig afhankelijk van handmatige acties. Het proces ziet er als volgt uit:
+De huidige procedure binnen Scrada is een manueel proces. Hoewel de gegevensverzameling digitaal verloopt, is de verificatiestap volledig afhankelijk van handmatige acties. Het proces ziet er als volgt uit:
 
 \begin{enumerate}
     \item \textbf{Data invoer:} De cliënt voert bedrijfsgegevens (minimaal het btw- of ondernemingsnummer en e-mailadres) in via de Flutter-applicatie.
@@ -157,6 +157,7 @@ en het toetsen van de resultaten aan de onderzoeksvraag.
 \begin{itemize}
     \item \textbf{Functionele Acceptatietesten (Manual Testing):} Via de UI van de Flutter-applicatie is gecontroleerd of de volledige correcte flow (van BTW-invoer tot biometrische match) foutloos wordt doorlopen. 
     Hierbij is handmatig geverifieerd of de backend de juiste data ophaalt uit de KBO-scraper en VIES.
+    \item \textbf{Performance testen:} Om te kunnen vaststellen dat de PoC ook werkelijk sneller is dan het huidige manuele proces, is er een vergelijking gemaakt van de doorlooptijd van het geautomatiseerde proces versus het manuele proces.
     \item \textbf{Scenario-gebaseerde validatie:} Er is getest met specifieke scenario's om de robuustheid te bepalen, 
     zoals het invoeren van een ongeldig ondernemingsnummer of het simuleren van een mismatch tussen de eID en de gebruiker (negative testing).
     \item \textbf{GDPR-check:} Er is visueel en via log-analyse in de backend gecontroleerd of persoonsgegevens (zoals biometrische vectoren en eID-gegevens) 
@@ -208,8 +209,6 @@ en het toetsen van de resultaten aan de onderzoeksvraag.
     \caption{BPMN-visualisatie van het huidige proces (AS-IS).}
     \label{fig:bpmn-as-is}
 \end{figure}
-
-\de
 
 \begin{figure}[p]
     \centering
