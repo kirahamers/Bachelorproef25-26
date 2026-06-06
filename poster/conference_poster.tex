@@ -14,7 +14,7 @@
 % Info over de opleiding
 \course{Bachelorproef}
 \studyprogramme{toegepaste informatica}
-\academicyear{2022-2023}
+\academicyear{2025-2026}
 \institution{Hogeschool Gent, Valentin Vaerwyckweg 1, 9000 Gent}
 
 % Info over de bachelorproef
@@ -57,30 +57,23 @@
 
 \begin{document}
 
-\begin{minipage}[c]{0.72\linewidth}
+\begin{minipage}[c]{\linewidth}
     \maketitle
 \end{minipage}%
-\hfill
-\begin{minipage}[c]{0.25\linewidth}
-    \centering
-    \includegraphics[width=0.75\linewidth]{scrada_poster.png}
-\end{minipage}
 
 \begin{center}
     \vspace{-0.5cm}
-    \rule{\linewidth}{2pt} \\
     \vspace{0.3cm}
     {\huge\titlefont\color{hogent-blue} Abstract} \\
     \vspace{0.3cm}
     \begin{minipage}{0.95\linewidth}
-        \itshape\large
+        \itshape\Large
         Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
         Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
         Door een hybride koppeling van de Europese VIES-API en de KBO webservice, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
         Het resultaat is een sneller, veiliger en self-service onboarding proces.
     \end{minipage}
     \vspace{0.3cm}
-    \rule{\linewidth}{2pt}
 \end{center}
 
 \begin{multicols}{2}
@@ -91,7 +84,7 @@ Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiër
 De huidige methode bij Scrada vereist manuele invoer van KBO-gegevens, wat de efficiëntie verlaagt.
 
 \vspace{0.4cm}
-\begin{tcolorbox}[colback=boxblue!70,colframe=hogent-blue,arc=3mm,boxrule=0.5mm,center,width=0.95\linewidth]
+\begin{tcolorbox}[colback=boxblue!70,colframe=hogent-blue,arc=3mm,boxrule=0.6mm,center,width=0.95\linewidth]
     \centering
     \itshape\Large ``Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden?''
 \end{tcolorbox}
@@ -124,23 +117,23 @@ Om identiteitsfraude tegen te gaan, is biometrie essentieel:
 \begin{center}
     \vspace{0.2cm}
 
-    \tcbox[colback=pastelorange, colframe=orange!40, arc=5mm, boxrule=1mm]{
+    \tcbox[colback=pastelorange, colframe=orange!40, arc=5mm, boxrule=0mm]{
         \Large \textbf{1. Ondernemingsnummer}
-    } \\
+    } 
     \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
     
-    \tcbox[colback=pastelblue, colframe=blue!40, arc=5mm, boxrule=1mm]{
+    \tcbox[colback=pastelblue, colframe=blue!40, arc=5mm, boxrule=0mm]{
         \Large \textbf{2. eID-scan}
-    } \\
+    } 
     \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
     
-    \tcbox[colback=pastelpurple, colframe=purple!40, arc=5mm, boxrule=1mm]{
+    \tcbox[colback=pastelpurple, colframe=purple!40, arc=5mm, boxrule=0mm]{
         \Large \textbf{3. Biometrie}
-    } \\
+    } 
     \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
     
-    \tcbox[colback=pastelgreen, colframe=green!50!black!30, arc=5mm, boxrule=1mm]{
-        \Large \textbf{4. Afronding}
+    \tcbox[colback=pastelgreen, colframe=green!50!black!30, arc=5mm, boxrule=0mm]{
+        \Large \textbf{4. Afronding registratie}
     }
     
     \vspace{0.2cm}
@@ -170,9 +163,24 @@ waardoor de gebruiker onmiddellijk feedback krijgt over de geldigheid van de bed
 \end{posterbox}
 
 \begin{posterbox}{\faCheckDouble \quad Resultaten \& Verificatie}
-De PoC bewijst dat een volledige check niet meer dan 2 minuten duurt. 
-Er is een naadloze match tussen live data en biometrie. De backend vertaalt ruwe HTML naar tekst voor een betrouwbare vergelijking.
+De PoC bewijst dat een volledige check niet meer dan 3 minuten duurt. 
+\vspace{0.5cm}
+\begin{center}
+\resizebox{\linewidth}{!}{%
+    \begin{tabular}{|l|l|l|l|}
+    \hline
+    \textbf{Scenario} & \textbf{Input Type} & \textbf{Gem. Score} & \textbf{Resultaat} \\ \hline
+    Goede belichting & ID + Selfie & 80,4\% & Match (OK) \\ \hline
+    Matige belichting & ID + Selfie & 64,0\% & Match (OK) \\ \hline
+    Mismatch (Andere persoon) & ID + Selfie andere persoon & -6,1\% & No Match \\ \hline
+    Spoofing (Foto op scherm) & ID + Foto & N.v.t. & Liveness Failed \\ \hline
+    \end{tabular}%
+}
+    \captionof{table}{Resultaten van de biometrische testscenario's.}
+    \label{tab:biometrische-testresultaten}
+\end{center}
 \end{posterbox}
+
 
 \begin{posterbox}{\faFlagCheckered \quad Conclusie}
 Manuele KYC-processen bij Scrada zijn verleden tijd. 

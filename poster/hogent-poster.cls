@@ -11,7 +11,7 @@
 %% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{hogent-poster}[2022/11/27 Poster voor de bachelorproef toegepaste informatica @HOGENT]
+\ProvidesClass{hogent-poster}[2026/06/06 Poster voor de bachelorproef toegepaste informatica @HOGENT]
 \LoadClass{article}
 
 %%============================================================================
@@ -321,16 +321,16 @@
 \fancypagestyle{plain}{%
   %\newgeometry{bottom=\wd\logopart}
   \fancyhf{}%
-  \fancyfoot[L]{}%
-  \fancyfoot[C]{}
-  \fancyfoot[R]{%
+  \fancyfoot[L]{%
     \begin{tikzpicture}[remember picture, overlay]
-      \node [anchor=south east, shift={(-\the\wd\logopart, \the\wd\logopart)}, inner sep=0, outer sep=0] (logo) at (current page.south east)%
+      \node [anchor=south west, shift={(\the\wd\logopart, \the\wd\logopart)}, inner sep=0, outer sep=0] (logo) at (current page.south west)%
       {%
         \includegraphics[height=\the\ht\logopart]{hogent_logo}%
       };%
     \end{tikzpicture}
   }%
+  \fancyfoot[C]{}
+  \fancyfoot[R]{}
 }
 
 %%============================================================================
