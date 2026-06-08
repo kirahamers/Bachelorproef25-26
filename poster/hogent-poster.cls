@@ -317,20 +317,14 @@
 \newsavebox{\logopart}
 \savebox{\logopart}{\includegraphics[height=7cm]{logopart}}
 
-% First page footer
 \fancypagestyle{plain}{%
-  %\newgeometry{bottom=\wd\logopart}
   \fancyhf{}%
-  \fancyfoot[L]{%
+  \fancyfoot[R]{%
     \begin{tikzpicture}[remember picture, overlay]
-      \node [anchor=south west, shift={(\the\wd\logopart, \the\wd\logopart)}, inner sep=0, outer sep=0] (logo) at (current page.south west)%
-      {%
-        \includegraphics[height=\the\ht\logopart]{hogent_logo}%
-      };%
+      \node [anchor=south east, shift={(-2cm, 4cm)}, inner sep=0, outer sep=0] (logo) at (current page.south east)
+      {\includegraphics[height=\the\ht\logopart]{hogent_logo}};
     \end{tikzpicture}
-  }%
-  \fancyfoot[C]{}
-  \fancyfoot[R]{}
+  }
 }
 
 %%============================================================================

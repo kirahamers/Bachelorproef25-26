@@ -10,6 +10,8 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{xcolor}
+\definecolor{tableheader}{RGB}{0, 102, 179}
 
 % Info over de opleiding
 \course{Bachelorproef}
@@ -19,7 +21,7 @@
 
 % Info over de bachelorproef
 \title{Automatisering van de KYC-onboarding bij Scrada}
-\subtitle{Een onderzoek naar een GDPR-conforme, fraudeveilige en kostenefficiënte aanpak.}
+\subtitle{Een onderzoek naar een GDPR-conforme, fraudeveilige en \\ kostenefficiënte aanpak.}
 \author{Hamers Kira}
 \email{kira.hamers@student.hogent.be}
 \supervisor{Tom Antjon}
@@ -67,11 +69,11 @@
     {\huge\titlefont\color{hogent-blue} Abstract} \\
     \vspace{0.3cm}
     \begin{minipage}{0.95\linewidth}
-        \itshape\Large
+        \Large
         Het handmatig verifiëren van nieuwe klanten (Know Your Customer) is voor bedrijven een tijdrovend en foutgevoelig proces. 
         Deze bachelorproef presenteert een Proof-of-Concept applicatie die het onboarding-proces voor Scrada automatiseert. 
         Door een hybride koppeling van de Europese VIES-API en de KBO webservice, valideert de applicatie live bedrijfsgegevens en matcht deze met biometrische data uit eID-scans. 
-        Het resultaat is een sneller, veiliger en self-service onboarding proces.
+        Het resultaat is een sneller, veiliger en self-service onboarding proces, waarbij de snelheid van het proces met ongeveer 70\% verbetert.
     \end{minipage}
     \vspace{0.3cm}
 \end{center}
@@ -79,33 +81,31 @@
 \begin{multicols}{2}
 \large
 
-\begin{posterbox}{\faInfoCircle \quad Introductie}
-Bedrijven zijn wettelijk verplicht om de identiteit van hun klanten te verifiëren (AML-wetgeving). 
-De huidige methode bij Scrada vereist manuele invoer van KBO-gegevens, wat de efficiëntie verlaagt.
+\begin{posterbox}{\faInfoCircle \quad Introductie \& Probleemstelling}
+Bedrijven zijn op basis van de AML-wetgeving verplicht de identiteit van hun klanten te verifiëren. 
+Het huidige manuele KYC-proces bij Scrada, gebaseerd op handmatige KBO-controle en onversleutelde ID-kopieën, is \textbf{foutgevoelig}, \textbf{niet schaalbaar} en schendt het GDPR-principe van \textbf{dataminimalisatie}.
 
 \vspace{0.4cm}
 \begin{tcolorbox}[colback=boxblue!70,colframe=hogent-blue,arc=3mm,boxrule=0.6mm,center,width=0.95\linewidth]
     \centering
     \itshape\Large ``Hoe kan het KYC-proces bij de identiteitsverificatie van bedrijven op het Peppol-platform van Scrada geautomatiseerd worden?''
 \end{tcolorbox}
-\end{posterbox}
 
-\begin{posterbox}{\faLightbulb \quad De Oplossing}
-Vanwege de hoge licentiekosten van de officiële KBO-API, is gekozen voor een kostenloze PoC:
+\vspace{0.4cm}
+\textbf{Deelvragen:}
 \begin{itemize}
-    \item \textbf{Bedrijfsstatus:} Live validatie via de gratis VIES-API.
-    \item \textbf{Bestuurdersgegevens:} Een custom .NET scraper (HtmlAgilityPack), dat bij productie niet aangeraden is maar perfect toepasbaar is voor een PoC.
-    \item \textbf{Identiteitsmatch:} Vergelijking met OCR-data van de eID, samen met een biometriecheck aan de hand van een live-selfie.
+    \item \textbf{Probleem:} Welke bottlenecks en frauderisico's (zoals identiteitsfraude) ervaart Scrada?
+    \item \textbf{Oplossing:} Hoe kan een eKYC-flow conform de GDPR-regels via Privacy-by-Design gerealiseerd worden?
+    \item \textbf{Impact:} Hoe draagt automatisering (OCR/NFC) bij aan kostenreductie t.o.v. commerciële SaaS-oplossingen?
 \end{itemize}
 \end{posterbox}
 
-\begin{posterbox}{\faFingerprint \quad Biometrische Verificatie}
-Om identiteitsfraude tegen te gaan, is biometrie essentieel:
-\begin{itemize}
-    \item \textbf{Gezichtsherkenning:} Match tussen live-selfie en eID-foto.
-    \item \textbf{Liveness Detection:} Voorkomt fraude door fysieke aanwezigheid te verifiëren voor de biometrie.
-    \item \textbf{Bevoegdheidscheck:} Match met de statutaire bestuurders uit de KBO en de naam op de gescande ID.
-\end{itemize}
+\begin{posterbox}{\faFlask \quad Methodologie \& Oplossing}
+\begin{enumerate}
+    \item \textbf{Analyse:} Onderzoek naar AML- en GDPR-compliance en knelpunten bij Scrada (AS-IS).
+    \item \textbf{Hybride Architectuur:} Samen met VIES-API en een eigen KBO-scraper (HtmlAgilityPack) voor de data-validatie.
+    \item \textbf{data-extractie en biometrische Validatie:} OCR-data van de eID en implementatie van een liveness-gecontroleerde matching-flow (MobileFaceNet).
+\end{enumerate}
 \end{posterbox}
 
 \definecolor{pastelorange}{RGB}{255, 235, 210}
@@ -113,79 +113,64 @@ Om identiteitsfraude tegen te gaan, is biometrie essentieel:
 \definecolor{pastelpurple}{RGB}{240, 230, 250}
 \definecolor{pastelgreen}{RGB}{220, 245, 230}
 
-\begin{posterbox}{\faTasks \quad Het Onboarding-proces}
+\begin{posterbox}{\faSync \quad Procesoptimalisatie: AS-IS vs. TO-BE}
 \begin{center}
-    \vspace{0.2cm}
-
-    \tcbox[colback=pastelorange, colframe=orange!40, arc=5mm, boxrule=0mm]{
-        \Large \textbf{1. Ondernemingsnummer}
-    } 
-    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
-    
-    \tcbox[colback=pastelblue, colframe=blue!40, arc=5mm, boxrule=0mm]{
-        \Large \textbf{2. eID-scan}
-    } 
-    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
-    
-    \tcbox[colback=pastelpurple, colframe=purple!40, arc=5mm, boxrule=0mm]{
-        \Large \textbf{3. Biometrie}
-    } 
-    \vspace{0.1cm} {\Huge $\downarrow$} \\ \vspace{0.1cm}
-    
-    \tcbox[colback=pastelgreen, colframe=green!50!black!30, arc=5mm, boxrule=0mm]{
-        \Large \textbf{4. Afronding registratie}
-    }
-    
-    \vspace{0.2cm}
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth, keepaspectratio]{as_is.png}
+        \captionof{figure}{\small AS-IS: Huidig manueel proces}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{0.49\linewidth}
+        \centering
+        \includegraphics[width=\linewidth, keepaspectratio]{to_be.png}
+        \captionof{figure}{\small TO-BE: Geautomatiseerde flow}
+    \end{minipage}
 \end{center}
 \end{posterbox}
 
 \columnbreak
 
 \begin{posterbox}{\faProjectDiagram \quad Systeemarchitectuur}
-De applicatie is gebouwd met een Flutter frontend en een ASP.NET Core backend. 
-De flow van data-extractie loopt van de KBO-scraper rechtstreeks naar de Flutter UI, 
-waardoor de gebruiker onmiddellijk feedback krijgt over de geldigheid van de bedrijfsgegevens.
-
+De architectuur heeft een ontkoppeling tussen de lokale identiteitsverwerking (Flutter) en de centrale validatie \& logica (.NET). Dit garandeert Privacy-by-Design: 
+biometrische data wordt enkel lokaal verwerkt en nooit centraal opgeslagen.
 \vspace{0.4cm}
 \begin{center}
     \begin{minipage}[t]{0.45\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{poster-screenshot.png}
+        \includegraphics[width=0.7\linewidth]{poster-screenshot.png}
     \end{minipage}%
     \hfill
     \begin{minipage}[t]{0.45\linewidth}
         \centering
-        \includegraphics[width=\linewidth]{biometrics_poster.png}
+        \includegraphics[width=0.7\linewidth]{biometrics_poster.png}
     \end{minipage}\\[0.2cm]
     \captionof{figure}{\small Data-flow \& Biometrie}
 \end{center}
 \end{posterbox}
 
 \begin{posterbox}{\faCheckDouble \quad Resultaten \& Verificatie}
-De PoC bewijst dat een volledige check niet meer dan 3 minuten duurt. 
+De PoC bewijst dat een volledige check maar ongeveer 3 minuten duurt. 
 \vspace{0.5cm}
 \begin{center}
-\resizebox{\linewidth}{!}{%
-    \begin{tabular}{|l|l|l|l|}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|l|l|l|l|}
     \hline
-    \textbf{Scenario} & \textbf{Input Type} & \textbf{Gem. Score} & \textbf{Resultaat} \\ \hline
+    \textbf{\textcolor{hogent-blue}{Scenario}} & \textbf{\textcolor{hogent-blue}{Input Type}} & \textbf{\textcolor{hogent-blue}{Score}} & \textbf{\textcolor{hogent-blue}{Resultaat}} \\ \hline
     Goede belichting & ID + Selfie & 80,4\% & Match (OK) \\ \hline
     Matige belichting & ID + Selfie & 64,0\% & Match (OK) \\ \hline
-    Mismatch (Andere persoon) & ID + Selfie andere persoon & -6,1\% & No Match \\ \hline
-    Spoofing (Foto op scherm) & ID + Foto & N.v.t. & Liveness Failed \\ \hline
-    \end{tabular}%
-}
-    \captionof{table}{Resultaten van de biometrische testscenario's.}
-    \label{tab:biometrische-testresultaten}
+    Mismatch & ID + Andere persoon & -6,1\% & No Match \\ \hline
+    Spoofing (Foto) & ID + Foto & N.v.t. & Liveness Failed \\ \hline
+\end{tabular}
 \end{center}
 \end{posterbox}
 
-
-\begin{posterbox}{\faFlagCheckered \quad Conclusie}
-Manuele KYC-processen bij Scrada zijn verleden tijd. 
-De Flutter-app zorgt voor een hogere snelheid en veiligheid. 
-De architectuur is al voorbereid op de essentiële implementatie van officiële KBO-API voor productie.
+\begin{posterbox}{\faFlagCheckered \quad Conclusie \& Reflectie}
+\begin{itemize}
+    \item \textbf{Impact:} KYC-proces volledig geautomatiseerd \& doorlooptijd gereduceerd met ca. 70\%.
+    \item \textbf{Resultaat:} Een efficiënte, fraudeveilige en GDPR-conforme onboarding voor Scrada.
+    \item \textbf{Toekomst:} Integratie van officiële KBO-API en NFC-authenticatie voor maximale betrouwbaarheid.
+\end{itemize}
 \end{posterbox}
 
 \end{multicols}
